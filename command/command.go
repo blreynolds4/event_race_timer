@@ -1,6 +1,7 @@
 package command
 
 import (
+	"blreynolds4/event-race-timer/events"
 	"fmt"
 	"math/rand"
 	"os"
@@ -44,6 +45,7 @@ func NewPingCommand(rdb *redis.Client) CommandFunction {
 
 func NewStartCommand(rdb *redis.Client, streamName string) CommandFunction {
 	return func(args []string) (bool, error) {
+		eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
 		startTime := time.Now().UTC()
 		seedTime := "0s"
 		if len(args) > 0 {
@@ -54,45 +56,26 @@ func NewStartCommand(rdb *redis.Client, streamName string) CommandFunction {
 			return false, err
 		}
 
-		addArgs := redis.XAddArgs{
-			Stream: streamName,
-			Values: map[string]interface{}{
-				"event_type": "start",
-				"start_time": startTime.Add(-seedDuration).UnixMilli(),
-				"source":     clientName,
-			},
-		}
-		result := rdb.XAdd(&addArgs)
-		if result.Err() != nil {
-			return false, result.Err()
-		}
-
-		fmt.Println("ok -", result.Val())
-		return false, nil
+		return false, eventTarget.SendStart(events.StartEvent{
+			Source:    clientName,
+			StartTime: startTime.Add(-seedDuration),
+		})
 	}
 }
 
 func NewFinishCommand(rdb *redis.Client, streamName string) CommandFunction {
 	return func(args []string) (bool, error) {
+		eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
+
 		bib := ""
 		if len(args) > 0 {
 			bib = args[0]
 		}
-		addArgs := redis.XAddArgs{
-			Stream: streamName,
-			Values: map[string]interface{}{
-				"event_type":  "finish",
-				"bib":         bib,
-				"finish_time": time.Now().UTC().UnixMilli(),
-				"source":      clientName,
-			},
-		}
-		result := rdb.XAdd(&addArgs)
-		if result.Err() != nil {
-			return false, result.Err()
-		}
 
-		fmt.Println("ok -", result.Val())
-		return false, nil
+		return false, eventTarget.SendFinish(events.FinishEvent{
+			Source:     clientName,
+			Bib:        bib,
+			FinishTime: time.Now().UTC(),
+		})
 	}
 }

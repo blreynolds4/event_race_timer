@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -79,6 +80,8 @@ func main() {
 			if len(split) > 0 {
 				// use place for bib
 				timeString := split[len(split)-2]
+				// durations are in minutes:seconds.tenths
+				// convert to go duration format
 				durationString := strings.Replace(timeString, ":", "m", 1) + "s"
 				runDuration, err := time.ParseDuration(durationString)
 				if err != nil {
@@ -88,10 +91,35 @@ func main() {
 
 				// generate a finish event for each place with the correct timestamp from the finish
 				eventTarget.SendFinish(events.FinishEvent{
-					Source:     "generator",
+					Source:     "generator-1",
 					Bib:        split[0],
 					FinishTime: startTime.Add(runDuration),
 				})
+
+				// get a random number 1 - 3 to decide on additional finish events for the athlete
+				random := rand.Intn(3)
+				if random >= 1 {
+					// add a manual event a little slower than first event with no bib
+					// set a bib about half the time
+					bib := split[0]
+					if rand.Intn(2) > 0 {
+						bib = ""
+					}
+					eventTarget.SendFinish(events.FinishEvent{
+						Source:     "generator-manual",
+						Bib:        bib,
+						FinishTime: startTime.Add(runDuration).Add(time.Millisecond * 500),
+					})
+				}
+
+				if random >= 2 {
+					// add a third reader event a little faster
+					eventTarget.SendFinish(events.FinishEvent{
+						Source:     "generator-2",
+						Bib:        split[0],
+						FinishTime: startTime.Add(runDuration).Add(time.Millisecond * -500),
+					})
+				}
 			}
 		} else {
 			done = true

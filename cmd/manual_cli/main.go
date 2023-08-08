@@ -44,6 +44,8 @@ func main() {
 	loopCommands["stop"] = command.QuitCommand
 	loopCommands["ping"] = command.NewPingCommand(rdb)
 	loopCommands["start"] = command.NewStartCommand(rdb, claRacename)
+	loopCommands["place"] = command.NewPlaceCommand(rdb, claRacename)
+	loopCommands["p"] = command.NewPlaceCommand(rdb, claRacename)
 	loopCommands["finish"] = finishCommand
 	loopCommands["f"] = finishCommand
 

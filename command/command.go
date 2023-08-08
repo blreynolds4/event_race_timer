@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 
 	redis "github.com/go-redis/redis/v7"
 )
 
-//unique name for a client
+// unique name for a client
 var clientName string
 
 type CommandFunction func(args []string) (bool, error)
@@ -56,10 +57,7 @@ func NewStartCommand(rdb *redis.Client, streamName string) CommandFunction {
 			return false, err
 		}
 
-		return false, eventTarget.SendStart(events.StartEvent{
-			Source:    clientName,
-			StartTime: startTime.Add(-seedDuration),
-		})
+		return false, eventTarget.SendRaceEvent(events.NewStartEvent(clientName, startTime.Add(-seedDuration)))
 	}
 }
 
@@ -67,15 +65,38 @@ func NewFinishCommand(rdb *redis.Client, streamName string) CommandFunction {
 	return func(args []string) (bool, error) {
 		eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
 
-		bib := ""
-		if len(args) > 0 {
-			bib = args[0]
+		var err error
+		bib := events.NoBib
+		if len(args) > 0 && len(args[0]) > 0 {
+			bib, err = strconv.Atoi(args[0])
+			if err != nil {
+				fmt.Println("Finish Error", err, len(args), args)
+				return false, err
+			}
 		}
 
-		return false, eventTarget.SendFinish(events.FinishEvent{
-			Source:     clientName,
-			Bib:        bib,
-			FinishTime: time.Now().UTC(),
-		})
+		return false, eventTarget.SendRaceEvent(events.NewFinishEvent(clientName, time.Now().UTC(), bib))
+	}
+}
+
+func NewPlaceCommand(rdb *redis.Client, streamName string) CommandFunction {
+	return func(args []string) (bool, error) {
+		eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
+
+		var err error
+		bib, place := 0, 0
+		if len(args) > 1 {
+			bib, err = strconv.Atoi(args[0])
+			if err != nil {
+				return false, err
+			}
+
+			place, err = strconv.Atoi(args[1])
+			if err != nil {
+				return false, err
+			}
+		}
+
+		return false, eventTarget.SendRaceEvent(events.NewPlaceEvent(clientName, bib, place))
 	}
 }

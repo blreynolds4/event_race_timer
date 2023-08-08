@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -54,10 +55,7 @@ func main() {
 
 	// send a start event
 	startTime := time.Now().UTC()
-	err = eventTarget.SendStart(events.StartEvent{
-		Source:    "generator",
-		StartTime: startTime,
-	})
+	err = eventTarget.SendRaceEvent(events.NewStartEvent("generator", startTime))
 	if err != nil {
 		fmt.Printf("error sending start event: %s", err.Error())
 		os.Exit(-1)
@@ -67,6 +65,7 @@ func main() {
 	// match the race times based on starTime
 	scanner := bufio.NewScanner(eventFile)
 	done := false
+	finishCount := 0
 	for !done {
 		// read a line of event input
 		if scanner.Scan() {
@@ -78,6 +77,8 @@ func main() {
 
 			split := strings.Split(line, " ")
 			if len(split) > 0 {
+				finishCount++
+
 				// use place for bib
 				timeString := split[len(split)-2]
 				// durations are in minutes:seconds.tenths
@@ -89,40 +90,37 @@ func main() {
 					os.Exit(-1)
 				}
 
-				// generate a finish event for each place with the correct timestamp from the finish
-				eventTarget.SendFinish(events.FinishEvent{
-					Source:     "generator-1",
-					Bib:        split[0],
-					FinishTime: startTime.Add(runDuration),
-				})
+				// generate a finish event for each timestamp from the finish
+				bib, err := strconv.Atoi(split[0])
+				if err != nil {
+					fmt.Printf("error getting bib from %s: %s", split[0], err.Error())
+					os.Exit(-1)
+				}
+				eventTarget.SendRaceEvent(events.NewFinishEvent("reader-1", startTime.Add(runDuration), bib))
 
 				// get a random number 1 - 3 to decide on additional finish events for the athlete
 				random := rand.Intn(3)
 				if random >= 1 {
 					// add a manual event a little slower than first event with no bib
 					// set a bib about half the time
-					bib := split[0]
 					if rand.Intn(2) > 0 {
-						bib = ""
+						bib = events.NoBib
 					}
-					eventTarget.SendFinish(events.FinishEvent{
-						Source:     "generator-manual",
-						Bib:        bib,
-						FinishTime: startTime.Add(runDuration).Add(time.Millisecond * 500),
-					})
+					eventTarget.SendRaceEvent(events.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*500), bib))
 				}
 
 				if random >= 2 {
 					// add a third reader event a little faster
-					eventTarget.SendFinish(events.FinishEvent{
-						Source:     "generator-2",
-						Bib:        split[0],
-						FinishTime: startTime.Add(runDuration).Add(time.Millisecond * -500),
-					})
+					eventTarget.SendRaceEvent(events.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*-500), bib))
 				}
 			}
 		} else {
 			done = true
 		}
+	}
+
+	// send a place event for each finish using the place as the bib
+	for i := 1; i <= finishCount; i++ {
+		eventTarget.SendRaceEvent(events.NewPlaceEvent("chute-manual", i, i))
 	}
 }

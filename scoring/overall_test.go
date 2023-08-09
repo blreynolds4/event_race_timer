@@ -51,22 +51,22 @@ func TestOverallScoring(t *testing.T) {
 		},
 		{
 			Athlete: athletes[10],
-			Place:   1,
+			Place:   2,
 			Time:    finishTime10.Sub(now),
 		},
 		{
 			Athlete: athletes[11],
-			Place:   1,
+			Place:   3,
 			Time:    finishTime11.Sub(now),
 		},
 		{
 			Athlete: athletes[13],
-			Place:   1,
+			Place:   4,
 			Time:    finishTime13.Sub(now),
 		},
 		{
 			Athlete: athletes[14],
-			Place:   1,
+			Place:   5,
 			Time:    finishTime14.Sub(now),
 		},
 	}

@@ -1,0 +1,28 @@
+Create an interface with struct implementation that builds results from an event stream (EventSource) and publishes them on a stream (EventTarget)
+
+It needs to build and cache results from race events:
+
+StartEvent
+    Keep track of the start time of the event.  Always use the most recent StartEvent
+    The start time is used to build the result duration
+    If the start event gets updated, re-send any completed results with an updated duration
+
+FinishEvent
+    Uses FinishTime in the event along with Start Time from start event to get result duration
+    We may want logic to prefer a particular event source for the finish time.  Ie a particular
+    chip reader or maybe the manual source.  If there are multiple readers and manual inputs there could be many finishes for a bib
+
+PlaceEvent
+    Sets the place of the result.
+    The latest place event should always be used to set/update the place on the result
+
+ResultBuilder should use a provided EventTarget to put the Results on a stream
+Results that get updated should be put on the EventTarget again
+
+Updates happen:
+    Start time changes:  all previous results need to be updated and sent with new duration
+    Finish event comes:  if a finish event with a "better"/"preferred" source for the finish time arrives
+    Place event updates a bib place.
+
+Event Scoring code will need to be ready for results to be updated by changes to start time, finish time, and places.  That means
+a result for a bib could be sent to scoring multiple times.

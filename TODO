@@ -9,15 +9,18 @@ https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ve
 100% test coverage is goal
 
 1.  Update current Overall Scorer to be a ResultBuilder.  That should require a partial result struct to keep track of results in progress
-It might be good to put this in a results package to isolate from scoring (I put the ResultBuilder spec in the results dir)
+It might be good to put this in a results package to isolate from scoring (I put the ResultBuilder spec in the results dir). Thinking some more
+I think ResultBuilder may need to run as a stand alone app.  It monitors the race stream for events and publishes results.
 
 2. Implement scorers that read from result stream:
     Overall
     Team XC
     Age Group
 
-3. Results saved to db
-4. Results web pages for all scoring types
+    Results saved to db
+    Scoring is also probably a stand alone app.  It monitors results and compiles them into scoring output.  Stores the data to db
+
+3. Results web pages for all scoring types, one or more web services to show results web pages
 5. Raspberry pi deployment so monitor can be set up to show overall and team scores on constant refresh
 
 

@@ -10,7 +10,9 @@ StartEvent
 FinishEvent
     Uses FinishTime in the event along with Start Time from start event to get result duration
     We may want logic to prefer a particular event source for the finish time.  Ie a particular
-    chip reader or maybe the manual source.  If there are multiple readers and manual inputs there could be many finishes for a bib
+    chip reader or maybe the manual source.  If there are multiple readers and manual inputs there could be many finishes for a bib.  This could be a simple
+    ranking.  Most preferred source is a 0, so you use the Finish event that maps to the lowest ranking number.  If they have equal ranking just use the
+    most recent of the events
 
 PlaceEvent
     Sets the place of the result.

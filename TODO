@@ -1,0 +1,23 @@
+Tutorials on Testing
+https://blog.jetbrains.com/go/2022/11/22/comprehensive-guide-to-testing-in-go/
+
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjwtoPE4dSAAxXFjIkEHftFCLsQwqsBegQIDRAG&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DFjkSJ1iXKpg&usg=AOvVaw3HPFQSBDP-wM4R9gdWU4Gr&opi=89978449
+
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjwtoPE4dSAAxXFjIkEHftFCLsQwqsBegQIDhAG&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DXQzTUa9LPU8&usg=AOvVaw1TOzX0BIA5yTjiQOlO6cLX&opi=89978449
+
+
+100% test coverage is goal
+
+1.  Update current Overall Scorer to be a ResultBuilder.  That should require a partial result struct to keep track of results in progress
+It might be good to put this in a results package to isolate from scoring (I put the ResultBuilder spec in the results dir)
+
+2. Implement scorers that read from result stream:
+    Overall
+    Team XC
+    Age Group
+
+3. Results saved to db
+4. Results web pages for all scoring types
+5. Raspberry pi deployment so monitor can be set up to show overall and team scores on constant refresh
+
+

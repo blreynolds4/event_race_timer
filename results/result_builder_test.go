@@ -13,7 +13,6 @@ func TestOverallScoring(t *testing.T) {
 	// read events off a stream and return
 	// overall results in place order
 	now := time.Now().UTC()
-
 	// Test data
 	finishTime10 := now.Add(5 * time.Minute)
 	finishTime11 := now.Add(5*time.Minute + (time.Second * 5))

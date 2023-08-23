@@ -3,34 +3,26 @@ package results
 import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/events"
-	"fmt"
-	"time"
 )
 
-type ScoredResult struct {
-	Athlete competitors.Competitor
-	Place   int
-	Time    time.Duration
+type ResultBuilder interface {
+	BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error
 }
 
-type Scorer interface {
-	Score(inputEvents events.EventSource, athletes competitors.CompetitorLookup) ([]ScoredResult, error)
+func NewResultBuilder() ResultBuilder {
+	return &resultBuilder{}
 }
 
-func NewOverallScoring() Scorer {
-	return &overallScorer{}
-}
-
-type overallScorer struct {
+type resultBuilder struct {
 	eventSource events.EventSource
+	results     ResultTarget
 	athletes    competitors.CompetitorLookup
 }
 
-func (os *overallScorer) Score(inputEvents events.EventSource, athletes competitors.CompetitorLookup) ([]ScoredResult, error) {
+func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error {
 	start := []events.StartEvent{}
 	finishes := map[int]events.FinishEvent{} //key is bib number
 	places := []events.PlaceEvent{}          //key is place
-	result := []ScoredResult{}
 
 	event, err := inputEvents.GetRaceEvent()
 
@@ -48,10 +40,9 @@ func (os *overallScorer) Score(inputEvents events.EventSource, athletes competit
 		event, err = inputEvents.GetRaceEvent()
 	}
 
-	for place, event := range places {
-		fmt.Println("range place", place)
-		result = append(result, ScoredResult{athletes[event.GetBib()], place + 1, finishes[event.GetBib()].GetFinishTime().Sub(start[0].GetStartTime())})
-	}
+	// for place, event := range places {
+	// 	result = append(result, ScoredResult{athletes[event.GetBib()], place + 1, finishes[event.GetBib()].GetFinishTime().Sub(start[0].GetStartTime())})
+	// }
 
-	return result, nil
+	return nil
 }

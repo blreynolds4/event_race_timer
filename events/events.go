@@ -3,7 +3,6 @@ package events
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"strconv"
 	"time"
 
@@ -128,9 +127,7 @@ func (re *raceEvent) getIntData(field string) int {
 		panic(fmt.Sprintf("data for event field %s is missing", field))
 	}
 
-	fmt.Println("Int TYPE:", fmt.Sprintf("%v", reflect.TypeOf(d)))
 	result, ok := d.(int)
-	fmt.Println("result", result, ok)
 	if !ok {
 		panic(fmt.Sprintf("%s data in event should be an int", field))
 	}

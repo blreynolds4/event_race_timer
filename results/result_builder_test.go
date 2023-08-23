@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOverallScoring(t *testing.T) {
+func TestResultBuilder(t *testing.T) {
 	// read events off a stream and return
 	// overall results in place order
 	now := time.Now().UTC()
@@ -42,38 +42,47 @@ func TestOverallScoring(t *testing.T) {
 	athletes[13] = competitors.NewCompetitor("SSR", "WPI", 19, 14)
 	athletes[14] = competitors.NewCompetitor("SSL", "CU", 53, 20)
 
-	expectedResults := []ScoredResult{
+	expectedResults := []RaceResult{
 		{
+			Bib:     12,
 			Athlete: athletes[12],
 			Place:   1,
 			Time:    finishTime12.Sub(now),
 		},
 		{
+			Bib:     10,
 			Athlete: athletes[10],
 			Place:   2,
 			Time:    finishTime10.Sub(now),
 		},
 		{
+			Bib:     11,
 			Athlete: athletes[11],
 			Place:   3,
 			Time:    finishTime11.Sub(now),
 		},
 		{
+			Bib:     13,
 			Athlete: athletes[13],
 			Place:   4,
 			Time:    finishTime13.Sub(now),
 		},
 		{
+			Bib:     14,
 			Athlete: athletes[14],
 			Place:   5,
 			Time:    finishTime14.Sub(now),
 		},
 	}
 
-	overall := NewOverallScoring()
-	actualResults, err := overall.Score(inputEvents, athletes)
+	actualResults := &mockResultTarget{
+		Results: make([]RaceResult, 0),
+	}
+
+	builder := NewResultBuilder()
+	err := builder.BuildResults(inputEvents, athletes, actualResults)
 	assert.NoError(t, err)
-	assert.Equal(t, expectedResults, actualResults)
+	assert.Equal(t, expectedResults, actualResults.Results)
 }
 
 func NewMockRaceEventSource(testEvents []events.RaceEvent) events.EventSource {
@@ -94,4 +103,13 @@ func (mes *mockEventSource) GetRaceEvent() (events.RaceEvent, error) {
 	}
 
 	return nil, nil
+}
+
+type mockResultTarget struct {
+	Results []RaceResult
+}
+
+func (mrt *mockResultTarget) SendResult(rr RaceResult) error {
+	mrt.Results = append(mrt.Results, rr)
+	return nil
 }

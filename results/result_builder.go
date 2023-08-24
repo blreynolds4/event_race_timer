@@ -22,7 +22,7 @@ type resultBuilder struct {
 func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error {
 	start := []events.StartEvent{}
 	finishes := map[int]events.FinishEvent{} //key is bib number
-	places := []events.PlaceEvent{}          //key is place
+	places := []events.PlaceEvent{}
 
 	event, err := inputEvents.GetRaceEvent()
 
@@ -34,15 +34,18 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			finishes[event.(events.FinishEvent).GetBib()] = event.(events.FinishEvent)
 		case events.PlaceEventType:
 			places = append(places, event.(events.PlaceEvent))
-			//places[event.(events.PlaceEvent).GetPlace()] = event.(events.PlaceEvent)
 		}
 
 		event, err = inputEvents.GetRaceEvent()
 	}
 
-	// for place, event := range places {
-	// 	result = append(result, ScoredResult{athletes[event.GetBib()], place + 1, finishes[event.GetBib()].GetFinishTime().Sub(start[0].GetStartTime())})
-	// }
+	for place, event := range places {
+		rr := RaceResult{event.GetBib(), athletes[event.GetBib()], place + 1, finishes[event.GetBib()].GetFinishTime().Sub(start[0].GetStartTime())}
+		results.SendResult(rr)
+		// if rr.IsComplete {
+		// 	results.SendResult(rr)
+		// }
+	}
 
 	return nil
 }

@@ -2,7 +2,6 @@ package places
 
 import (
 	"blreynolds4/event-race-timer/events"
-	"fmt"
 	"testing"
 	"time"
 
@@ -35,7 +34,6 @@ func TestNormalPlacingInOrderSkipNoBib(t *testing.T) {
 	builder := NewPlaceGenerator(inputEvents, actualResults)
 	err := builder.GeneratePlaces()
 	assert.NoError(t, err)
-	fmt.Println("LEN", len(actualResults.Events))
 	assert.Equal(t, 3, len(actualResults.Events))
 
 	// verify the bibs and places match what we expect
@@ -138,6 +136,5 @@ type mockEventTarget struct {
 
 func (mrt *mockEventTarget) SendRaceEvent(e events.RaceEvent) error {
 	mrt.Events = append(mrt.Events, e)
-	fmt.Println("mock target added", e, "new len", len(mrt.Events))
 	return nil
 }

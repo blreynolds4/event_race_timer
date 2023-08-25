@@ -174,19 +174,29 @@ func NewPlaceEvent(src string, bib, place int) PlaceEvent {
 	return result
 }
 
-type redisStreamEventTarget struct {
-	client *redis.Client
-	stream string
+type redisEventStream struct {
+	client    *redis.Client
+	stream    string
+	lastMsgId string
 }
 
 func NewRedisStreamEventTarget(c *redis.Client, name string) EventTarget {
-	return &redisStreamEventTarget{
-		client: c,
-		stream: name,
+	return &redisEventStream{
+		client:    c,
+		stream:    name,
+		lastMsgId: "0",
 	}
 }
 
-func (rset *redisStreamEventTarget) SendRaceEvent(re RaceEvent) error {
+func NewRedisStreamEventSource(c *redis.Client, name string) EventSource {
+	return &redisEventStream{
+		client:    c,
+		stream:    name,
+		lastMsgId: "0",
+	}
+}
+
+func (rset *redisEventStream) SendRaceEvent(re RaceEvent) error {
 	// convert our event to a json to embed in the message
 	eventData, err := json.Marshal(re)
 	if err != nil {
@@ -210,6 +220,41 @@ func (rset *redisStreamEventTarget) SendRaceEvent(re RaceEvent) error {
 
 	fmt.Println("ok -", result.Val())
 	return nil
+}
+
+func (rset *redisEventStream) GetRaceEvent() (RaceEvent, error) {
+	fmt.Println("Reading from id", rset.lastMsgId, "...")
+	data, err := rset.client.XRead(&redis.XReadArgs{
+		Streams: []string{rset.stream, rset.lastMsgId},
+		//count is number of entries we want to read from redis
+		Count: 1,
+		//we use the block command to make sure if no entry is found we wait
+		//until an entry is found
+		Block: 0,
+	}).Result()
+	if err != nil {
+		fmt.Println("ERROR", err)
+		return nil, err
+	}
+
+	if len(data[0].Messages) > 0 {
+		msg := data[0].Messages[0]
+		// create a result message and deserialize
+		result := raceEvent{}
+		data, ok := msg.Values["event"].(string)
+		if ok {
+			err = json.Unmarshal([]byte(data), &result)
+			if err != nil {
+				return nil, err
+			}
+
+			rset.lastMsgId = msg.ID
+			result.ID = msg.ID
+			fmt.Println("Date", result.Data[finishTimeData])
+			return &result, nil
+		}
+	}
+	return nil, nil
 }
 
 func (et EventType) MarshalJSON() ([]byte, error) {
@@ -256,5 +301,27 @@ func (et *raceEvent) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// convert the dates stored in the Data
+	if et.Data[startTimeData] != nil {
+		et.Data[startTimeData] = et.unmarshallDateData(et.Data[startTimeData])
+	}
+	if et.Data[finishTimeData] != nil {
+		et.Data[finishTimeData] = et.unmarshallDateData(et.Data[finishTimeData])
+	}
+
 	return nil
+}
+
+func (et *raceEvent) unmarshallDateData(rawDate any) time.Time {
+	result := time.Time{}
+	data, ok := rawDate.(string)
+	if !ok {
+		panic(fmt.Sprintf("expected raw date to be string but was %v", rawDate))
+	}
+
+	result, err := time.Parse(time.RFC3339Nano, data)
+	if err != nil {
+		panic(err)
+	}
+	return result
 }

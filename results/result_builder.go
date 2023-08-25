@@ -24,6 +24,8 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 	finishes := map[int]events.FinishEvent{} //key is bib number
 	places := []events.PlaceEvent{}
 
+	incomplete := []events.PlaceEvent{}
+
 	event, err := inputEvents.GetRaceEvent()
 
 	for event != nil && err == nil {
@@ -39,13 +41,16 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 		event, err = inputEvents.GetRaceEvent()
 	}
 
-	for place, event := range places {
-		rr := RaceResult{event.GetBib(), athletes[event.GetBib()], place + 1, finishes[event.GetBib()].GetFinishTime().Sub(start[0].GetStartTime())}
-		results.SendResult(rr)
-		// if rr.IsComplete {
-		// 	results.SendResult(rr)
-		// }
+	for _, event := range places {
+		rr := RaceResult{event.GetBib(), athletes[event.GetBib()], event.GetPlace(), finishes[event.GetBib()].GetFinishTime().Sub(start[0].GetStartTime())}
+		if rr.IsComplete() {
+			results.SendResult(rr)
+			delete(finishes, event.GetBib())
+		} else {
+			incomplete = append(incomplete, event)
+		}
 	}
+	places = incomplete
 
 	return nil
 }

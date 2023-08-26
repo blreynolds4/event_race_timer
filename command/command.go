@@ -123,3 +123,65 @@ func NewPlaceCommand(rdb *redis.Client, streamName string) Command {
 		},
 	}
 }
+
+func NewListFinishCommand(rdb *redis.Client, streamName string) Command {
+	return &noStateCommand{
+		CmdFunc: func(args []string) (bool, error) {
+			eventSource := events.NewRedisStreamEventSource(rdb, streamName)
+
+			var err error
+			var startEvent events.StartEvent
+			finishes := make([]events.FinishEvent, 0, 100)
+			// read all the events and print them out
+			var current events.RaceEvent
+			current, err = eventSource.GetRaceEvent(time.Second)
+			if err != nil {
+				return false, err
+			}
+
+			for current != nil {
+				switch current.GetType() {
+				case events.StartEventType:
+					startEvent = current.(events.StartEvent)
+				case events.FinishEventType:
+					finishes = append(finishes, current.(events.FinishEvent))
+				default:
+				}
+
+				current, err = eventSource.GetRaceEvent(time.Second)
+				if err != nil {
+					return false, err
+				}
+			}
+
+			// print the finish events in order with a duration base on the start event
+			// can't print finishes with out a start event
+			if startEvent != nil {
+				fmt.Printf("%20s %20s %6s\n", "Event ID", "Time", "Bib")
+				for _, fe := range finishes {
+					fmt.Printf("%20s %20s %6d\n", fe.GetID(), fe.GetFinishTime().Sub(startEvent.GetStartTime()), fe.GetBib())
+				}
+			}
+
+			return false, err
+		},
+	}
+}
+
+func NewAddBibCommand(rdb *redis.Client, streamName string) Command {
+	return &noStateCommand{
+		CmdFunc: func(args []string) (bool, error) {
+			eventSource := events.NewRedisStreamEventSource(rdb, streamName)
+
+			//ADD RANGE QUERY, change this call to take count and timeout
+			// goal is to get the event we want from our args
+			// then send new finish event with same duration but add the bib
+			current, err = eventSource.GetRaceEvent(time.Second)
+			if err != nil {
+				return false, err
+			}
+
+			return false, err
+		},
+	}
+}

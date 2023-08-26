@@ -3,7 +3,6 @@ package events
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"strconv"
 	"time"
 
@@ -28,6 +27,7 @@ const (
 )
 
 type RaceEvent interface {
+	GetID() string
 	GetSource() string
 	GetType() EventType
 	GetTime() time.Time
@@ -61,7 +61,7 @@ type EventTarget interface {
 }
 
 type EventSource interface {
-	GetRaceEvent() (RaceEvent, error)
+	GetRaceEvent(timeout time.Duration) (RaceEvent, error)
 }
 
 // struct or interface?  what methods? enum for Data keys?
@@ -73,6 +73,10 @@ type raceEvent struct {
 	EventTime time.Time
 	Type      EventType
 	Data      map[string]any
+}
+
+func (re *raceEvent) GetID() string {
+	return re.ID
 }
 
 func (re *raceEvent) GetTime() time.Time {
@@ -128,9 +132,9 @@ func (re *raceEvent) getIntData(field string) int {
 		panic(fmt.Sprintf("data for event field %s is missing", field))
 	}
 
-	fmt.Println("Int TYPE:", fmt.Sprintf("%v", reflect.TypeOf(d)))
+	// fmt.Println("Int TYPE:", fmt.Sprintf("%v", reflect.TypeOf(d)))
 	result, ok := d.(int)
-	fmt.Println("result", result, ok)
+	// fmt.Println("result", result, ok)
 	if !ok {
 		panic(fmt.Sprintf("%s data in event should be an int", field))
 	}
@@ -222,22 +226,20 @@ func (rset *redisEventStream) SendRaceEvent(re RaceEvent) error {
 	return nil
 }
 
-func (rset *redisEventStream) GetRaceEvent() (RaceEvent, error) {
-	fmt.Println("Reading from id", rset.lastMsgId, "...")
+func (rset *redisEventStream) GetRaceEvent(timeout time.Duration) (RaceEvent, error) {
 	data, err := rset.client.XRead(&redis.XReadArgs{
 		Streams: []string{rset.stream, rset.lastMsgId},
 		//count is number of entries we want to read from redis
 		Count: 1,
 		//we use the block command to make sure if no entry is found we wait
-		//until an entry is found
-		Block: 0,
+		//timeout duration, 0 is forever
+		Block: timeout,
 	}).Result()
-	if err != nil {
-		fmt.Println("ERROR", err)
+	if err != nil && err != redis.Nil {
 		return nil, err
 	}
 
-	if len(data[0].Messages) > 0 {
+	if err != redis.Nil && len(data[0].Messages) > 0 {
 		msg := data[0].Messages[0]
 		// create a result message and deserialize
 		result := raceEvent{}
@@ -250,7 +252,6 @@ func (rset *redisEventStream) GetRaceEvent() (RaceEvent, error) {
 
 			rset.lastMsgId = msg.ID
 			result.ID = msg.ID
-			fmt.Println("Date", result.Data[finishTimeData])
 			return &result, nil
 		}
 	}

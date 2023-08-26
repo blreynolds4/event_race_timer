@@ -36,14 +36,15 @@ func main() {
 	defer rdb.Close()
 
 	// create the command map
-	loopCommands := make(map[string]command.CommandFunction)
+	loopCommands := make(map[string]command.Command)
 	finishCommand := command.NewFinishCommand(rdb, claRacename)
-	loopCommands["quit"] = command.QuitCommand
-	loopCommands["q"] = command.QuitCommand
-	loopCommands["exit"] = command.QuitCommand
-	loopCommands["stop"] = command.QuitCommand
+	loopCommands["quit"] = command.NewQuitCommand()
+	loopCommands["q"] = command.NewQuitCommand()
+	loopCommands["exit"] = command.NewQuitCommand()
+	loopCommands["stop"] = command.NewQuitCommand()
 	loopCommands["ping"] = command.NewPingCommand(rdb)
 	loopCommands["start"] = command.NewStartCommand(rdb, claRacename)
+	loopCommands["s"] = command.NewStartCommand(rdb, claRacename)
 	loopCommands["place"] = command.NewPlaceCommand(rdb, claRacename)
 	loopCommands["p"] = command.NewPlaceCommand(rdb, claRacename)
 	loopCommands["finish"] = finishCommand
@@ -59,19 +60,19 @@ func main() {
 			fmt.Println()
 			line := scanner.Text()
 			// look up the first string as the command and pass the rest to the command if one is found.
-			split := strings.Split(line, " ")
-			if len(split) > 0 {
-				cmd := split[0]
+			cmdArgs := strings.Split(line, " ")
+			if len(cmdArgs) > 0 {
+				cmd := cmdArgs[0]
 				cmdFunc, found := loopCommands[cmd]
 				if found {
-					done, err = cmdFunc(split[1:])
+					done, err = cmdFunc.Run(cmdArgs[1:])
 					if err != nil {
 						fmt.Println("error during", cmd, ":", err.Error())
 					}
 				} else {
 					// default to a finish event and send cmd as the bib
-					fmt.Println("defaulting to finish for", split)
-					finishCommand(split)
+					fmt.Println("defaulting to finish for", cmdArgs)
+					finishCommand.Run(cmdArgs)
 				}
 			}
 		}

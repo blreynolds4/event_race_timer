@@ -172,16 +172,38 @@ func NewAddBibCommand(rdb *redis.Client, streamName string) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			eventSource := events.NewRedisStreamEventSource(rdb, streamName)
+			eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
 
-			//ADD RANGE QUERY, change this call to take count and timeout
-			// goal is to get the event we want from our args
-			// then send new finish event with same duration but add the bib
-			current, err = eventSource.GetRaceEvent(time.Second)
+			//get the event with the event id and resend it with a bib attached
+			if len(args) < 2 {
+				return false, fmt.Errorf("add bib requires to arguments:  <finish event id> <bib>")
+			}
+
+			bib, err := strconv.Atoi(args[1])
 			if err != nil {
 				return false, err
 			}
 
-			return false, err
+			eventRange, err := eventSource.GetRaceEventRange(args[0], args[0])
+			if err != nil {
+				return false, err
+			}
+			if len(eventRange) != 1 {
+				return false, fmt.Errorf("event id did not return 1 event")
+			}
+
+			if len(eventRange) == 1 {
+				finishEvent, ok := eventRange[0].(events.FinishEvent)
+				if !ok {
+					return false, fmt.Errorf("expected event id to be for finish event, skipping")
+				}
+
+				// create updated event with new bib
+				updated := events.NewFinishEvent(finishEvent.GetSource(), finishEvent.GetFinishTime(), bib)
+				eventTarget.SendRaceEvent(updated)
+			}
+
+			return false, nil
 		},
 	}
 }

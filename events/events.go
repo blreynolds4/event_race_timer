@@ -62,6 +62,7 @@ type EventTarget interface {
 
 type EventSource interface {
 	GetRaceEvent(timeout time.Duration) (RaceEvent, error)
+	GetRaceEventRange(start, end string) ([]RaceEvent, error)
 }
 
 // struct or interface?  what methods? enum for Data keys?
@@ -242,20 +243,50 @@ func (rset *redisEventStream) GetRaceEvent(timeout time.Duration) (RaceEvent, er
 	if err != redis.Nil && len(data[0].Messages) > 0 {
 		msg := data[0].Messages[0]
 		// create a result message and deserialize
-		result := raceEvent{}
-		data, ok := msg.Values["event"].(string)
-		if ok {
-			err = json.Unmarshal([]byte(data), &result)
-			if err != nil {
-				return nil, err
-			}
-
-			rset.lastMsgId = msg.ID
-			result.ID = msg.ID
-			return &result, nil
+		result, err := rset.raceEventFromRedisMessage(msg)
+		if err != nil {
+			return nil, err
 		}
+
+		return result, nil
 	}
 	return nil, nil
+}
+
+func (rset *redisEventStream) raceEventFromRedisMessage(msg redis.XMessage) (RaceEvent, error) {
+	result := raceEvent{}
+	data, ok := msg.Values["event"].(string)
+	if ok {
+		err := json.Unmarshal([]byte(data), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		rset.lastMsgId = msg.ID
+		result.ID = msg.ID
+		return &result, nil
+	}
+
+	return nil, fmt.Errorf("Values event data was not a string, can't buld RaceEvent")
+}
+
+func (rset *redisEventStream) GetRaceEventRange(start, end string) ([]RaceEvent, error) {
+	data, err := rset.client.XRange(rset.stream, start, end).Result()
+	if err != nil && err != redis.Nil {
+		return nil, err
+	}
+
+	// convert the data to RaceEvents and return them
+	result := make([]RaceEvent, 0)
+	for _, msg := range data {
+		event, err := rset.raceEventFromRedisMessage(msg)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, event)
+	}
+
+	return result, nil
 }
 
 func (et EventType) MarshalJSON() ([]byte, error) {

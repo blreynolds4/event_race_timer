@@ -29,7 +29,7 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 	finishCache := list.New()
 
 	// read from the source any finish events with bibs (default_placer consumer group)
-	event, err := dpg.eventSource.GetRaceEvent()
+	event, err := dpg.eventSource.GetRaceEvent(0)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 				}
 			}
 		}
-		event, err = dpg.eventSource.GetRaceEvent()
+		event, err = dpg.eventSource.GetRaceEvent(0)
 		if err != nil {
 			return err
 		}

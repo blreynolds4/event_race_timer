@@ -3,7 +3,6 @@ package results
 import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/events"
-	"fmt"
 	"time"
 )
 
@@ -32,7 +31,6 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 	for event != nil && err == nil {
 		switch event.GetType() {
 		case events.StartEventType:
-			fmt.Println("start event")
 			start = append(start, event.(events.StartEvent))
 
 			for _, result := range rr {
@@ -41,7 +39,6 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 				rr[result.Bib] = result
 
 				if rr[result.Bib].IsComplete() {
-					fmt.Println("send result")
 					results.SendResult(rr[result.Bib])
 				}
 			}
@@ -51,21 +48,16 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			result := rr[fe.GetBib()]
 			result.Bib = fe.GetBib()
 			result.Athlete = athletes[fe.GetBib()]
-			fmt.Println("finishEvent2")
 			if len(start) > 0 {
-				fmt.Println("finishEvent2.1")
 				latest_start := len(start) - 1
 				result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
 			} else {
-				fmt.Println("finishEvent2.2")
 				ft[fe.GetBib()] = fe.GetFinishTime()
 			}
 
-			fmt.Println("finishEvent3")
 			rr[fe.GetBib()] = result
 
 			if rr[fe.GetBib()].IsComplete() {
-				fmt.Println("sent")
 				results.SendResult(rr[fe.GetBib()])
 			}
 		case events.PlaceEventType:
@@ -78,7 +70,6 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			rr[pe.GetBib()] = result
 
 			if rr[pe.GetBib()].IsComplete() {
-				fmt.Println("sent")
 				results.SendResult(rr[pe.GetBib()])
 			}
 		}

@@ -3,7 +3,6 @@ package places
 import (
 	"blreynolds4/event-race-timer/events"
 	"container/list"
-	"fmt"
 )
 
 // Write a placer that takes event source and event target
@@ -48,14 +47,11 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 				} else {
 					for e := finishCache.Front(); e != nil; e = e.Next() {
 						current := e.Value.(events.FinishEvent)
-						fmt.Println("Finish time ", finish.GetFinishTime(), "current list time", current.GetFinishTime())
 						if finish.GetFinishTime().Before(current.GetFinishTime()) {
 							//insert in front of current and stop
 							inserted = finishCache.InsertBefore(finish, e)
-							fmt.Println("Inserted", inserted)
 							break
 						} else {
-							fmt.Println("event is after")
 							currentPlace = currentPlace + 1
 						}
 					}

@@ -27,7 +27,7 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 	rr := map[int]RaceResult{}
 	ft := map[int]time.Time{}
 
-	event, err := inputEvents.GetRaceEvent()
+	event, err := inputEvents.GetRaceEvent(0)
 
 	for event != nil && err == nil {
 		switch event.GetType() {
@@ -83,7 +83,7 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			}
 		}
 
-		event, err = inputEvents.GetRaceEvent()
+		event, err = inputEvents.GetRaceEvent(0)
 	}
 	return nil
 }

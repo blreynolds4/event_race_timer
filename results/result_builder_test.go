@@ -359,7 +359,7 @@ type mockEventSource struct {
 	events []events.RaceEvent
 }
 
-func (mes *mockEventSource) GetRaceEvent() (events.RaceEvent, error) {
+func (mes *mockEventSource) GetRaceEvent(timeout time.Duration) (events.RaceEvent, error) {
 	if len(mes.events) > 0 {
 		var result events.RaceEvent
 		// remove the first item in the list and shift everything else up
@@ -369,6 +369,10 @@ func (mes *mockEventSource) GetRaceEvent() (events.RaceEvent, error) {
 	}
 
 	return nil, nil
+}
+
+func (mes *mockEventSource) GetRaceEventRange(start, end string) ([]events.RaceEvent, error) {
+	return []events.RaceEvent{}, nil
 }
 
 type mockResultTarget struct {

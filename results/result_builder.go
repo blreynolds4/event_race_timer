@@ -36,7 +36,8 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			start = append(start, event.(events.StartEvent))
 
 			for _, result := range rr {
-				result.Time = ft[result.Bib].Sub(start[0].GetStartTime())
+				latest_start := len(start) - 1
+				result.Time = ft[result.Bib].Sub(start[latest_start].GetStartTime())
 				rr[result.Bib] = result
 
 				if rr[result.Bib].IsComplete() {
@@ -53,7 +54,8 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			fmt.Println("finishEvent2")
 			if len(start) > 0 {
 				fmt.Println("finishEvent2.1")
-				result.Time = fe.GetFinishTime().Sub(start[0].GetStartTime())
+				latest_start := len(start) - 1
+				result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
 			} else {
 				fmt.Println("finishEvent2.2")
 				ft[fe.GetBib()] = fe.GetFinishTime()

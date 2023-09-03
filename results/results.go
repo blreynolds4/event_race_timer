@@ -63,6 +63,10 @@ type ResultTarget interface {
 	SendResult(ctx context.Context, rr RaceResult) error
 }
 
+type ResultSource interface {
+	GetResult(ctx context.Context) (RaceResult, error)
+}
+
 type resultTargetStream struct {
 	rawStream stream.Writer
 }

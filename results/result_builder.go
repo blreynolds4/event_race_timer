@@ -22,8 +22,8 @@ type resultBuilder struct {
 }
 
 func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error {
+	// comment on the usage of each of these variables
 	start := []events.StartEvent{}
-
 	rr := map[int]RaceResult{}
 	ft := map[int]time.Time{}
 
@@ -34,8 +34,9 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 		case events.StartEventType:
 			start = append(start, event.(events.StartEvent))
 
+			// comment on why iterating on result here
 			for _, result := range rr {
-				latest_start := len(start) - 1
+				latest_start := len(start) - 1 // look up slice syntax to get shortcut to get last item in go slice
 				result.Time = ft[result.Bib].Sub(start[latest_start].GetStartTime())
 				rr[result.Bib] = result
 
@@ -44,13 +45,16 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 				}
 			}
 		case events.FinishEventType:
+			// add code here to always keep the best rated finish source
+			// we need a way to define event source ranking
+			// will require chaning the interface (function signature)
 			fe := event.(events.FinishEvent)
 
 			result := rr[fe.GetBib()]
 			result.Bib = fe.GetBib()
 			result.Athlete = athletes[fe.GetBib()]
 			if len(start) > 0 {
-				latest_start := len(start) - 1
+				latest_start := len(start) - 1 // use go slice for last item
 				result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
 			} else {
 				ft[fe.GetBib()] = fe.GetFinishTime()

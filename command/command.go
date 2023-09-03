@@ -2,13 +2,14 @@ package command
 
 import (
 	"blreynolds4/event-race-timer/events"
+	"context"
 	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
-	redis "github.com/go-redis/redis/v7"
+	redis "github.com/redis/go-redis/v9"
 )
 
 // unique name for a client
@@ -53,17 +54,16 @@ func NewQuitCommand() Command {
 func NewPingCommand(rdb *redis.Client) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
-			cmdResult := rdb.Ping()
+			cmdResult := rdb.Ping(context.TODO())
 			fmt.Println(cmdResult.String())
 			return false, cmdResult.Err()
 		},
 	}
 }
 
-func NewStartCommand(rdb *redis.Client, streamName string) Command {
+func NewStartCommand(eventTarget events.EventTarget) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
-			eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
 			startTime := time.Now().UTC()
 			seedTime := "0s"
 			if len(args) > 0 {
@@ -74,17 +74,15 @@ func NewStartCommand(rdb *redis.Client, streamName string) Command {
 				return false, err
 			}
 
-			return false, eventTarget.SendRaceEvent(events.NewStartEvent(clientName, startTime.Add(-seedDuration)))
+			return false, eventTarget.SendRaceEvent(context.TODO(), events.NewStartEvent(clientName, startTime.Add(-seedDuration)))
 		},
 	}
 
 }
 
-func NewFinishCommand(rdb *redis.Client, streamName string) Command {
+func NewFinishCommand(eventTarget events.EventTarget) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
-			eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
-
 			var err error
 			bib := events.NoBib
 			if len(args) > 0 && len(args[0]) > 0 {
@@ -95,18 +93,16 @@ func NewFinishCommand(rdb *redis.Client, streamName string) Command {
 				}
 			}
 
-			return false, eventTarget.SendRaceEvent(events.NewFinishEvent(clientName, time.Now().UTC(), bib))
+			return false, eventTarget.SendRaceEvent(context.TODO(), events.NewFinishEvent(clientName, time.Now().UTC(), bib))
 		},
 	}
 }
 
-func NewPlaceCommand(rdb *redis.Client, streamName string) Command {
+func NewPlaceCommand(eventTarget events.EventTarget) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
-			eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
-
 			var err error
-			bib, place := 0, 0
+			bib, place := events.NoBib, 0
 			if len(args) > 1 {
 				bib, err = strconv.Atoi(args[0])
 				if err != nil {
@@ -117,24 +113,24 @@ func NewPlaceCommand(rdb *redis.Client, streamName string) Command {
 				if err != nil {
 					return false, err
 				}
+
+				return false, eventTarget.SendRaceEvent(context.TODO(), events.NewPlaceEvent(clientName, bib, place))
 			}
 
-			return false, eventTarget.SendRaceEvent(events.NewPlaceEvent(clientName, bib, place))
+			return false, fmt.Errorf("missing bib or place argument")
 		},
 	}
 }
 
-func NewListFinishCommand(rdb *redis.Client, streamName string) Command {
+func NewListFinishCommand(eventSource events.EventSource) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
-			eventSource := events.NewRedisStreamEventSource(rdb, streamName)
-
 			var err error
 			var startEvent events.StartEvent
 			finishes := make([]events.FinishEvent, 0, 100)
 			// read all the events and print them out
 			var current events.RaceEvent
-			current, err = eventSource.GetRaceEvent(time.Second)
+			current, err = eventSource.GetRaceEvent(context.TODO(), time.Second)
 			if err != nil {
 				return false, err
 			}
@@ -148,7 +144,7 @@ func NewListFinishCommand(rdb *redis.Client, streamName string) Command {
 				default:
 				}
 
-				current, err = eventSource.GetRaceEvent(time.Second)
+				current, err = eventSource.GetRaceEvent(context.TODO(), time.Second)
 				if err != nil {
 					return false, err
 				}
@@ -168,12 +164,9 @@ func NewListFinishCommand(rdb *redis.Client, streamName string) Command {
 	}
 }
 
-func NewAddBibCommand(rdb *redis.Client, streamName string) Command {
+func NewAddBibCommand(eventSource events.EventSource, eventTarget events.EventTarget) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
-			eventSource := events.NewRedisStreamEventSource(rdb, streamName)
-			eventTarget := events.NewRedisStreamEventTarget(rdb, streamName)
-
 			//get the event with the event id and resend it with a bib attached
 			if len(args) < 2 {
 				return false, fmt.Errorf("add bib requires to arguments:  <finish event id> <bib>")
@@ -184,7 +177,7 @@ func NewAddBibCommand(rdb *redis.Client, streamName string) Command {
 				return false, err
 			}
 
-			eventRange, err := eventSource.GetRaceEventRange(args[0], args[0])
+			eventRange, err := eventSource.GetRaceEventRange(context.TODO(), args[0], args[0])
 			if err != nil {
 				return false, err
 			}
@@ -194,13 +187,13 @@ func NewAddBibCommand(rdb *redis.Client, streamName string) Command {
 
 			if len(eventRange) == 1 {
 				finishEvent, ok := eventRange[0].(events.FinishEvent)
-				if !ok {
+				if !ok || finishEvent.GetType() != events.FinishEventType {
 					return false, fmt.Errorf("expected event id to be for finish event, skipping")
 				}
 
 				// create updated event with new bib
 				updated := events.NewFinishEvent(finishEvent.GetSource(), finishEvent.GetFinishTime(), bib)
-				eventTarget.SendRaceEvent(updated)
+				eventTarget.SendRaceEvent(context.TODO(), updated)
 			}
 
 			return false, nil

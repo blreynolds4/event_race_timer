@@ -1,12 +1,12 @@
 package events
 
 import (
+	"blreynolds4/event-race-timer/stream"
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
-
-	"github.com/go-redis/redis/v7"
 )
 
 type EventType string
@@ -31,6 +31,8 @@ type RaceEvent interface {
 	GetSource() string
 	GetType() EventType
 	GetTime() time.Time
+	ToStreamMessage() (stream.Message, error)
+	FromStreamMessage(stream.Message) error
 }
 
 // Start event will have type StartEvent and Data:
@@ -57,12 +59,12 @@ type PlaceEvent interface {
 // all the data for all event types is the same underneath
 // so all can be sent and read as Race Events
 type EventTarget interface {
-	SendRaceEvent(re RaceEvent) error
+	SendRaceEvent(ctx context.Context, re RaceEvent) error
 }
 
 type EventSource interface {
-	GetRaceEvent(timeout time.Duration) (RaceEvent, error)
-	GetRaceEventRange(start, end string) ([]RaceEvent, error)
+	GetRaceEvent(ctx context.Context, t time.Duration) (RaceEvent, error)
+	GetRaceEventRange(ctx context.Context, start, end string) ([]RaceEvent, error)
 }
 
 // struct or interface?  what methods? enum for Data keys?
@@ -149,6 +151,41 @@ func (re *raceEvent) GetPlace() int {
 	return re.getIntData(placeData)
 }
 
+func (re *raceEvent) ToStreamMessage() (stream.Message, error) {
+	// convert our event to a json to embed in the message
+	eventData, err := json.Marshal(re)
+	if err != nil {
+		return stream.Message{}, err
+	}
+
+	msg := stream.Message{
+		Values: map[string]interface{}{
+			"event_type": string(re.GetType()),
+			"event_time": re.GetTime().UnixMilli(),
+			"source":     re.GetSource(),
+			"event":      string(eventData),
+		},
+	}
+
+	return msg, nil
+}
+
+func (re *raceEvent) FromStreamMessage(msg stream.Message) error {
+	re.ID = msg.ID
+
+	data, ok := msg.Values["event"].(string)
+	if ok {
+		err := json.Unmarshal([]byte(data), re)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	return fmt.Errorf("Values data was not a string, can't build RaceEvent")
+}
+
 func NewFinishEvent(src string, finishTime time.Time, bib int) FinishEvent {
 	result := new(raceEvent)
 	result.Data = make(map[string]interface{})
@@ -177,107 +214,69 @@ func NewPlaceEvent(src string, bib, place int) PlaceEvent {
 	return result
 }
 
-type redisEventStream struct {
-	client    *redis.Client
-	stream    string
-	lastMsgId string
+type eventSourceStream struct {
+	rawStream stream.Reader
 }
 
-func NewRedisStreamEventTarget(c *redis.Client, name string) EventTarget {
-	return &redisEventStream{
-		client:    c,
-		stream:    name,
-		lastMsgId: "0",
+type eventTargetStream struct {
+	rawStream stream.Writer
+}
+
+func NewRaceEventTarget(raw stream.Writer) EventTarget {
+	return &eventTargetStream{
+		rawStream: raw,
 	}
 }
 
-func NewRedisStreamEventSource(c *redis.Client, name string) EventSource {
-	return &redisEventStream{
-		client:    c,
-		stream:    name,
-		lastMsgId: "0",
+func NewRaceEventSource(raw stream.Reader) EventSource {
+	return &eventSourceStream{
+		rawStream: raw,
 	}
 }
 
-func (rset *redisEventStream) SendRaceEvent(re RaceEvent) error {
-	// convert our event to a json to embed in the message
-	eventData, err := json.Marshal(re)
+func (ets *eventTargetStream) SendRaceEvent(ctx context.Context, re RaceEvent) error {
+	msg, err := re.ToStreamMessage()
+
+	err = ets.rawStream.SendMessage(ctx, msg)
 	if err != nil {
 		return err
 	}
 
-	addArgs := redis.XAddArgs{
-		Stream: rset.stream,
-		Values: map[string]interface{}{
-			"event_type": string(re.GetType()),
-			"event_time": re.GetTime().UnixMilli(),
-			"source":     re.GetSource(),
-			"event":      string(eventData),
-		},
-	}
-
-	result := rset.client.XAdd(&addArgs)
-	if result.Err() != nil {
-		return result.Err()
-	}
-
-	fmt.Println("ok -", result.Val())
+	fmt.Println("sent")
 	return nil
 }
 
-func (rset *redisEventStream) GetRaceEvent(timeout time.Duration) (RaceEvent, error) {
-	data, err := rset.client.XRead(&redis.XReadArgs{
-		Streams: []string{rset.stream, rset.lastMsgId},
-		//count is number of entries we want to read from redis
-		Count: 1,
-		//we use the block command to make sure if no entry is found we wait
-		//timeout duration, 0 is forever
-		Block: timeout,
-	}).Result()
-	if err != nil && err != redis.Nil {
+func (ess *eventSourceStream) GetRaceEvent(ctx context.Context, timeout time.Duration) (RaceEvent, error) {
+	msg, err := ess.rawStream.GetMessage(ctx, timeout)
+	if err != nil {
 		return nil, err
 	}
 
-	if err != redis.Nil && len(data[0].Messages) > 0 {
-		msg := data[0].Messages[0]
+	if msg.IsValid() {
 		// create a result message and deserialize
-		result, err := rset.raceEventFromRedisMessage(msg)
+		result := new(raceEvent)
+		err := result.FromStreamMessage(msg)
 		if err != nil {
 			return nil, err
 		}
 
 		return result, nil
 	}
+
 	return nil, nil
 }
 
-func (rset *redisEventStream) raceEventFromRedisMessage(msg redis.XMessage) (RaceEvent, error) {
-	result := raceEvent{}
-	data, ok := msg.Values["event"].(string)
-	if ok {
-		err := json.Unmarshal([]byte(data), &result)
-		if err != nil {
-			return nil, err
-		}
-
-		rset.lastMsgId = msg.ID
-		result.ID = msg.ID
-		return &result, nil
-	}
-
-	return nil, fmt.Errorf("Values event data was not a string, can't buld RaceEvent")
-}
-
-func (rset *redisEventStream) GetRaceEventRange(start, end string) ([]RaceEvent, error) {
-	data, err := rset.client.XRange(rset.stream, start, end).Result()
-	if err != nil && err != redis.Nil {
+func (ess *eventSourceStream) GetRaceEventRange(ctx context.Context, start, end string) ([]RaceEvent, error) {
+	msgs, err := ess.rawStream.GetMessageRange(ctx, start, end)
+	if err != nil {
 		return nil, err
 	}
 
 	// convert the data to RaceEvents and return them
 	result := make([]RaceEvent, 0)
-	for _, msg := range data {
-		event, err := rset.raceEventFromRedisMessage(msg)
+	for _, msg := range msgs {
+		event := new(raceEvent)
+		err := event.FromStreamMessage(msg)
 		if err != nil {
 			return result, err
 		}

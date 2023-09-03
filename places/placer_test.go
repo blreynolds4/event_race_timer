@@ -2,6 +2,7 @@ package places
 
 import (
 	"blreynolds4/event-race-timer/events"
+	"context"
 	"testing"
 	"time"
 
@@ -118,7 +119,7 @@ type mockEventSource struct {
 	events []events.RaceEvent
 }
 
-func (mes *mockEventSource) GetRaceEvent(timeout time.Duration) (events.RaceEvent, error) {
+func (mes *mockEventSource) GetRaceEvent(ctx context.Context, timeout time.Duration) (events.RaceEvent, error) {
 	if len(mes.events) > 0 {
 		var result events.RaceEvent
 		// remove the first item in the list and shift everything else up
@@ -130,7 +131,7 @@ func (mes *mockEventSource) GetRaceEvent(timeout time.Duration) (events.RaceEven
 	return nil, nil
 }
 
-func (mes *mockEventSource) GetRaceEventRange(start, end string) ([]events.RaceEvent, error) {
+func (mes *mockEventSource) GetRaceEventRange(ctx context.Context, start, end string) ([]events.RaceEvent, error) {
 	return []events.RaceEvent{}, nil
 }
 
@@ -138,7 +139,7 @@ type mockEventTarget struct {
 	Events []events.RaceEvent
 }
 
-func (mrt *mockEventTarget) SendRaceEvent(e events.RaceEvent) error {
+func (mrt *mockEventTarget) SendRaceEvent(ctx context.Context, e events.RaceEvent) error {
 	mrt.Events = append(mrt.Events, e)
 	return nil
 }

@@ -1,23 +1,21 @@
 package competitors
 
-type Competitor interface {
-	GetName() string
-	GetTeam() string
-	GetAge() int
-	GetGrade() int
-}
+import (
+	"encoding/json"
+	"io/ioutil"
+)
 
-type CompetitorLookup map[int]Competitor
+type CompetitorLookup map[int]*Competitor
 
-type competitor struct {
+type Competitor struct {
 	Name  string
 	Team  string
 	Age   int
 	Grade int
 }
 
-func NewCompetitor(name, team string, age, grade int) Competitor {
-	return &competitor{
+func NewCompetitor(name, team string, age, grade int) *Competitor {
+	return &Competitor{
 		Name:  name,
 		Team:  team,
 		Age:   age,
@@ -25,18 +23,29 @@ func NewCompetitor(name, team string, age, grade int) Competitor {
 	}
 }
 
-func (c *competitor) GetName() string {
-	return c.Name
+// Implement JSON competitor lookup save and load
+func LoadCompetitorLookup(path string) (CompetitorLookup, error) {
+	// read json from the path provided and return the lookup
+	file, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	athletes := make(CompetitorLookup)
+	err = json.Unmarshal([]byte(file), &athletes)
+	if err != nil {
+		return nil, err
+	}
+
+	return athletes, err
 }
 
-func (c *competitor) GetTeam() string {
-	return c.Team
-}
+func (cl CompetitorLookup) Store(path string) error {
+	// write json from the path provided and return the lookup
+	data, err := json.MarshalIndent(cl, "", " ")
+	if err != nil {
+		return err
+	}
 
-func (c *competitor) GetAge() int {
-	return c.Age
-}
-
-func (c *competitor) GetGrade() int {
-	return c.Grade
+	return ioutil.WriteFile(path, data, 0644)
 }

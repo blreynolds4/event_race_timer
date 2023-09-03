@@ -1,7 +1,10 @@
 package events
 
 import (
+	"blreynolds4/event-race-timer/stream"
+	"context"
 	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
 
@@ -131,4 +134,136 @@ func TestMarshallEvent(t *testing.T) {
 	assert.Equal(t, bib, loaded.GetBib())
 	assert.Equal(t, place, loaded.GetPlace())
 	assert.Equal(t, source, loaded.GetSource())
+}
+
+func TestStreamConstructors(t *testing.T) {
+	actualR := NewRaceEventSource(&stream.MockStream{})
+	_, ok := actualR.(*eventSourceStream)
+	assert.True(t, ok)
+
+	actualW := NewRaceEventTarget(&stream.MockStream{})
+	_, ok = actualW.(*eventTargetStream)
+	assert.True(t, ok)
+}
+
+func TestSendEvent(t *testing.T) {
+	mock := &stream.MockStream{
+		Events: make([]stream.Message, 0),
+	}
+	evStream := NewRaceEventTarget(mock)
+
+	se := NewStartEvent(t.Name(), time.Now().UTC())
+
+	err := evStream.SendRaceEvent(context.TODO(), se)
+	assert.NoError(t, err)
+
+	actual := &raceEvent{}
+	data, ok := mock.Events[0].Values["event"].(string)
+	assert.True(t, ok)
+	err = json.Unmarshal([]byte(data), actual)
+
+	assert.NoError(t, err)
+	assert.Equal(t, se, actual)
+}
+
+func TestSendEventFails(t *testing.T) {
+	expErr := fmt.Errorf("fail")
+	mock := &stream.MockStream{
+		Events: make([]stream.Message, 0),
+		Send: func(ctx context.Context, sm stream.Message) error {
+			return expErr
+		},
+	}
+	evStream := NewRaceEventTarget(mock)
+
+	se := NewStartEvent(t.Name(), time.Now().UTC())
+
+	err := evStream.SendRaceEvent(context.TODO(), se)
+	assert.Equal(t, expErr, err)
+}
+
+func TestGetRaceEvent(t *testing.T) {
+	// create the expected event.  It needs an ID, which is normally
+	// added by the stream when sent.  We will add it manually
+	expEvent := NewStartEvent(t.Name(), time.Now().UTC())
+	msg, err := expEvent.ToStreamMessage()
+	assert.NoError(t, err)
+	msg.ID = "test"
+	expEvent.FromStreamMessage(msg)
+
+	mock := &stream.MockStream{
+		Events: []stream.Message{msg},
+	}
+	evStream := NewRaceEventSource(mock)
+
+	actualEvent, err := evStream.GetRaceEvent(context.TODO(), time.Second)
+	assert.NoError(t, err)
+	assert.Equal(t, expEvent, actualEvent)
+}
+
+func TestGetRaceEventEmptyStream(t *testing.T) {
+	// create the expected event.  It needs an ID, which is normally
+	// added by the stream when sent.  We will add it manually
+
+	mock := &stream.MockStream{
+		Events: []stream.Message{},
+	}
+	evStream := NewRaceEventSource(mock)
+
+	actualEvent, err := evStream.GetRaceEvent(context.TODO(), time.Second)
+	assert.NoError(t, err)
+	assert.Nil(t, actualEvent)
+}
+
+func TestGetRaceEventFails(t *testing.T) {
+	// create the expected event.  It needs an ID, which is normally
+	// added by the stream when sent.  We will add it manually
+
+	expErr := fmt.Errorf("fail")
+	mock := &stream.MockStream{
+		Get: func(ctx context.Context, timeout time.Duration) (stream.Message, error) {
+			return stream.Message{}, expErr
+		},
+	}
+	evStream := NewRaceEventSource(mock)
+
+	_, err := evStream.GetRaceEvent(context.TODO(), time.Second)
+	assert.Equal(t, expErr, err)
+}
+
+func TestGetRaceEventRange(t *testing.T) {
+	// create the expected event.  It needs an ID, which is normally
+	// added by the stream when sent.  We will add it manually
+	expEvent := NewStartEvent(t.Name(), time.Now().UTC())
+	msg, err := expEvent.ToStreamMessage()
+	assert.NoError(t, err)
+	msg.ID = "test"
+	expEvent.FromStreamMessage(msg)
+	expEvents := []RaceEvent{expEvent}
+
+	mock := &stream.MockStream{
+		Events: []stream.Message{msg},
+	}
+	evStream := NewRaceEventSource(mock)
+
+	actualEvents, err := evStream.GetRaceEventRange(context.TODO(), "0", "end")
+	assert.NoError(t, err)
+	assert.Equal(t, expEvents, actualEvents)
+}
+
+func TestGetRaceEventRangeBadEvent(t *testing.T) {
+	badMsg := stream.Message{
+		Values: map[string]interface{}{
+			"event": 5,
+		},
+	}
+
+	mock := &stream.MockStream{
+		Events: []stream.Message{badMsg},
+	}
+	evStream := NewRaceEventSource(mock)
+
+	expErr := fmt.Errorf("Values data was not a string, can't build RaceEvent")
+	_, err := evStream.GetRaceEventRange(context.TODO(), "0", "end")
+	assert.Equal(t, expErr, err)
 }

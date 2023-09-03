@@ -3,6 +3,7 @@ package places
 import (
 	"blreynolds4/event-race-timer/events"
 	"container/list"
+	"context"
 )
 
 // Write a placer that takes event source and event target
@@ -28,7 +29,7 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 	finishCache := list.New()
 
 	// read from the source any finish events with bibs (default_placer consumer group)
-	event, err := dpg.eventSource.GetRaceEvent(0)
+	event, err := dpg.eventSource.GetRaceEvent(context.TODO(), 0)
 	if err != nil {
 		return err
 	}
@@ -67,11 +68,11 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 					current := e.Value.(events.FinishEvent)
 					placeEvent := events.NewPlaceEvent("default_placer", current.GetBib(), currentPlace)
 					currentPlace = currentPlace + 1
-					dpg.eventTarget.SendRaceEvent(placeEvent)
+					dpg.eventTarget.SendRaceEvent(context.TODO(), placeEvent)
 				}
 			}
 		}
-		event, err = dpg.eventSource.GetRaceEvent(0)
+		event, err = dpg.eventSource.GetRaceEvent(context.TODO(), 0)
 		if err != nil {
 			return err
 		}

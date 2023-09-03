@@ -2,13 +2,15 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/command"
+	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/redis_stream"
 	"bufio"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
 
-	redis "github.com/go-redis/redis/v7"
+	redis "github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -35,20 +37,33 @@ func main() {
 
 	defer rdb.Close()
 
+	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
+	eventTarget := events.NewRaceEventTarget(rawWrite)
+
+	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
+	eventSource := events.NewRaceEventSource(rawRead)
+
 	// create the command map
 	loopCommands := make(map[string]command.Command)
-	finishCommand := command.NewFinishCommand(rdb, claRacename)
+	finishCommand := command.NewFinishCommand(eventTarget)
+
 	loopCommands["quit"] = command.NewQuitCommand()
 	loopCommands["q"] = command.NewQuitCommand()
 	loopCommands["exit"] = command.NewQuitCommand()
 	loopCommands["stop"] = command.NewQuitCommand()
+
 	loopCommands["ping"] = command.NewPingCommand(rdb)
-	loopCommands["start"] = command.NewStartCommand(rdb, claRacename)
-	loopCommands["s"] = command.NewStartCommand(rdb, claRacename)
-	loopCommands["place"] = command.NewPlaceCommand(rdb, claRacename)
-	loopCommands["p"] = command.NewPlaceCommand(rdb, claRacename)
-	loopCommands["list"] = command.NewListFinishCommand(rdb, claRacename)
-	loopCommands["bib"] = command.NewAddBibCommand(rdb, claRacename)
+
+	loopCommands["start"] = command.NewStartCommand(eventTarget)
+	loopCommands["s"] = command.NewStartCommand(eventTarget)
+
+	loopCommands["place"] = command.NewPlaceCommand(eventTarget)
+	loopCommands["p"] = command.NewPlaceCommand(eventTarget)
+
+	loopCommands["list"] = command.NewListFinishCommand(eventSource)
+
+	loopCommands["bib"] = command.NewAddBibCommand(eventSource, eventTarget)
+
 	loopCommands["finish"] = finishCommand
 	loopCommands["f"] = finishCommand
 

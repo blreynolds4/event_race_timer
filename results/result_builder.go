@@ -3,6 +3,7 @@ package results
 import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/events"
+	"context"
 	"time"
 )
 
@@ -26,7 +27,7 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 	rr := map[int]RaceResult{}
 	ft := map[int]time.Time{}
 
-	event, err := inputEvents.GetRaceEvent(0)
+	event, err := inputEvents.GetRaceEvent(context.TODO(), 0)
 
 	for event != nil && err == nil {
 		switch event.GetType() {
@@ -39,7 +40,7 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 				rr[result.Bib] = result
 
 				if rr[result.Bib].IsComplete() {
-					results.SendResult(rr[result.Bib])
+					results.SendResult(context.TODO(), rr[result.Bib])
 				}
 			}
 		case events.FinishEventType:
@@ -58,7 +59,7 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			rr[fe.GetBib()] = result
 
 			if rr[fe.GetBib()].IsComplete() {
-				results.SendResult(rr[fe.GetBib()])
+				results.SendResult(context.TODO(), rr[fe.GetBib()])
 			}
 		case events.PlaceEventType:
 			pe := event.(events.PlaceEvent)
@@ -70,11 +71,11 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			rr[pe.GetBib()] = result
 
 			if rr[pe.GetBib()].IsComplete() {
-				results.SendResult(rr[pe.GetBib()])
+				results.SendResult(context.TODO(), rr[pe.GetBib()])
 			}
 		}
 
-		event, err = inputEvents.GetRaceEvent(0)
+		event, err = inputEvents.GetRaceEvent(context.TODO(), 0)
 	}
 	return nil
 }

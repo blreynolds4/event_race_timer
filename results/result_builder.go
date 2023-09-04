@@ -22,10 +22,9 @@ type resultBuilder struct {
 }
 
 func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error {
-	// comment on the usage of each of these variables
-	start := []events.StartEvent{}
-	rr := map[int]RaceResult{}
-	ft := map[int]time.Time{}
+	start := []events.StartEvent{} //array to store all of the start events
+	rr := map[int]RaceResult{}     //map of race results, bib number is key
+	ft := map[int]time.Time{}      // map of times with bib number being key
 
 	event, err := inputEvents.GetRaceEvent(context.TODO(), 0)
 
@@ -34,7 +33,7 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 		case events.StartEventType:
 			start = append(start, event.(events.StartEvent))
 
-			// comment on why iterating on result here
+			// iterate over result to get times for all finish events that came before the start event
 			for _, result := range rr {
 				latest_start := len(start) - 1 // look up slice syntax to get shortcut to get last item in go slice
 				result.Time = ft[result.Bib].Sub(start[latest_start].GetStartTime())

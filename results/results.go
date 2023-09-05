@@ -17,6 +17,7 @@ type RaceResult struct {
 	Athlete *competitors.Competitor
 	Place   int
 	Time    time.Duration
+	Source  string
 }
 
 func (rr RaceResult) IsComplete() bool {

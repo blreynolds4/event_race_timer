@@ -8,7 +8,7 @@ import (
 )
 
 type ResultBuilder interface {
-	BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error
+	BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget, ranking map[string]int) error
 }
 
 func NewResultBuilder() ResultBuilder {
@@ -19,9 +19,12 @@ type resultBuilder struct {
 	eventSource events.EventSource
 	results     ResultTarget
 	athletes    competitors.CompetitorLookup
+	ranking     map[string]int
 }
 
-func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error {
+func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget, ranking map[string]int) error {
+	//ranking := map[string]int{} //key is the source and the int is its ranking
+
 	start := []events.StartEvent{} //array to store all of the start events
 	rr := map[int]RaceResult{}     //map of race results, bib number is key
 	ft := map[int]time.Time{}      // map of times with bib number being key
@@ -50,19 +53,22 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			fe := event.(events.FinishEvent)
 
 			result := rr[fe.GetBib()]
-			result.Bib = fe.GetBib()
-			result.Athlete = athletes[fe.GetBib()]
-			if len(start) > 0 {
-				latest_start := len(start) - 1 // use go slice for last item
-				result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
-			} else {
-				ft[fe.GetBib()] = fe.GetFinishTime()
-			}
+			//if the ranking of the new event source is higher than the old create a new result
+			if ranking[fe.GetSource()] < ranking[result.Source] {
+				result.Bib = fe.GetBib()
+				result.Athlete = athletes[fe.GetBib()]
+				if len(start) > 0 {
+					latest_start := len(start) - 1 // use go slice for last item
+					result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
+				} else {
+					ft[fe.GetBib()] = fe.GetFinishTime()
+				}
 
-			rr[fe.GetBib()] = result
+				rr[fe.GetBib()] = result
 
-			if rr[fe.GetBib()].IsComplete() {
-				results.SendResult(context.TODO(), rr[fe.GetBib()])
+				if rr[fe.GetBib()].IsComplete() {
+					results.SendResult(context.TODO(), rr[fe.GetBib()])
+				}
 			}
 		case events.PlaceEventType:
 			pe := event.(events.PlaceEvent)

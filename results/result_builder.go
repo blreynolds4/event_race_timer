@@ -4,7 +4,6 @@ import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/events"
 	"context"
-	"fmt"
 	"time"
 )
 
@@ -53,12 +52,10 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			// will require chaning the interface (function signature)
 			fe := event.(events.FinishEvent)
 
-			result, exists := rr[fe.GetBib()]
+			result := rr[fe.GetBib()]
 			//if the ranking of the new event source is higher than the old create a new result
-			fmt.Println("ranking1: ", ranking[fe.GetSource()])
-			fmt.Println("ranking2: ", ranking[result.Source])
-			if ranking[fe.GetSource()] <= ranking[result.Source] || !exists {
-				fmt.Println("here1111")
+			if ranking[fe.GetSource()] <= ranking[result.Source] || ranking[result.Source] == 0 {
+
 				result.Bib = fe.GetBib()
 				result.Athlete = athletes[fe.GetBib()]
 				result.Source = fe.GetSource()
@@ -68,7 +65,6 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 				} else {
 					ft[fe.GetBib()] = fe.GetFinishTime()
 				}
-
 				rr[fe.GetBib()] = result
 
 				if rr[fe.GetBib()].IsComplete() {
@@ -79,13 +75,17 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			pe := event.(events.PlaceEvent)
 
 			result := rr[pe.GetBib()]
-			result.Bib = pe.GetBib()
-			result.Athlete = athletes[pe.GetBib()]
-			result.Place = pe.GetPlace()
-			rr[pe.GetBib()] = result
 
-			if rr[pe.GetBib()].IsComplete() {
-				results.SendResult(context.TODO(), rr[pe.GetBib()])
+			if ranking[pe.GetSource()] <= ranking[result.Psource] || ranking[result.Psource] == 0 {
+				result.Bib = pe.GetBib()
+				result.Athlete = athletes[pe.GetBib()]
+				result.Place = pe.GetPlace()
+				result.Psource = pe.GetSource()
+				rr[pe.GetBib()] = result
+
+				if rr[pe.GetBib()].IsComplete() {
+					results.SendResult(context.TODO(), rr[pe.GetBib()])
+				}
 			}
 		}
 

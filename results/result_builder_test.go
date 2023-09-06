@@ -36,6 +36,7 @@ func TestResultBuilderSimplest(t *testing.T) {
 			Place:   1,
 			Time:    finishTime10.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 	}
 
@@ -82,6 +83,7 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 			Place:   1,
 			Time:    finishTime10.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 		{
 			Bib:     10,
@@ -89,6 +91,7 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 			Place:   1,
 			Time:    finishTime10updated.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 	}
 
@@ -135,6 +138,7 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 			Place:   1,
 			Time:    finishTime10.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 		{
 			Bib:     10,
@@ -142,6 +146,7 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 			Place:   1,
 			Time:    finishTime10.Sub(startUpdated),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 	}
 
@@ -187,6 +192,7 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 			Place:   1,
 			Time:    finishTime10.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 		{
 			Bib:     10,
@@ -194,6 +200,7 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 			Place:   2,
 			Time:    finishTime10.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 	}
 
@@ -337,6 +344,7 @@ func TestResultBuilder(t *testing.T) {
 			Place:   1,
 			Time:    finishTime12.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 		{
 			Bib:     10,
@@ -344,6 +352,7 @@ func TestResultBuilder(t *testing.T) {
 			Place:   2,
 			Time:    finishTime10.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 		{
 			Bib:     11,
@@ -351,6 +360,7 @@ func TestResultBuilder(t *testing.T) {
 			Place:   3,
 			Time:    finishTime11.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 		{
 			Bib:     13,
@@ -358,6 +368,7 @@ func TestResultBuilder(t *testing.T) {
 			Place:   4,
 			Time:    finishTime13.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 		{
 			Bib:     14,
@@ -365,6 +376,7 @@ func TestResultBuilder(t *testing.T) {
 			Place:   5,
 			Time:    finishTime14.Sub(now),
 			Source:  t.Name(),
+			Psource: t.Name(),
 		},
 	}
 
@@ -375,6 +387,214 @@ func TestResultBuilder(t *testing.T) {
 	builder := NewResultBuilder()
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedResults, actualResults.Results)
+}
+
+func TestResultBuilderRankUpdates(t *testing.T) {
+	// read events off a stream and return
+	// result events when they are complete
+	now := time.Now().UTC()
+	// Test data
+	finishTime10 := now.Add(5 * time.Minute)
+
+	// 3 events minimum to build a result:  start, finish and place
+	// if the builder doesn't get all 3 no result for the bib is produced
+	testEvents := []events.RaceEvent{
+		events.NewStartEvent(t.Name(), now),
+		events.NewPlaceEvent(t.Name(), 10, 1),
+		events.NewFinishEvent("worse", finishTime10, 10),
+		events.NewFinishEvent("better", finishTime10, 10),
+	}
+	inputEvents := NewMockRaceEventSource(testEvents)
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+
+	// when the first place event comes in the builder should produce a result
+	// when the updated start time comes, it should produce a new result for the
+	// same bib
+	expectedResults := []RaceResult{
+		{
+			Bib:     10,
+			Athlete: athletes[10],
+			Place:   1,
+			Time:    finishTime10.Sub(now),
+			Source:  "worse",
+			Psource: t.Name(),
+		},
+		{
+			Bib:     10,
+			Athlete: athletes[10],
+			Place:   1,
+			Time:    finishTime10.Sub(now),
+			Source:  "better",
+			Psource: t.Name(),
+		},
+	}
+
+	actualResults := &mockResultTarget{
+		Results: make([]RaceResult, 0),
+	}
+
+	builder := NewResultBuilder()
+	ranking := map[string]int{}
+	ranking["better"] = 1
+	ranking["worse"] = 2
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedResults, actualResults.Results)
+}
+
+func TestResultBuilderRankIgnores(t *testing.T) {
+	// read events off a stream and return
+	// result events when they are complete
+	now := time.Now().UTC()
+	// Test data
+	finishTime10 := now.Add(5 * time.Minute)
+
+	// 3 events minimum to build a result:  start, finish and place
+	// if the builder doesn't get all 3 no result for the bib is produced
+	testEvents := []events.RaceEvent{
+		events.NewStartEvent(t.Name(), now),
+		events.NewPlaceEvent(t.Name(), 10, 1),
+		events.NewFinishEvent("better", finishTime10, 10),
+		events.NewFinishEvent("worse", finishTime10, 10),
+	}
+	inputEvents := NewMockRaceEventSource(testEvents)
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+
+	// when the first place event comes in the builder should produce a result
+	// when the updated start time comes, it should produce a new result for the
+	// same bib
+	expectedResults := []RaceResult{
+		{
+			Bib:     10,
+			Athlete: athletes[10],
+			Place:   1,
+			Time:    finishTime10.Sub(now),
+			Source:  "better",
+			Psource: t.Name(),
+		},
+	}
+
+	actualResults := &mockResultTarget{
+		Results: make([]RaceResult, 0),
+	}
+
+	builder := NewResultBuilder()
+	ranking := map[string]int{}
+	ranking["better"] = 1
+	ranking["worse"] = 2
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedResults, actualResults.Results)
+}
+
+func TestResultBuilderRankPlaceUpdate(t *testing.T) {
+	// read events off a stream and return
+	// result events when they are complete
+	now := time.Now().UTC()
+	// Test data
+	finishTime10 := now.Add(5 * time.Minute)
+
+	// 3 events minimum to build a result:  start, finish and place
+	// if the builder doesn't get all 3 no result for the bib is produced
+	testEvents := []events.RaceEvent{
+		events.NewStartEvent(t.Name(), now),
+		events.NewFinishEvent("better", finishTime10, 10),
+		events.NewPlaceEvent("worsePlace", 10, 1),
+		events.NewPlaceEvent("betterPlace", 10, 2),
+	}
+	inputEvents := NewMockRaceEventSource(testEvents)
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+
+	// when the first place event comes in the builder should produce a result
+	// when the updated start time comes, it should produce a new result for the
+	// same bib
+	expectedResults := []RaceResult{
+		{
+			Bib:     10,
+			Athlete: athletes[10],
+			Place:   1,
+			Time:    finishTime10.Sub(now),
+			Source:  "better",
+			Psource: "worsePlace",
+		},
+		{
+			Bib:     10,
+			Athlete: athletes[10],
+			Place:   2,
+			Time:    finishTime10.Sub(now),
+			Source:  "better",
+			Psource: "betterPlace",
+		},
+	}
+
+	actualResults := &mockResultTarget{
+		Results: make([]RaceResult, 0),
+	}
+
+	builder := NewResultBuilder()
+	ranking := map[string]int{}
+	ranking["better"] = 1
+	ranking["worse"] = 2
+	ranking["betterPlace"] = 1
+	ranking["worsePlace"] = 2
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedResults, actualResults.Results)
+}
+
+func TestResultBuilderRankPlaceIgnore(t *testing.T) {
+	// read events off a stream and return
+	// result events when they are complete
+	now := time.Now().UTC()
+	// Test data
+	finishTime10 := now.Add(5 * time.Minute)
+
+	// 3 events minimum to build a result:  start, finish and place
+	// if the builder doesn't get all 3 no result for the bib is produced
+	testEvents := []events.RaceEvent{
+		events.NewStartEvent(t.Name(), now),
+		events.NewFinishEvent("better", finishTime10, 10),
+		events.NewPlaceEvent("betterPlace", 10, 1),
+		events.NewPlaceEvent("worsePlace", 10, 2),
+	}
+	inputEvents := NewMockRaceEventSource(testEvents)
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+
+	// when the first place event comes in the builder should produce a result
+	// when the updated start time comes, it should produce a new result for the
+	// same bib
+	expectedResults := []RaceResult{
+		{
+			Bib:     10,
+			Athlete: athletes[10],
+			Place:   1,
+			Time:    finishTime10.Sub(now),
+			Source:  "better",
+			Psource: "betterPlace",
+		},
+	}
+
+	actualResults := &mockResultTarget{
+		Results: make([]RaceResult, 0),
+	}
+
+	builder := NewResultBuilder()
+	ranking := map[string]int{}
+	ranking["better"] = 1
+	ranking["worse"] = 2
+	ranking["betterPlace"] = 1
+	ranking["worsePlace"] = 2
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)

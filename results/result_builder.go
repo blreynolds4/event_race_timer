@@ -4,6 +4,7 @@ import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/events"
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -52,11 +53,15 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			// will require chaning the interface (function signature)
 			fe := event.(events.FinishEvent)
 
-			result := rr[fe.GetBib()]
+			result, exists := rr[fe.GetBib()]
 			//if the ranking of the new event source is higher than the old create a new result
-			if ranking[fe.GetSource()] < ranking[result.Source] {
+			fmt.Println("ranking1: ", ranking[fe.GetSource()])
+			fmt.Println("ranking2: ", ranking[result.Source])
+			if ranking[fe.GetSource()] <= ranking[result.Source] || !exists {
+				fmt.Println("here1111")
 				result.Bib = fe.GetBib()
 				result.Athlete = athletes[fe.GetBib()]
+				result.Source = fe.GetSource()
 				if len(start) > 0 {
 					latest_start := len(start) - 1 // use go slice for last item
 					result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())

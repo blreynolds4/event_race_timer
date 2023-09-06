@@ -35,6 +35,7 @@ func TestResultBuilderSimplest(t *testing.T) {
 			Athlete: athletes[10],
 			Place:   1,
 			Time:    finishTime10.Sub(now),
+			Source:  t.Name(),
 		},
 	}
 
@@ -43,7 +44,9 @@ func TestResultBuilderSimplest(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }
@@ -78,12 +81,14 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 			Athlete: athletes[10],
 			Place:   1,
 			Time:    finishTime10.Sub(now),
+			Source:  t.Name(),
 		},
 		{
 			Bib:     10,
 			Athlete: athletes[10],
 			Place:   1,
 			Time:    finishTime10updated.Sub(now),
+			Source:  t.Name(),
 		},
 	}
 
@@ -92,7 +97,9 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }
@@ -127,12 +134,14 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 			Athlete: athletes[10],
 			Place:   1,
 			Time:    finishTime10.Sub(now),
+			Source:  t.Name(),
 		},
 		{
 			Bib:     10,
 			Athlete: athletes[10],
 			Place:   1,
 			Time:    finishTime10.Sub(startUpdated),
+			Source:  t.Name(),
 		},
 	}
 
@@ -141,7 +150,9 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }
@@ -175,12 +186,14 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 			Athlete: athletes[10],
 			Place:   1,
 			Time:    finishTime10.Sub(now),
+			Source:  t.Name(),
 		},
 		{
 			Bib:     10,
 			Athlete: athletes[10],
 			Place:   2,
 			Time:    finishTime10.Sub(now),
+			Source:  t.Name(),
 		},
 	}
 
@@ -189,7 +202,9 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }
@@ -217,7 +232,9 @@ func TestResultBuilderNoStartNoResult(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }
@@ -243,7 +260,9 @@ func TestResultBuilderNoFinishNoResult(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }
@@ -271,7 +290,9 @@ func TestResultBuilderNoPlaceNoResult(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }
@@ -315,30 +336,35 @@ func TestResultBuilder(t *testing.T) {
 			Athlete: athletes[12],
 			Place:   1,
 			Time:    finishTime12.Sub(now),
+			Source:  t.Name(),
 		},
 		{
 			Bib:     10,
 			Athlete: athletes[10],
 			Place:   2,
 			Time:    finishTime10.Sub(now),
+			Source:  t.Name(),
 		},
 		{
 			Bib:     11,
 			Athlete: athletes[11],
 			Place:   3,
 			Time:    finishTime11.Sub(now),
+			Source:  t.Name(),
 		},
 		{
 			Bib:     13,
 			Athlete: athletes[13],
 			Place:   4,
 			Time:    finishTime13.Sub(now),
+			Source:  t.Name(),
 		},
 		{
 			Bib:     14,
 			Athlete: athletes[14],
 			Place:   5,
 			Time:    finishTime14.Sub(now),
+			Source:  t.Name(),
 		},
 	}
 
@@ -347,7 +373,9 @@ func TestResultBuilder(t *testing.T) {
 	}
 
 	builder := NewResultBuilder()
-	err := builder.BuildResults(inputEvents, athletes, actualResults)
+	ranking := map[string]int{}
+	ranking[t.Name()] = 1
+	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResults, actualResults.Results)
 }

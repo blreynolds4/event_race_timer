@@ -1,7 +1,10 @@
 package score
 
-import "blreynolds4/event-race-timer/results"
+import (
+	"blreynolds4/event-race-timer/results"
+	"context"
+)
 
 type Scorer interface {
-	ScoreResults(results.ResultSource) error
+	ScoreResults(context.Context, results.ResultSource) error
 }

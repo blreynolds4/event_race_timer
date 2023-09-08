@@ -29,14 +29,5 @@ type xcScorer struct {
 }
 
 func (xcs *xcScorer) ScoreResults(ctx context.Context, source results.ResultSource) error {
-	// keep the current scoring place to assign to the next finisher
-	// it only increments if the team has less than 7 results
-	// at what point are we done and do we recalculate scores for incomplete teams?
-	// do we not include teams in the team result until they have 5?
-	// definitely don't show incomplete teams in team results
-	// do a brute force run through not worrying about updates and incomplete teams
-	// assign scores first, zeros till a team has 5
-
-	// sort incoming results by place?  insertion sort?
 	return nil
 }

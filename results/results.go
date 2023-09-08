@@ -13,12 +13,12 @@ const resultValueKey = "result"
 
 // A RaceResult that can be filled in as events arrive and sent when IsComplete() is true
 type RaceResult struct {
-	Bib     int
-	Athlete *competitors.Competitor
-	Place   int
-	Time    time.Duration
-	Source  string
-	Psource string
+	Bib          int
+	Athlete      *competitors.Competitor
+	Place        int
+	Time         time.Duration
+	FinishSource string
+	PlaceSource  string
 }
 
 func (rr RaceResult) IsComplete() bool {

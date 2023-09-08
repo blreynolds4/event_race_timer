@@ -31,12 +31,12 @@ func TestResultBuilderSimplest(t *testing.T) {
 
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 	}
 
@@ -78,20 +78,20 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 	// same bib
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10updated.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10updated.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 	}
 
@@ -133,20 +133,20 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 	// same bib
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(startUpdated),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(startUpdated),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 	}
 
@@ -187,20 +187,20 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 	// same bib
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   2,
-			Time:    finishTime10.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        2,
+			Time:         finishTime10.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 	}
 
@@ -339,44 +339,44 @@ func TestResultBuilder(t *testing.T) {
 
 	expectedResults := []RaceResult{
 		{
-			Bib:     12,
-			Athlete: athletes[12],
-			Place:   1,
-			Time:    finishTime12.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          12,
+			Athlete:      athletes[12],
+			Place:        1,
+			Time:         finishTime12.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   2,
-			Time:    finishTime10.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        2,
+			Time:         finishTime10.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     11,
-			Athlete: athletes[11],
-			Place:   3,
-			Time:    finishTime11.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          11,
+			Athlete:      athletes[11],
+			Place:        3,
+			Time:         finishTime11.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     13,
-			Athlete: athletes[13],
-			Place:   4,
-			Time:    finishTime13.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          13,
+			Athlete:      athletes[13],
+			Place:        4,
+			Time:         finishTime13.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     14,
-			Athlete: athletes[14],
-			Place:   5,
-			Time:    finishTime14.Sub(now),
-			Source:  t.Name(),
-			Psource: t.Name(),
+			Bib:          14,
+			Athlete:      athletes[14],
+			Place:        5,
+			Time:         finishTime14.Sub(now),
+			FinishSource: t.Name(),
+			PlaceSource:  t.Name(),
 		},
 	}
 
@@ -398,6 +398,7 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 	now := time.Now().UTC()
 	// Test data
 	finishTime10 := now.Add(5 * time.Minute)
+	finishTime11 := now.Add(6 * time.Minute)
 
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
@@ -405,7 +406,7 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 		events.NewStartEvent(t.Name(), now),
 		events.NewPlaceEvent(t.Name(), 10, 1),
 		events.NewFinishEvent("worse", finishTime10, 10),
-		events.NewFinishEvent("better", finishTime10, 10),
+		events.NewFinishEvent("better", finishTime11, 10),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -417,20 +418,20 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 	// same bib
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  "worse",
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: "worse",
+			PlaceSource:  t.Name(),
 		},
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  "better",
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime11.Sub(now),
+			FinishSource: "better",
+			PlaceSource:  t.Name(),
 		},
 	}
 
@@ -472,12 +473,12 @@ func TestResultBuilderRankIgnores(t *testing.T) {
 	// same bib
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  "better",
-			Psource: t.Name(),
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: "better",
+			PlaceSource:  t.Name(),
 		},
 	}
 
@@ -519,20 +520,20 @@ func TestResultBuilderRankPlaceUpdate(t *testing.T) {
 	// same bib
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  "better",
-			Psource: "worsePlace",
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: "better",
+			PlaceSource:  "worsePlace",
 		},
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   2,
-			Time:    finishTime10.Sub(now),
-			Source:  "better",
-			Psource: "betterPlace",
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        2,
+			Time:         finishTime10.Sub(now),
+			FinishSource: "better",
+			PlaceSource:  "betterPlace",
 		},
 	}
 
@@ -576,12 +577,12 @@ func TestResultBuilderRankPlaceIgnore(t *testing.T) {
 	// same bib
 	expectedResults := []RaceResult{
 		{
-			Bib:     10,
-			Athlete: athletes[10],
-			Place:   1,
-			Time:    finishTime10.Sub(now),
-			Source:  "better",
-			Psource: "betterPlace",
+			Bib:          10,
+			Athlete:      athletes[10],
+			Place:        1,
+			Time:         finishTime10.Sub(now),
+			FinishSource: "better",
+			PlaceSource:  "betterPlace",
 		},
 	}
 

@@ -23,7 +23,6 @@ type resultBuilder struct {
 }
 
 func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget, ranking map[string]int) error {
-	//ranking := map[string]int{} //key is the source and the int is its ranking
 
 	start := []events.StartEvent{} //array to store all of the start events
 	rr := map[int]RaceResult{}     //map of race results, bib number is key
@@ -38,8 +37,7 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 
 			// iterate over result to get times for all finish events that came before the start event
 			for _, result := range rr {
-				latest_start := len(start) - 1 // look up slice syntax to get shortcut to get last item in go slice
-				result.Time = ft[result.Bib].Sub(start[latest_start].GetStartTime())
+				result.Time = ft[result.Bib].Sub(start[len(start)-1].GetStartTime())
 				rr[result.Bib] = result
 
 				if rr[result.Bib].IsComplete() {
@@ -53,12 +51,13 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 			fe := event.(events.FinishEvent)
 
 			result := rr[fe.GetBib()]
+			//when the result does not exist the result is empty
 			//if the ranking of the new event source is higher than the old create a new result
-			if ranking[fe.GetSource()] <= ranking[result.Source] || ranking[result.Source] == 0 {
+			if ranking[fe.GetSource()] <= ranking[result.FinishSource] || ranking[result.FinishSource] == 0 {
 
 				result.Bib = fe.GetBib()
 				result.Athlete = athletes[fe.GetBib()]
-				result.Source = fe.GetSource()
+				result.FinishSource = fe.GetSource()
 				if len(start) > 0 {
 					latest_start := len(start) - 1 // use go slice for last item
 					result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
@@ -76,11 +75,11 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 
 			result := rr[pe.GetBib()]
 
-			if ranking[pe.GetSource()] <= ranking[result.Psource] || ranking[result.Psource] == 0 {
+			if ranking[pe.GetSource()] <= ranking[result.PlaceSource] || ranking[result.PlaceSource] == 0 {
 				result.Bib = pe.GetBib()
 				result.Athlete = athletes[pe.GetBib()]
 				result.Place = pe.GetPlace()
-				result.Psource = pe.GetSource()
+				result.PlaceSource = pe.GetSource()
 				rr[pe.GetBib()] = result
 
 				if rr[pe.GetBib()].IsComplete() {

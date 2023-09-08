@@ -13,10 +13,12 @@ const resultValueKey = "result"
 
 // A RaceResult that can be filled in as events arrive and sent when IsComplete() is true
 type RaceResult struct {
-	Bib     int
-	Athlete *competitors.Competitor
-	Place   int
-	Time    time.Duration
+	Bib          int
+	Athlete      *competitors.Competitor
+	Place        int
+	Time         time.Duration
+	FinishSource string
+	PlaceSource  string
 }
 
 func (rr RaceResult) IsComplete() bool {
@@ -61,6 +63,10 @@ func (rr *RaceResult) FromStreamMessage(msg stream.Message) error {
 // that need to look at each result so athletes can see them.
 type ResultTarget interface {
 	SendResult(ctx context.Context, rr RaceResult) error
+}
+
+type ResultSource interface {
+	GetResult(ctx context.Context) (RaceResult, error)
 }
 
 type resultTargetStream struct {

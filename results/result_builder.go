@@ -8,7 +8,7 @@ import (
 )
 
 type ResultBuilder interface {
-	BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error
+	BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget, ranking map[string]int) error
 }
 
 func NewResultBuilder() ResultBuilder {
@@ -19,13 +19,14 @@ type resultBuilder struct {
 	eventSource events.EventSource
 	results     ResultTarget
 	athletes    competitors.CompetitorLookup
+	ranking     map[string]int
 }
 
-func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget) error {
-	start := []events.StartEvent{}
+func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes competitors.CompetitorLookup, results ResultTarget, ranking map[string]int) error {
 
-	rr := map[int]RaceResult{}
-	ft := map[int]time.Time{}
+	start := []events.StartEvent{} //array to store all of the start events
+	rr := map[int]RaceResult{}     //map of race results, bib number is key
+	ft := map[int]time.Time{}      // map of times with bib number being key
 
 	event, err := inputEvents.GetRaceEvent(context.TODO(), 0)
 
@@ -34,9 +35,9 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 		case events.StartEventType:
 			start = append(start, event.(events.StartEvent))
 
+			// iterate over result to get times for all finish events that came before the start event
 			for _, result := range rr {
-				latest_start := len(start) - 1
-				result.Time = ft[result.Bib].Sub(start[latest_start].GetStartTime())
+				result.Time = ft[result.Bib].Sub(start[len(start)-1].GetStartTime())
 				rr[result.Bib] = result
 
 				if rr[result.Bib].IsComplete() {
@@ -44,34 +45,46 @@ func (os *resultBuilder) BuildResults(inputEvents events.EventSource, athletes c
 				}
 			}
 		case events.FinishEventType:
+			// add code here to always keep the best rated finish source
+			// we need a way to define event source ranking
+			// will require chaning the interface (function signature)
 			fe := event.(events.FinishEvent)
 
 			result := rr[fe.GetBib()]
-			result.Bib = fe.GetBib()
-			result.Athlete = athletes[fe.GetBib()]
-			if len(start) > 0 {
-				latest_start := len(start) - 1
-				result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
-			} else {
-				ft[fe.GetBib()] = fe.GetFinishTime()
-			}
+			//when the result does not exist the result is empty
+			//if the ranking of the new event source is higher than the old create a new result
+			if ranking[fe.GetSource()] <= ranking[result.FinishSource] || ranking[result.FinishSource] == 0 {
 
-			rr[fe.GetBib()] = result
+				result.Bib = fe.GetBib()
+				result.Athlete = athletes[fe.GetBib()]
+				result.FinishSource = fe.GetSource()
+				if len(start) > 0 {
+					latest_start := len(start) - 1 // use go slice for last item
+					result.Time = fe.GetFinishTime().Sub(start[latest_start].GetStartTime())
+				} else {
+					ft[fe.GetBib()] = fe.GetFinishTime()
+				}
+				rr[fe.GetBib()] = result
 
-			if rr[fe.GetBib()].IsComplete() {
-				results.SendResult(context.TODO(), rr[fe.GetBib()])
+				if rr[fe.GetBib()].IsComplete() {
+					results.SendResult(context.TODO(), rr[fe.GetBib()])
+				}
 			}
 		case events.PlaceEventType:
 			pe := event.(events.PlaceEvent)
 
 			result := rr[pe.GetBib()]
-			result.Bib = pe.GetBib()
-			result.Athlete = athletes[pe.GetBib()]
-			result.Place = pe.GetPlace()
-			rr[pe.GetBib()] = result
 
-			if rr[pe.GetBib()].IsComplete() {
-				results.SendResult(context.TODO(), rr[pe.GetBib()])
+			if ranking[pe.GetSource()] <= ranking[result.PlaceSource] || ranking[result.PlaceSource] == 0 {
+				result.Bib = pe.GetBib()
+				result.Athlete = athletes[pe.GetBib()]
+				result.Place = pe.GetPlace()
+				result.PlaceSource = pe.GetSource()
+				rr[pe.GetBib()] = result
+
+				if rr[pe.GetBib()].IsComplete() {
+					results.SendResult(context.TODO(), rr[pe.GetBib()])
+				}
 			}
 		}
 

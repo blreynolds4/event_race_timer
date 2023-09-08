@@ -2,6 +2,7 @@ package places
 
 import (
 	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"container/list"
 	"context"
 )
@@ -66,7 +67,7 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 				for e := inserted; e != nil; e = e.Next() {
 					// create place event
 					current := e.Value.(events.FinishEvent)
-					placeEvent := events.NewPlaceEvent("default_placer", current.GetBib(), currentPlace)
+					placeEvent := eventstream.NewPlaceEvent("default_placer", current.GetBib(), currentPlace)
 					currentPlace = currentPlace + 1
 					dpg.eventTarget.SendRaceEvent(context.TODO(), placeEvent)
 				}

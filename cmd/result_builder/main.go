@@ -2,7 +2,7 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/redis_stream"
 	"blreynolds4/event-race-timer/results"
 	"flag"
@@ -45,7 +45,7 @@ func main() {
 	}
 
 	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
-	raceEventSrc := events.NewRaceEventSource(rawRead)
+	raceEventSrc := eventstream.NewRaceEventSource(rawRead, eventstream.StreamMessageToRaceEvent)
 
 	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename+"_results")
 	resultEventTarget := results.NewResultTarget(rawWrite)

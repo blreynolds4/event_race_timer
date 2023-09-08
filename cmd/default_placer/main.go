@@ -1,7 +1,7 @@
 package main
 
 import (
-	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/places"
 	"blreynolds4/event-race-timer/redis_stream"
 	"flag"
@@ -35,10 +35,10 @@ func main() {
 	defer rdb.Close()
 
 	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
-	src := events.NewRaceEventSource(rawRead)
+	src := eventstream.NewRaceEventSource(rawRead, eventstream.StreamMessageToRaceEvent)
 
 	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
-	target := events.NewRaceEventTarget(rawWrite)
+	target := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
 
 	placer := places.NewPlaceGenerator(src, target)
 

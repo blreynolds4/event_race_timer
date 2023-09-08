@@ -1,11 +1,18 @@
-package events
+package eventstream
 
 import (
+	"blreynolds4/event-race-timer/events"
 	"blreynolds4/event-race-timer/stream"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
+)
+
+const (
+	startTimeData  = "StartTime"
+	finishTimeData = "FinishTime"
+	bibData        = "Bib"
+	placeData      = "Place"
 )
 
 // struct or interface?  what methods? enum for Data keys?
@@ -15,8 +22,45 @@ type raceEvent struct {
 	ID        string
 	Source    string
 	EventTime time.Time
-	Type      EventType
+	Type      events.EventType
 	Data      map[string]any
+}
+
+func RaceEventToStreamMessage(re events.RaceEvent) (stream.Message, error) {
+	// convert our event to a json to embed in the message
+	eventData, err := json.Marshal(re)
+	if err != nil {
+		return stream.Message{}, err
+	}
+
+	msg := stream.Message{
+		Values: map[string]interface{}{
+			"event_type": string(re.GetType()),
+			"event_time": re.GetTime().UnixMilli(),
+			"source":     re.GetSource(),
+			"event":      string(eventData),
+		},
+	}
+
+	return msg, nil
+}
+
+func StreamMessageToRaceEvent(msg stream.Message) (events.RaceEvent, error) {
+	re := raceEvent{
+		ID: msg.ID,
+	}
+
+	data, ok := msg.Values["event"].(string)
+	if ok {
+		err := json.Unmarshal([]byte(data), &re)
+		if err != nil {
+			return nil, err
+		}
+
+		return &re, nil
+	}
+
+	return nil, fmt.Errorf("Values data was not a string, can't build RaceEvent")
 }
 
 func (re *raceEvent) GetID() string {
@@ -27,7 +71,7 @@ func (re *raceEvent) GetTime() time.Time {
 	return re.EventTime
 }
 
-func (re *raceEvent) GetType() EventType {
+func (re *raceEvent) GetType() events.EventType {
 	return re.Type
 }
 
@@ -35,12 +79,12 @@ func (re *raceEvent) GetSource() string {
 	return re.Source
 }
 
-func NewStartEvent(src string, startTime time.Time) StartEvent {
+func NewStartEvent(src string, startTime time.Time) events.StartEvent {
 	result := new(raceEvent)
 	result.Data = make(map[string]interface{})
 	result.Source = src
 	result.EventTime = startTime
-	result.Type = StartEventType
+	result.Type = events.StartEventType
 
 	// add the start time to the data payload
 	result.Data[startTimeData] = startTime
@@ -92,47 +136,12 @@ func (re *raceEvent) GetPlace() int {
 	return re.getIntData(placeData)
 }
 
-func (re *raceEvent) ToStreamMessage() (stream.Message, error) {
-	// convert our event to a json to embed in the message
-	eventData, err := json.Marshal(re)
-	if err != nil {
-		return stream.Message{}, err
-	}
-
-	msg := stream.Message{
-		Values: map[string]interface{}{
-			"event_type": string(re.GetType()),
-			"event_time": re.GetTime().UnixMilli(),
-			"source":     re.GetSource(),
-			"event":      string(eventData),
-		},
-	}
-
-	return msg, nil
-}
-
-func (re *raceEvent) FromStreamMessage(msg stream.Message) error {
-	re.ID = msg.ID
-
-	data, ok := msg.Values["event"].(string)
-	if ok {
-		err := json.Unmarshal([]byte(data), re)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
-
-	return fmt.Errorf("Values data was not a string, can't build RaceEvent")
-}
-
-func NewFinishEvent(src string, finishTime time.Time, bib int) FinishEvent {
+func NewFinishEvent(src string, finishTime time.Time, bib int) events.FinishEvent {
 	result := new(raceEvent)
 	result.Data = make(map[string]interface{})
 	result.Source = src
 	result.EventTime = finishTime
-	result.Type = FinishEventType
+	result.Type = events.FinishEventType
 
 	// add the start time to the data payload
 	result.Data[finishTimeData] = finishTime
@@ -141,28 +150,18 @@ func NewFinishEvent(src string, finishTime time.Time, bib int) FinishEvent {
 	return result
 }
 
-func NewPlaceEvent(src string, bib, place int) PlaceEvent {
+func NewPlaceEvent(src string, bib, place int) events.PlaceEvent {
 	result := new(raceEvent)
 	result.Data = make(map[string]interface{})
 	result.Source = src
 	result.EventTime = time.Now().UTC()
-	result.Type = PlaceEventType
+	result.Type = events.PlaceEventType
 
 	// add the start time to the data payload
 	result.Data[placeData] = place
 	result.Data[bibData] = bib
 
 	return result
-}
-
-func (et EventType) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("\"%s\"", et)), nil
-}
-
-func (et *EventType) UnmarshalJSON(data []byte) error {
-	x, _ := strconv.Unquote(string(data))
-	*et = EventType(x)
-	return nil
 }
 
 func (et *raceEvent) UnmarshalJSON(data []byte) error {
@@ -203,6 +202,7 @@ func (et *raceEvent) UnmarshalJSON(data []byte) error {
 	if et.Data[startTimeData] != nil {
 		et.Data[startTimeData] = et.unmarshallDateData(et.Data[startTimeData])
 	}
+
 	if et.Data[finishTimeData] != nil {
 		et.Data[finishTimeData] = et.unmarshallDateData(et.Data[finishTimeData])
 	}

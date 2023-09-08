@@ -1,7 +1,6 @@
 package events
 
 import (
-	"blreynolds4/event-race-timer/stream"
 	"context"
 	"time"
 )
@@ -16,20 +15,11 @@ const (
 	NoBib = -1
 )
 
-const (
-	startTimeData  = "StartTime"
-	finishTimeData = "FinishTime"
-	bibData        = "Bib"
-	placeData      = "Place"
-)
-
 type RaceEvent interface {
 	GetID() string
 	GetSource() string
 	GetType() EventType
 	GetTime() time.Time
-	ToStreamMessage() (stream.Message, error)
-	FromStreamMessage(stream.Message) error
 }
 
 // Start event will have type StartEvent and Data:

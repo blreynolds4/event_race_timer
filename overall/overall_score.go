@@ -9,6 +9,7 @@ type overallResult struct {
 	overallResults []results.RaceResult
 }
 
-func (OVR *overallResult) ScoreResults(context.Context, results.ResultSource) error {
+func (OVR *overallResult) ScoreResults(ctx context.Context, source results.ResultSource) error {
+
 	return nil
 }

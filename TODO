@@ -8,16 +8,14 @@ https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ve
 
 100% test coverage is goal
 
-1.  Implement source ranking in result builder
-
-2. Implement scorers that read from result stream:
+1. Implement scorers that read from result stream:
     Overall XC -- Place Name Grade Team Time (for each line, fastest at top of list)
     Team XC -- Place Team Points Top 5 Avg Top 7 Avg
 
     Results saved to db
     Scoring is also probably a stand alone app.  It monitors results and compiles them into scoring output.  Stores the data to db
 
-3. Results web pages for all scoring types, one or more web services to show results web pages
-4. Raspberry pi deployment so monitor can be set up to show overall and team scores on constant refresh
+2. Results web pages for all scoring types, one or more web services to show results web pages
+3. Raspberry pi deployment so monitor can be set up to show overall and team scores on constant refresh
 
 

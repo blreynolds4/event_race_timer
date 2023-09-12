@@ -29,7 +29,6 @@ func (OVR *overallResults) ScoreResults(ctx context.Context, source results.Resu
 
 	for (result != results.RaceResult{}) && err == nil && acc < 10 {
 		acc++
-		fmt.Println(acc)
 		fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", result.Athlete)
 		result, err = source.GetResult(ctx)
 	}

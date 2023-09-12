@@ -51,7 +51,10 @@ func main() {
 	resultEventTarget := results.NewResultTarget(rawWrite)
 
 	resultBuilder := results.NewResultBuilder()
-	err = resultBuilder.BuildResults(raceEventSrc, athletes, resultEventTarget)
+
+	// can these be CLA's, multiple instances of an arg?
+	sourceRanking := make(map[string]int)
+	err = resultBuilder.BuildResults(raceEventSrc, athletes, resultEventTarget, sourceRanking)
 	if err != nil {
 		fmt.Println("ERROR generating results:", err)
 	}

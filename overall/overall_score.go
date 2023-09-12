@@ -28,13 +28,13 @@ func (OVR *overallResults) ScoreResults(ctx context.Context, source results.Resu
 
 	resultMap := map[int]results.RaceResult{}
 	placeMap := map[int16]overallResult{}
-
+	//store all results to bib number, this collects the most recent results
 	for (result != results.RaceResult{}) && err == nil {
 		resultMap[result.Bib] = result
 
 		result, err = source.GetResult(ctx)
 	}
-
+	//convert to overallResult and order into a finish map
 	for _, result := range resultMap {
 		finish := overallResult{}
 		finish.Athlete = result.Athlete
@@ -43,7 +43,7 @@ func (OVR *overallResults) ScoreResults(ctx context.Context, source results.Resu
 
 		placeMap[finish.Place] = finish
 	}
-
+	//output in the correct order
 	for i := int16(1); i <= int16(len(placeMap)); i++ {
 		OVR.overallResults = append(OVR.overallResults, placeMap[i])
 	}

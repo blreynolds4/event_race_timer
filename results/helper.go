@@ -14,6 +14,7 @@ func (mrs MockResultSource) GetResult(ctx context.Context) (RaceResult, error) {
 
 	if len(mrs.Results) > 0 {
 		result := mrs.Results[0]
+
 		mrs.Results = mrs.Results[1:]
 		return result, nil
 	}

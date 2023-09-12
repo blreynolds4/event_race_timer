@@ -37,7 +37,7 @@ func TestXCMeetScore3Teams2Complete(t *testing.T) {
 	athletes[23] = competitors.NewCompetitor("MV 10", "MV", 1, 1)
 
 	// Need to create Results for each athlete
-	mock := results.MockResultSource{
+	mock := &results.MockResultSource{
 		Results: make([]results.RaceResult, 0, 23),
 	}
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 17, Athlete: athletes[17], Place: 1, Time: durationHelper("23m29s")})

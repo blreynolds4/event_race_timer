@@ -10,7 +10,7 @@ type MockResultSource struct {
 	Results []RaceResult
 }
 
-func (mrs MockResultSource) GetResult(ctx context.Context) (RaceResult, error) {
+func (mrs *MockResultSource) GetResult(ctx context.Context) (RaceResult, error) {
 	if mrs.Get != nil {
 		return mrs.Get(ctx)
 	}

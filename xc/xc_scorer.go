@@ -1,15 +1,14 @@
 package xc
 
 import (
-	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/results"
 	"context"
 	"time"
 )
 
 type XCResult struct {
-	Athlete *competitors.Competitor
-	Score   int16
+	results.RaceResult
+	Score int16
 }
 
 type XCTeamResult struct {

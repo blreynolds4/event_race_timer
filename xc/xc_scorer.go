@@ -1,4 +1,4 @@
-package score
+package xc
 
 import (
 	"blreynolds4/event-race-timer/competitors"
@@ -8,7 +8,7 @@ import (
 )
 
 type XCResult struct {
-	Athlete competitors.Competitor
+	Athlete *competitors.Competitor
 	Score   int16
 }
 
@@ -20,14 +20,16 @@ type XCTeamResult struct {
 	Finishers []XCResult
 }
 
-func NewXCScorer() Scorer {
-	return &xcScorer{}
+func NewXCScorer() *XCScorer {
+	return &XCScorer{
+		Results: make([]XCTeamResult, 0),
+	}
 }
 
-type xcScorer struct {
-	Results map[string]XCTeamResult
+type XCScorer struct {
+	Results []XCTeamResult
 }
 
-func (xcs *xcScorer) ScoreResults(ctx context.Context, source results.ResultSource) error {
+func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultSource) error {
 	return nil
 }

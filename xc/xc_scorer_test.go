@@ -1,4 +1,4 @@
-package score
+package xc
 
 import (
 	"blreynolds4/event-race-timer/competitors"
@@ -64,11 +64,105 @@ func TestXCMeetScore3Teams2Complete(t *testing.T) {
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 18, Athlete: athletes[9], Place: 22, Time: durationHelper("37m25s")})
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 18, Athlete: athletes[23], Place: 23, Time: durationHelper("37m46s")})
 
-	xcScorer := NewXCScorer(mock)
-	err := xcScorer.ScoreResults(context.TODO())
+	// expected scoring
+	// start with just the scores, fill the rest in
+	expected := []XCTeamResult{
+		{
+			Name:      "JS",
+			TeamScore: 28,
+			Finishers: []XCResult{
+				{
+					Athlete: athletes[1],
+					Score:   3,
+				},
+				{
+					Athlete: athletes[2],
+					Score:   4,
+				},
+				{
+					Athlete: athletes[3],
+					Score:   6,
+				},
+				{
+					Athlete: athletes[4],
+					Score:   7,
+				},
+				{
+					Athlete: athletes[5],
+					Score:   8,
+				},
+				{
+					Athlete: athletes[6],
+					Score:   10,
+				},
+				{
+					Athlete: athletes[7],
+					Score:   13,
+				},
+				{
+					Athlete: athletes[8],
+					Score:   0,
+				},
+				{
+					Athlete: athletes[9],
+					Score:   0,
+				},
+			},
+		},
+		{
+			Name:      "MV",
+			TeamScore: 28,
+			Finishers: []XCResult{
+				{
+					Athlete: athletes[17],
+					Score:   1,
+				},
+				{
+					Athlete: athletes[18],
+					Score:   2,
+				},
+				{
+					Athlete: athletes[19],
+					Score:   5,
+				},
+				{
+					Athlete: athletes[11],
+					Score:   9,
+				},
+				{
+					Athlete: athletes[12],
+					Score:   11,
+				},
+				{
+					Athlete: athletes[13],
+					Score:   12,
+				},
+				{
+					Athlete: athletes[20],
+					Score:   14,
+				},
+				{
+					Athlete: athletes[21],
+					Score:   0,
+				},
+				{
+					Athlete: athletes[22],
+					Score:   0,
+				},
+				{
+					Athlete: athletes[23],
+					Score:   0,
+				},
+			},
+		},
+	}
+
+	// XCScorer has team results in an array
+	xcScorer := NewXCScorer()
+	err := xcScorer.ScoreResults(context.TODO(), mock)
 	assert.NoError(t, err)
 
-	teamScores := xcScorer.GetTeamScores()
+	assert.Equal(t, expected, xcScorer.Results)
 }
 
 func durationHelper(d string) time.Duration {

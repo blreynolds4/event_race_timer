@@ -4,7 +4,7 @@ import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/results"
 	"context"
-	"fmt"
+	"time"
 )
 
 type overallResults struct {
@@ -13,6 +13,7 @@ type overallResults struct {
 
 type overallResult struct {
 	Athlete *competitors.Competitor
+	Ftime   time.Duration
 	Place   int16
 }
 
@@ -25,12 +26,26 @@ func newOverallResults() *overallResults {
 func (OVR *overallResults) ScoreResults(ctx context.Context, source results.ResultSource) error {
 	result, err := source.GetResult(ctx)
 
-	acc := 0
+	resultMap := map[int]results.RaceResult{}
+	placeMap := map[int16]overallResult{}
 
-	for (result != results.RaceResult{}) && err == nil && acc < 10 {
-		acc++
-		fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", result.Athlete)
+	for (result != results.RaceResult{}) && err == nil {
+		resultMap[result.Bib] = result
+
 		result, err = source.GetResult(ctx)
+	}
+
+	for _, result := range resultMap {
+		finish := overallResult{}
+		finish.Athlete = result.Athlete
+		finish.Place = int16(result.Place)
+		finish.Ftime = result.Time
+
+		placeMap[finish.Place] = finish
+	}
+
+	for i := int16(1); i <= int16(len(placeMap)); i++ {
+		OVR.overallResults = append(OVR.overallResults, placeMap[i])
 	}
 	return nil
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/redis_stream"
 	"blreynolds4/event-race-timer/results"
 	"flag"
@@ -45,13 +45,16 @@ func main() {
 	}
 
 	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
-	raceEventSrc := events.NewRaceEventSource(rawRead)
+	raceEventSrc := eventstream.NewRaceEventSource(rawRead, eventstream.StreamMessageToRaceEvent)
 
 	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename+"_results")
 	resultEventTarget := results.NewResultTarget(rawWrite)
 
 	resultBuilder := results.NewResultBuilder()
-	err = resultBuilder.BuildResults(raceEventSrc, athletes, resultEventTarget)
+
+	// can these be CLA's, multiple instances of an arg?
+	sourceRanking := make(map[string]int)
+	err = resultBuilder.BuildResults(raceEventSrc, athletes, resultEventTarget, sourceRanking)
 	if err != nil {
 		fmt.Println("ERROR generating results:", err)
 	}

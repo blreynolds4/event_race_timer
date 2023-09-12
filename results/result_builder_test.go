@@ -3,6 +3,7 @@ package results
 import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"context"
 	"testing"
 	"time"
@@ -20,9 +21,9 @@ func TestResultBuilderSimplest(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewStartEvent(t.Name(), now),
-		events.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -63,10 +64,10 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewStartEvent(t.Name(), now),
-		events.NewPlaceEvent(t.Name(), 10, 1),
-		events.NewFinishEvent(t.Name(), finishTime10updated, 10),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewFinishEvent(t.Name(), finishTime10updated, 10),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -118,10 +119,10 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewStartEvent(t.Name(), now),
-		events.NewPlaceEvent(t.Name(), 10, 1),
-		events.NewStartEvent(t.Name(), startUpdated),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewStartEvent(t.Name(), startUpdated),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -172,10 +173,10 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewStartEvent(t.Name(), now),
-		events.NewPlaceEvent(t.Name(), 10, 1),
-		events.NewPlaceEvent(t.Name(), 10, 2),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewPlaceEvent(t.Name(), 10, 2),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -224,8 +225,8 @@ func TestResultBuilderNoStartNoResult(t *testing.T) {
 	finishTime10 := now.Add(5 * time.Minute)
 
 	testEvents := []events.RaceEvent{
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -252,8 +253,8 @@ func TestResultBuilderNoFinishNoResult(t *testing.T) {
 	now := time.Now().UTC()
 
 	testEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), now),
-		events.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -282,8 +283,8 @@ func TestResultBuilderNoPlaceNoResult(t *testing.T) {
 	finishTime10 := now.Add(5 * time.Minute)
 
 	testEvents := []events.RaceEvent{
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewStartEvent(t.Name(), now),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewStartEvent(t.Name(), now),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -316,17 +317,17 @@ func TestResultBuilder(t *testing.T) {
 	finishTime14 := now.Add(5*time.Minute + (time.Second * 30))
 
 	testEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), now),
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewFinishEvent(t.Name(), finishTime12, 12),
-		events.NewFinishEvent(t.Name(), finishTime11, 11),
-		events.NewFinishEvent(t.Name(), finishTime14, 14),
-		events.NewFinishEvent(t.Name(), finishTime13, 13),
-		events.NewPlaceEvent(t.Name(), 12, 1),
-		events.NewPlaceEvent(t.Name(), 10, 2),
-		events.NewPlaceEvent(t.Name(), 11, 3),
-		events.NewPlaceEvent(t.Name(), 13, 4),
-		events.NewPlaceEvent(t.Name(), 14, 5),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewFinishEvent(t.Name(), finishTime12, 12),
+		eventstream.NewFinishEvent(t.Name(), finishTime11, 11),
+		eventstream.NewFinishEvent(t.Name(), finishTime14, 14),
+		eventstream.NewFinishEvent(t.Name(), finishTime13, 13),
+		eventstream.NewPlaceEvent(t.Name(), 12, 1),
+		eventstream.NewPlaceEvent(t.Name(), 10, 2),
+		eventstream.NewPlaceEvent(t.Name(), 11, 3),
+		eventstream.NewPlaceEvent(t.Name(), 13, 4),
+		eventstream.NewPlaceEvent(t.Name(), 14, 5),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -403,10 +404,10 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), now),
-		events.NewPlaceEvent(t.Name(), 10, 1),
-		events.NewFinishEvent("worse", finishTime10, 10),
-		events.NewFinishEvent("better", finishTime11, 10),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewFinishEvent("worse", finishTime10, 10),
+		eventstream.NewFinishEvent("better", finishTime10, 10),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -458,10 +459,10 @@ func TestResultBuilderRankIgnores(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), now),
-		events.NewPlaceEvent(t.Name(), 10, 1),
-		events.NewFinishEvent("better", finishTime10, 10),
-		events.NewFinishEvent("worse", finishTime10, 10),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewPlaceEvent(t.Name(), 10, 1),
+		eventstream.NewFinishEvent("better", finishTime10, 10),
+		eventstream.NewFinishEvent("worse", finishTime10, 10),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -505,10 +506,10 @@ func TestResultBuilderRankPlaceUpdate(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), now),
-		events.NewFinishEvent("better", finishTime10, 10),
-		events.NewPlaceEvent("worsePlace", 10, 1),
-		events.NewPlaceEvent("betterPlace", 10, 2),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewFinishEvent("better", finishTime10, 10),
+		eventstream.NewPlaceEvent("worsePlace", 10, 1),
+		eventstream.NewPlaceEvent("betterPlace", 10, 2),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -562,10 +563,10 @@ func TestResultBuilderRankPlaceIgnore(t *testing.T) {
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
 	testEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), now),
-		events.NewFinishEvent("better", finishTime10, 10),
-		events.NewPlaceEvent("betterPlace", 10, 1),
-		events.NewPlaceEvent("worsePlace", 10, 2),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewFinishEvent("better", finishTime10, 10),
+		eventstream.NewPlaceEvent("betterPlace", 10, 1),
+		eventstream.NewPlaceEvent("worsePlace", 10, 2),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 

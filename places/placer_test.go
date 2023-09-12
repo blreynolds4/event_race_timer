@@ -2,6 +2,7 @@ package places
 
 import (
 	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"context"
 	"testing"
 	"time"
@@ -20,11 +21,11 @@ func TestNormalPlacingInOrderSkipNoBib(t *testing.T) {
 	finishTime13 := now.Add(5*time.Minute + (time.Second * 29))
 
 	testEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), now),
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
-		events.NewFinishEvent(t.Name(), finishTime12, events.NoBib),
-		events.NewFinishEvent(t.Name(), finishTime11, 11),
-		events.NewFinishEvent(t.Name(), finishTime13, 13),
+		eventstream.NewStartEvent(t.Name(), now),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewFinishEvent(t.Name(), finishTime12, events.NoBib),
+		eventstream.NewFinishEvent(t.Name(), finishTime11, 11),
+		eventstream.NewFinishEvent(t.Name(), finishTime13, 13),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -64,9 +65,9 @@ func TestEventsArriveOutOfOrder(t *testing.T) {
 	finishTime13 := now.Add(5*time.Minute + (time.Second * 29))
 
 	testEvents := []events.RaceEvent{
-		events.NewFinishEvent(t.Name(), finishTime13, 13),
-		events.NewFinishEvent(t.Name(), finishTime11, 11),
-		events.NewFinishEvent(t.Name(), finishTime10, 10),
+		eventstream.NewFinishEvent(t.Name(), finishTime13, 13),
+		eventstream.NewFinishEvent(t.Name(), finishTime11, 11),
+		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 

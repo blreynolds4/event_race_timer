@@ -5,6 +5,7 @@ package main
 // Phase 2:  Generate 2-3 events for each row within a few ms, some missing info, some with all
 import (
 	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/redis_stream"
 	"bufio"
 	"context"
@@ -54,11 +55,11 @@ func main() {
 
 	// create event target
 	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
-	eventTarget := events.NewRaceEventTarget(rawWrite)
+	eventTarget := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
 
 	// send a start event
 	startTime := time.Now().UTC()
-	err = eventTarget.SendRaceEvent(context.TODO(), events.NewStartEvent("generator", startTime))
+	err = eventTarget.SendRaceEvent(context.TODO(), eventstream.NewStartEvent("generator", startTime))
 	if err != nil {
 		fmt.Printf("error sending start event: %s", err.Error())
 		os.Exit(-1)
@@ -99,7 +100,7 @@ func main() {
 					fmt.Printf("error getting bib from %s: %s", split[0], err.Error())
 					os.Exit(-1)
 				}
-				eventTarget.SendRaceEvent(context.TODO(), events.NewFinishEvent("reader-1", startTime.Add(runDuration), bib))
+				eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("reader-1", startTime.Add(runDuration), bib))
 
 				// get a random number 1 - 3 to decide on additional finish events for the athlete
 				random := rand.Intn(3)
@@ -109,12 +110,12 @@ func main() {
 					if rand.Intn(2) > 0 {
 						bib = events.NoBib
 					}
-					eventTarget.SendRaceEvent(context.TODO(), events.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*500), bib))
+					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*500), bib))
 				}
 
 				if random >= 2 {
 					// add a third reader event a little faster
-					eventTarget.SendRaceEvent(context.TODO(), events.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*-500), bib))
+					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*-500), bib))
 				}
 			}
 		} else {
@@ -124,6 +125,6 @@ func main() {
 
 	// send a place event for each finish using the place as the bib
 	for i := 1; i <= finishCount; i++ {
-		eventTarget.SendRaceEvent(context.TODO(), events.NewPlaceEvent("chute-manual", i, i))
+		eventTarget.SendRaceEvent(context.TODO(), eventstream.NewPlaceEvent("chute-manual", i, i))
 	}
 }

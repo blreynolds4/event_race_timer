@@ -2,7 +2,7 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/command"
-	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/redis_stream"
 	"bufio"
 	"flag"
@@ -38,10 +38,10 @@ func main() {
 	defer rdb.Close()
 
 	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
-	eventTarget := events.NewRaceEventTarget(rawWrite)
+	eventTarget := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
 
 	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
-	eventSource := events.NewRaceEventSource(rawRead)
+	eventSource := eventstream.NewRaceEventSource(rawRead, eventstream.StreamMessageToRaceEvent)
 
 	// create the command map
 	loopCommands := make(map[string]command.Command)

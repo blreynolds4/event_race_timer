@@ -1,6 +1,7 @@
-package events
+package eventstream
 
 import (
+	"blreynolds4/event-race-timer/events"
 	"blreynolds4/event-race-timer/stream"
 	"context"
 	"encoding/json"
@@ -18,7 +19,7 @@ func TestCreateStartEvent(t *testing.T) {
 	startEvent := NewStartEvent(source, startTime)
 	assert.NotNil(t, startEvent)
 
-	assert.Equal(t, StartEventType, startEvent.GetType())
+	assert.Equal(t, events.StartEventType, startEvent.GetType())
 	assert.Equal(t, startTime, startEvent.GetTime())
 	assert.Equal(t, startTime, startEvent.GetStartTime())
 	assert.Equal(t, source, startEvent.GetSource())
@@ -26,7 +27,7 @@ func TestCreateStartEvent(t *testing.T) {
 
 func TestGetStartTimeMissing(t *testing.T) {
 	startEvent := &raceEvent{
-		Type: StartEventType,
+		Type: events.StartEventType,
 		Data: make(map[string]interface{}),
 	}
 
@@ -35,7 +36,7 @@ func TestGetStartTimeMissing(t *testing.T) {
 
 func TestGetStartTimeNotADate(t *testing.T) {
 	startEvent := &raceEvent{
-		Type: StartEventType,
+		Type: events.StartEventType,
 		Data: make(map[string]interface{}),
 	}
 
@@ -46,7 +47,7 @@ func TestGetStartTimeNotADate(t *testing.T) {
 
 func TestGetBibMissing(t *testing.T) {
 	finishEvent := &raceEvent{
-		Type: FinishEventType,
+		Type: events.FinishEventType,
 		Data: make(map[string]interface{}),
 	}
 
@@ -55,7 +56,7 @@ func TestGetBibMissing(t *testing.T) {
 
 func TestGetBibNotAnInt(t *testing.T) {
 	finishEvent := &raceEvent{
-		Type: FinishEventType,
+		Type: events.FinishEventType,
 		Data: make(map[string]interface{}),
 	}
 
@@ -71,7 +72,7 @@ func TestCreateFinishEvent(t *testing.T) {
 	finishEvent := NewFinishEvent(source, finishTime, bib)
 	assert.NotNil(t, finishEvent)
 
-	assert.Equal(t, FinishEventType, finishEvent.GetType())
+	assert.Equal(t, events.FinishEventType, finishEvent.GetType())
 	assert.Equal(t, finishTime, finishEvent.GetTime())
 	assert.Equal(t, finishTime, finishEvent.GetFinishTime())
 	assert.Equal(t, bib, finishEvent.GetBib())
@@ -85,7 +86,7 @@ func TestCreatePlaceEvent(t *testing.T) {
 	placeEvent := NewPlaceEvent(source, bib, place)
 	assert.NotNil(t, placeEvent)
 
-	assert.Equal(t, PlaceEventType, placeEvent.GetType())
+	assert.Equal(t, events.PlaceEventType, placeEvent.GetType())
 	assert.Equal(t, bib, placeEvent.GetBib())
 	assert.Equal(t, place, placeEvent.GetPlace())
 	assert.Equal(t, source, placeEvent.GetSource())
@@ -93,7 +94,7 @@ func TestCreatePlaceEvent(t *testing.T) {
 
 func TestGetPlaceMissing(t *testing.T) {
 	placeEvent := &raceEvent{
-		Type: PlaceEventType,
+		Type: events.PlaceEventType,
 		Data: make(map[string]interface{}),
 	}
 
@@ -102,7 +103,7 @@ func TestGetPlaceMissing(t *testing.T) {
 
 func TestGetPlaceNotAnInt(t *testing.T) {
 	placeEvent := &raceEvent{
-		Type: PlaceEventType,
+		Type: events.PlaceEventType,
 		Data: make(map[string]interface{}),
 	}
 
@@ -118,7 +119,7 @@ func TestMarshallEvent(t *testing.T) {
 	placeEvent := NewPlaceEvent(source, bib, place)
 	assert.NotNil(t, placeEvent)
 
-	assert.Equal(t, PlaceEventType, placeEvent.GetType())
+	assert.Equal(t, events.PlaceEventType, placeEvent.GetType())
 	assert.Equal(t, bib, placeEvent.GetBib())
 	assert.Equal(t, place, placeEvent.GetPlace())
 	assert.Equal(t, source, placeEvent.GetSource())
@@ -130,18 +131,18 @@ func TestMarshallEvent(t *testing.T) {
 	err = json.Unmarshal(data, &loaded)
 	assert.Nil(t, err)
 
-	assert.Equal(t, PlaceEventType, loaded.GetType())
+	assert.Equal(t, events.PlaceEventType, loaded.GetType())
 	assert.Equal(t, bib, loaded.GetBib())
 	assert.Equal(t, place, loaded.GetPlace())
 	assert.Equal(t, source, loaded.GetSource())
 }
 
 func TestStreamConstructors(t *testing.T) {
-	actualR := NewRaceEventSource(&stream.MockStream{})
+	actualR := NewRaceEventSource(&stream.MockStream{}, StreamMessageToRaceEvent)
 	_, ok := actualR.(*eventSourceStream)
 	assert.True(t, ok)
 
-	actualW := NewRaceEventTarget(&stream.MockStream{})
+	actualW := NewRaceEventTarget(&stream.MockStream{}, RaceEventToStreamMessage)
 	_, ok = actualW.(*eventTargetStream)
 	assert.True(t, ok)
 }
@@ -150,7 +151,7 @@ func TestSendEvent(t *testing.T) {
 	mock := &stream.MockStream{
 		Events: make([]stream.Message, 0),
 	}
-	evStream := NewRaceEventTarget(mock)
+	evStream := NewRaceEventTarget(mock, RaceEventToStreamMessage)
 
 	se := NewStartEvent(t.Name(), time.Now().UTC())
 
@@ -174,7 +175,24 @@ func TestSendEventFails(t *testing.T) {
 			return expErr
 		},
 	}
-	evStream := NewRaceEventTarget(mock)
+	evStream := NewRaceEventTarget(mock, RaceEventToStreamMessage)
+
+	se := NewStartEvent(t.Name(), time.Now().UTC())
+
+	err := evStream.SendRaceEvent(context.TODO(), se)
+	assert.Equal(t, expErr, err)
+}
+
+func TestSendEventConversionFails(t *testing.T) {
+	expErr := fmt.Errorf("fail")
+	badConversion := func(events.RaceEvent) (stream.Message, error) {
+		return stream.Message{}, expErr
+	}
+
+	mock := &stream.MockStream{
+		Events: make([]stream.Message, 0),
+	}
+	evStream := NewRaceEventTarget(mock, badConversion)
 
 	se := NewStartEvent(t.Name(), time.Now().UTC())
 
@@ -185,16 +203,16 @@ func TestSendEventFails(t *testing.T) {
 func TestGetRaceEvent(t *testing.T) {
 	// create the expected event.  It needs an ID, which is normally
 	// added by the stream when sent.  We will add it manually
-	expEvent := NewStartEvent(t.Name(), time.Now().UTC())
-	msg, err := expEvent.ToStreamMessage()
+	startEvent := NewStartEvent(t.Name(), time.Now().UTC())
+	msg, err := RaceEventToStreamMessage(startEvent)
 	assert.NoError(t, err)
 	msg.ID = "test"
-	expEvent.FromStreamMessage(msg)
+	expEvent, err := StreamMessageToRaceEvent(msg)
 
 	mock := &stream.MockStream{
 		Events: []stream.Message{msg},
 	}
-	evStream := NewRaceEventSource(mock)
+	evStream := NewRaceEventSource(mock, StreamMessageToRaceEvent)
 
 	actualEvent, err := evStream.GetRaceEvent(context.TODO(), time.Second)
 	assert.NoError(t, err)
@@ -208,7 +226,7 @@ func TestGetRaceEventEmptyStream(t *testing.T) {
 	mock := &stream.MockStream{
 		Events: []stream.Message{},
 	}
-	evStream := NewRaceEventSource(mock)
+	evStream := NewRaceEventSource(mock, StreamMessageToRaceEvent)
 
 	actualEvent, err := evStream.GetRaceEvent(context.TODO(), time.Second)
 	assert.NoError(t, err)
@@ -216,39 +234,57 @@ func TestGetRaceEventEmptyStream(t *testing.T) {
 }
 
 func TestGetRaceEventFails(t *testing.T) {
-	// create the expected event.  It needs an ID, which is normally
-	// added by the stream when sent.  We will add it manually
-
 	expErr := fmt.Errorf("fail")
 	mock := &stream.MockStream{
 		Get: func(ctx context.Context, timeout time.Duration) (stream.Message, error) {
 			return stream.Message{}, expErr
 		},
 	}
-	evStream := NewRaceEventSource(mock)
+	evStream := NewRaceEventSource(mock, StreamMessageToRaceEvent)
 
 	_, err := evStream.GetRaceEvent(context.TODO(), time.Second)
 	assert.Equal(t, expErr, err)
 }
 
-func TestGetRaceEventRange(t *testing.T) {
-	// create the expected event.  It needs an ID, which is normally
-	// added by the stream when sent.  We will add it manually
-	expEvent := NewStartEvent(t.Name(), time.Now().UTC())
-	msg, err := expEvent.ToStreamMessage()
+func TestGetRaceEventConversionFails(t *testing.T) {
+	expErr := fmt.Errorf("fail")
+	badConversion := func(stream.Message) (events.RaceEvent, error) {
+		return nil, expErr
+	}
+	startEvent := NewStartEvent(t.Name(), time.Now().UTC())
+	msg, err := RaceEventToStreamMessage(startEvent)
 	assert.NoError(t, err)
 	msg.ID = "test"
-	expEvent.FromStreamMessage(msg)
-	expEvents := []RaceEvent{expEvent}
 
 	mock := &stream.MockStream{
 		Events: []stream.Message{msg},
 	}
-	evStream := NewRaceEventSource(mock)
 
-	actualEvents, err := evStream.GetRaceEventRange(context.TODO(), "0", "end")
+	evStream := NewRaceEventSource(mock, badConversion)
+
+	_, err = evStream.GetRaceEvent(context.TODO(), time.Second)
+	assert.Equal(t, expErr, err)
+}
+
+func TestGetRaceEventRange(t *testing.T) {
+	startEvent := NewStartEvent(t.Name(), time.Now().UTC())
+	msg, err := RaceEventToStreamMessage(startEvent)
 	assert.NoError(t, err)
-	assert.Equal(t, expEvents, actualEvents)
+	msg.ID = "test"
+
+	mock := &stream.MockStream{
+		Events: []stream.Message{msg},
+	}
+
+	expErr := fmt.Errorf("fail")
+	badConversion := func(stream.Message) (events.RaceEvent, error) {
+		return nil, expErr
+	}
+
+	evStream := NewRaceEventSource(mock, badConversion)
+
+	_, err = evStream.GetRaceEventRange(context.TODO(), "0", "end")
+	assert.Equal(t, expErr, err)
 }
 
 func TestGetRaceEventRangeBadEvent(t *testing.T) {
@@ -261,9 +297,29 @@ func TestGetRaceEventRangeBadEvent(t *testing.T) {
 	mock := &stream.MockStream{
 		Events: []stream.Message{badMsg},
 	}
-	evStream := NewRaceEventSource(mock)
+	evStream := NewRaceEventSource(mock, StreamMessageToRaceEvent)
 
 	expErr := fmt.Errorf("Values data was not a string, can't build RaceEvent")
 	_, err := evStream.GetRaceEventRange(context.TODO(), "0", "end")
 	assert.Equal(t, expErr, err)
+}
+
+func TestGetRaceEventRangeConversionFails(t *testing.T) {
+	// create the expected event.  It needs an ID, which is normally
+	// added by the stream when sent.  We will add it manually
+	startEvent := NewStartEvent(t.Name(), time.Now().UTC())
+	msg, err := RaceEventToStreamMessage(startEvent)
+	assert.NoError(t, err)
+	msg.ID = "test"
+	expEvent, err := StreamMessageToRaceEvent(msg)
+	expEvents := []events.RaceEvent{expEvent}
+
+	mock := &stream.MockStream{
+		Events: []stream.Message{msg},
+	}
+	evStream := NewRaceEventSource(mock, StreamMessageToRaceEvent)
+
+	actualEvents, err := evStream.GetRaceEventRange(context.TODO(), "0", "end")
+	assert.NoError(t, err)
+	assert.Equal(t, expEvents, actualEvents)
 }

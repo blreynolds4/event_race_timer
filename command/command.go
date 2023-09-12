@@ -2,6 +2,7 @@ package command
 
 import (
 	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"context"
 	"fmt"
 	"math/rand"
@@ -74,7 +75,7 @@ func NewStartCommand(eventTarget events.EventTarget) Command {
 				return false, err
 			}
 
-			return false, eventTarget.SendRaceEvent(context.TODO(), events.NewStartEvent(clientName, startTime.Add(-seedDuration)))
+			return false, eventTarget.SendRaceEvent(context.TODO(), eventstream.NewStartEvent(clientName, startTime.Add(-seedDuration)))
 		},
 	}
 
@@ -93,7 +94,7 @@ func NewFinishCommand(eventTarget events.EventTarget) Command {
 				}
 			}
 
-			return false, eventTarget.SendRaceEvent(context.TODO(), events.NewFinishEvent(clientName, time.Now().UTC(), bib))
+			return false, eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent(clientName, time.Now().UTC(), bib))
 		},
 	}
 }
@@ -114,7 +115,7 @@ func NewPlaceCommand(eventTarget events.EventTarget) Command {
 					return false, err
 				}
 
-				return false, eventTarget.SendRaceEvent(context.TODO(), events.NewPlaceEvent(clientName, bib, place))
+				return false, eventTarget.SendRaceEvent(context.TODO(), eventstream.NewPlaceEvent(clientName, bib, place))
 			}
 
 			return false, fmt.Errorf("missing bib or place argument")
@@ -192,7 +193,7 @@ func NewAddBibCommand(eventSource events.EventSource, eventTarget events.EventTa
 				}
 
 				// create updated event with new bib
-				updated := events.NewFinishEvent(finishEvent.GetSource(), finishEvent.GetFinishTime(), bib)
+				updated := eventstream.NewFinishEvent(finishEvent.GetSource(), finishEvent.GetFinishTime(), bib)
 				eventTarget.SendRaceEvent(context.TODO(), updated)
 			}
 

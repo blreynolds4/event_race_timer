@@ -2,6 +2,7 @@ package command
 
 import (
 	"blreynolds4/event-race-timer/events"
+	"blreynolds4/event-race-timer/eventstream"
 	"context"
 	"fmt"
 	"testing"
@@ -46,6 +47,7 @@ func TestStartCommandNoTime(t *testing.T) {
 	assert.False(t, q)
 	assert.Equal(t, 1, len(mockTarget.Events))
 
+	assert.Equal(t, events.StartEventType, mockTarget.Events[0].GetType())
 	se, ok := mockTarget.Events[0].(events.StartEvent)
 	assert.True(t, ok)
 	startTime := se.GetStartTime()
@@ -185,8 +187,8 @@ func TestStartListFinishes(t *testing.T) {
 	}
 
 	// seed a start and finish event
-	mockSource.Events = append(mockSource.Events, events.NewStartEvent(t.Name(), time.Now().UTC()))
-	mockSource.Events = append(mockSource.Events, events.NewFinishEvent(t.Name(), time.Now().UTC(), events.NoBib))
+	mockSource.Events = append(mockSource.Events, eventstream.NewStartEvent(t.Name(), time.Now().UTC()))
+	mockSource.Events = append(mockSource.Events, eventstream.NewFinishEvent(t.Name(), time.Now().UTC(), events.NoBib))
 
 	list := NewListFinishCommand(mockSource)
 	// no seed duration arugment
@@ -214,7 +216,7 @@ func TestStartListFinishesFailFirstGet(t *testing.T) {
 
 func TestStartListFinishesFailSecondGet(t *testing.T) {
 	raceEvents := []events.RaceEvent{
-		events.NewStartEvent(t.Name(), time.Now().UTC()),
+		eventstream.NewStartEvent(t.Name(), time.Now().UTC()),
 	}
 
 	expErr := fmt.Errorf("fail")
@@ -288,7 +290,7 @@ func TestAddBibMissingEvent(t *testing.T) {
 func TestAddBibWrongEventType(t *testing.T) {
 	expErr := fmt.Errorf("expected event id to be for finish event, skipping")
 	mockEvents := &events.MockRaceEventStream{
-		Events: []events.RaceEvent{events.NewStartEvent(t.Name(), time.Now().UTC())},
+		Events: []events.RaceEvent{eventstream.NewStartEvent(t.Name(), time.Now().UTC())},
 	}
 
 	list := NewAddBibCommand(mockEvents, mockEvents)
@@ -299,7 +301,7 @@ func TestAddBibWrongEventType(t *testing.T) {
 
 func TestAddBib(t *testing.T) {
 	mockEvents := &events.MockRaceEventStream{
-		Events: []events.RaceEvent{events.NewFinishEvent(t.Name(), time.Now().UTC(), events.NoBib)},
+		Events: []events.RaceEvent{eventstream.NewFinishEvent(t.Name(), time.Now().UTC(), events.NoBib)},
 	}
 
 	list := NewAddBibCommand(mockEvents, mockEvents)

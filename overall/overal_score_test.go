@@ -30,24 +30,24 @@ func TestOverallResultsSimple(t *testing.T) {
 	// start with just the scores, fill the rest in
 	expected := []overallResult{
 		{
-			Athlete: athletes[1],
-			Place:   1,
-			Ftime:   durationHelper("25m2s"),
+			Athlete:    athletes[1],
+			Place:      1,
+			Finishtime: durationHelper("25m2s"),
 		},
 		{
-			Athlete: athletes[10],
-			Place:   2,
-			Ftime:   durationHelper("26m40s"),
+			Athlete:    athletes[10],
+			Place:      2,
+			Finishtime: durationHelper("26m40s"),
 		},
 		{
-			Athlete: athletes[11],
-			Place:   3,
-			Ftime:   durationHelper("27m45s"),
+			Athlete:    athletes[11],
+			Place:      3,
+			Finishtime: durationHelper("27m45s"),
 		},
 		{
-			Athlete: athletes[23],
-			Place:   4,
-			Ftime:   durationHelper("37m46s"),
+			Athlete:    athletes[23],
+			Place:      4,
+			Finishtime: durationHelper("37m46s"),
 		},
 	}
 
@@ -80,24 +80,24 @@ func TestOverallResultsDuplicate(t *testing.T) {
 	// start with just the scores, fill the rest in
 	expected := []overallResult{
 		{
-			Athlete: athletes[1],
-			Place:   1,
-			Ftime:   durationHelper("22m2s"),
+			Athlete:    athletes[1],
+			Place:      1,
+			Finishtime: durationHelper("22m2s"),
 		},
 		{
-			Athlete: athletes[10],
-			Place:   2,
-			Ftime:   durationHelper("26m40s"),
+			Athlete:    athletes[10],
+			Place:      2,
+			Finishtime: durationHelper("26m40s"),
 		},
 		{
-			Athlete: athletes[11],
-			Place:   3,
-			Ftime:   durationHelper("27m45s"),
+			Athlete:    athletes[11],
+			Place:      3,
+			Finishtime: durationHelper("27m45s"),
 		},
 		{
-			Athlete: athletes[23],
-			Place:   4,
-			Ftime:   durationHelper("37m46s"),
+			Athlete:    athletes[23],
+			Place:      4,
+			Finishtime: durationHelper("37m46s"),
 		},
 	}
 

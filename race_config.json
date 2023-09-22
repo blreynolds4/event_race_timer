@@ -1,0 +1,11 @@
+{
+    "RaceName": "capital_area_jv",
+    "RedisAddress": "",
+    "RedisDbNumber": 0,
+    "SourceRanks": {
+        "manual": 100,
+        "line-reader-1":90,
+        "line-reader-2":90,
+        "chute-reader":70
+    }
+}

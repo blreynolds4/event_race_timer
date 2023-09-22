@@ -3,6 +3,11 @@ package main
 // Program to read a race result file and generate events
 // Phase 1:  Generate 1 event for each row, fully populated
 // Phase 2:  Generate 2-3 events for each row within a few ms, some missing info, some with all
+// Phase 3: emulate event volume by generating on schedule.  Send a start, then finishes, default placer should do place events
+// then allow manual place fixes
+// run score in real time or after all finshers are in
+// verify scoring can be run multiple times to get results
+// (ie the stream doesn't care it's been read already)
 import (
 	"blreynolds4/event-race-timer/events"
 	"blreynolds4/event-race-timer/eventstream"

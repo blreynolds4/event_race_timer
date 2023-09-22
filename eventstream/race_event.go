@@ -27,8 +27,13 @@ type raceEvent struct {
 }
 
 func RaceEventToStreamMessage(re events.RaceEvent) (stream.Message, error) {
+	lre, ok := re.(*raceEvent)
+	if !ok {
+		return stream.Message{}, fmt.Errorf("not a supported event structure")
+	}
+
 	// convert our event to a json to embed in the message
-	eventData, err := json.Marshal(re)
+	eventData, err := json.Marshal(lre)
 	if err != nil {
 		return stream.Message{}, err
 	}
@@ -137,17 +142,18 @@ func (re *raceEvent) GetPlace() int {
 }
 
 func NewFinishEvent(src string, finishTime time.Time, bib int) events.FinishEvent {
-	result := new(raceEvent)
-	result.Data = make(map[string]interface{})
-	result.Source = src
-	result.EventTime = finishTime
-	result.Type = events.FinishEventType
+	result := raceEvent{
+		Data:      make(map[string]interface{}),
+		Source:    src,
+		EventTime: finishTime,
+		Type:      events.FinishEventType,
+	}
 
 	// add the start time to the data payload
 	result.Data[finishTimeData] = finishTime
 	result.Data[bibData] = bib
 
-	return result
+	return &result
 }
 
 func NewPlaceEvent(src string, bib, place int) events.PlaceEvent {

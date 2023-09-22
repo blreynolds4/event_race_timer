@@ -8,7 +8,13 @@ package main
 // run score in real time or after all finshers are in
 // verify scoring can be run multiple times to get results
 // (ie the stream doesn't care it's been read already)
+
+// Modify this to generate: start, finish (and place events?) required to use existing results to drive a test of
+// whole system
+// place events may be needed to distinguish the order of finish if times are the same
+
 import (
+	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/events"
 	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/redis_stream"
@@ -62,6 +68,9 @@ func main() {
 	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
 	eventTarget := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
 
+	// create and save competitor data
+	athletes := make(competitors.CompetitorLookup)
+
 	// send a start event
 	startTime := time.Now().UTC()
 	err = eventTarget.SendRaceEvent(context.TODO(), eventstream.NewStartEvent("generator", startTime))
@@ -84,12 +93,34 @@ func main() {
 				continue
 			}
 
-			split := strings.Split(line, " ")
+			split := strings.Split(line, "|")
 			if len(split) > 0 {
+				// add competitor to lookup
+				bib, err := strconv.Atoi(split[1])
+				if err != nil {
+					fmt.Printf("error getting bib from %s: %s", split[1], err.Error())
+					os.Exit(-1)
+				}
+				grade, _ := strconv.Atoi(split[4])
+				if err != nil {
+					fmt.Printf("error getting grade from %s: %s", split[4], err.Error())
+					os.Exit(-1)
+				}
+
+				c := competitors.Competitor{
+					Name:  split[3] + " " + split[2],
+					Team:  split[5],
+					Grade: int(grade),
+				}
+
+				athletes[bib] = &c
+
 				finishCount++
 
+				// col           0     1     2     3      4      5       6     7
+				// splits are: place, bib, last, first, grade, school, time, score
 				// use place for bib
-				timeString := split[len(split)-2]
+				timeString := split[6]
 				// durations are in minutes:seconds.tenths
 				// convert to go duration format
 				durationString := strings.Replace(timeString, ":", "m", 1) + "s"
@@ -100,36 +131,29 @@ func main() {
 				}
 
 				// generate a finish event for each timestamp from the finish
-				bib, err := strconv.Atoi(split[0])
-				if err != nil {
-					fmt.Printf("error getting bib from %s: %s", split[0], err.Error())
-					os.Exit(-1)
-				}
 				eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("reader-1", startTime.Add(runDuration), bib))
 
 				// get a random number 1 - 3 to decide on additional finish events for the athlete
 				random := rand.Intn(3)
 				if random >= 1 {
-					// add a manual event a little slower than first event with no bib
+					// add a another event a little slower than first event with no bib
 					// set a bib about half the time
 					if rand.Intn(2) > 0 {
 						bib = events.NoBib
 					}
-					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*500), bib))
+					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-slow", startTime.Add(runDuration).Add(time.Millisecond*500), bib))
 				}
 
 				if random >= 2 {
 					// add a third reader event a little faster
-					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-manual", startTime.Add(runDuration).Add(time.Millisecond*-500), bib))
+					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-fast", startTime.Add(runDuration).Add(time.Millisecond*-500), bib))
 				}
 			}
 		} else {
 			done = true
 		}
-	}
 
-	// send a place event for each finish using the place as the bib
-	for i := 1; i <= finishCount; i++ {
-		eventTarget.SendRaceEvent(context.TODO(), eventstream.NewPlaceEvent("chute-manual", i, i))
+		// Save the competitor data for these events
+		athletes.Store(claSourceFile + "_athletes.json")
 	}
 }

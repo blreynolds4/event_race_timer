@@ -1,0 +1,58 @@
+                                   Team Scores                                    
+================================================================================= 
+Rank Team                      Total    1    2    3    4    5   *6   *7   *8   *9 
+================================================================================= 
+   1 Coe-Brown                    62    2    8   10   20   22   24   41           
+      Total Time:  1:41:46.40                                                     
+         Average:    20:21.28                                                     
+   2 Con-Val                      84    3    4    9   21   47   51   52           
+      Total Time:  1:42:15.40                                                     
+         Average:    20:27.08                                                     
+   3 Souhegan                    100    6    7   26   28   33   54   71           
+      Total Time:  1:44:02.30                                                     
+         Average:    20:48.46                                                     
+   4 Oyster River                122   15   17   25   31   34   45   49           
+      Total Time:  1:46:10.10                                                     
+         Average:    21:14.02                                                     
+   5 Hanover                     131   12   14   32   35   38   43   44           
+      Total Time:  1:46:30.40                                                     
+         Average:    21:18.08                                                     
+   6 Milford                     166    5   11   46   48   56   63   98           
+      Total Time:  1:47:07.70                                                     
+         Average:    21:25.54                                                     
+   7 Portsmouth                  204   13   30   40   59   62   81   92           
+      Total Time:  1:49:59.10                                                     
+         Average:    21:59.82                                                     
+   8 Merrimack Valley            258    1   16   50   90  101  106  115           
+      Total Time:  1:51:11.50                                                     
+         Average:    22:14.30                                                     
+   9 Kennett                     259   27   42   53   68   69   72   87           
+      Total Time:  1:52:37.40                                                     
+         Average:    22:31.48                                                     
+  10 Kingswood                   312   23   55   64   77   93   95  123           
+      Total Time:  1:55:09.00                                                     
+         Average:    23:01.80                                                     
+  11 John Stark                  321   36   39   74   83   89   97  100           
+      Total Time:  1:56:00.50                                                     
+         Average:    23:12.10                                                     
+  12 Hollis/Brookline            327   19   37   66  102  103  114  120           
+      Total Time:  1:55:54.40                                                     
+         Average:    23:10.88                                                     
+  13 Plymouth Regional           330   29   57   78   82   84   85  113           
+      Total Time:  1:56:21.60                                                     
+         Average:    23:16.32                                                     
+  14 Windham                     337   58   61   65   67   86   96                
+      Total Time:  1:56:07.10                                                     
+         Average:    23:13.42                                                     
+  15 Bow                         357   60   70   73   75   79  108  111           
+      Total Time:  1:56:46.30                                                     
+         Average:    23:21.26                                                     
+  16 St. Thomas Aquinas          367   18   76   88   91   94  105  110           
+      Total Time:  1:58:06.40                                                     
+         Average:    23:37.28                                                     
+  17 Goffstown                   538   80  109  112  118  119  121  122           
+      Total Time:  2:08:13.40                                                     
+         Average:    25:38.68                                                     
+  18 Pembroke                    543   99  104  107  116  117  124                
+      Total Time:  2:08:25.60                                                     
+         Average:    25:41.12                                                     

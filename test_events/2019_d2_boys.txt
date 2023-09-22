@@ -1,0 +1,145 @@
+1 121 Tkaczyk, Luke 11 Coe-Brown 5:12.0 16:06.4 1
+2 #115 Cox, Aidan            9 Coe-Brown               5:12.0    16:09.1    2   
+  3 #116 Dubois, Dawson       12 Coe-Brown               5:12.9    16:12.1    3   
+  4 #783 Khalil, Jared         9 Sanborn Regional        5:13.9    16:15.2    4   
+  5 #871 Rai, Rohan           11 Windham                 5:15.8    16:21.2    5   
+  6 #120 Sylvester, Carter    11 Coe-Brown               5:17.2    16:25.4    6   
+  7 #642 O'Brien, Andrew      11 Oyster River            5:19.1    16:31.4    7   
+  8 #639 Fleischer, Owen      11 Oyster River            5:19.8    16:33.3    8   
+  9 #119 Mihelich, Logan      11 Coe-Brown               5:20.5    16:35.6    9   
+ 10 #542 Korthals, Caleb      11 Milford                 5:22.1    16:40.5   10   
+ 11 #118 Mackey, Wyatt        11 Coe-Brown               5:22.9    16:43.2   11   
+ 12 #117 Hill, Patrick        11 Coe-Brown               5:23.9    16:46.1   12   
+ 13 #161 Kim, Harrison        12 Con-Val                 5:24.7    16:48.8   13   
+ 14 #270 Siegel, Trevor       12 Hanover                 5:26.9    16:55.4   14   
+ 15 #637 Carrico, Myles       12 Oyster River            5:26.9    16:55.5   15   
+ 16 #641 Labonte, Dillon      10 Oyster River            5:27.0    16:55.9   16   
+ 17 #638 Duisberg, Henry      12 Oyster River            5:27.8    16:58.4   17   
+ 18 #381 Desmaris, Christoph  12 Kennett                 5:29.4    17:03.4   18   
+ 19 #417 Davis, Cody          12 Lebanon                 5:30.9    17:08.1   19   
+ 20  #79 Neff, Benjamin       11 Bow                     5:31.2    17:08.8   20   
+ 21  #80 Neff, Gabriel        12 Bow                     5:32.1    17:11.6   21   
+ 22  #78 Lessard, Colin       12 Bow                     5:32.9    17:14.1   22   
+ 23 #399 Wasson, Joseph       12 Kingswood               5:33.1    17:14.9   23   
+ 24 #794 Anderson, Kariso      9 Souhegan                5:35.1    17:20.9   24   
+ 25 #708 Montville, Ari       12 Portsmouth              5:35.3    17:21.5   25   
+ 26 #266 Bonner, Matthew      12 Hanover                 5:35.4    17:22.1   26   
+ 27 #267 Frost, Daniel        11 Hanover                 5:35.9    17:23.6   27   
+ 28 #162 Kotula, August       11 Con-Val                 5:36.2    17:24.3   28   
+ 29 #868 Gonzalez, Trey       11 Windham                 5:37.1    17:27.2   29   
+ 30 #799 McFee, Ethan         11 Souhegan                5:38.2    17:30.6   30   
+ 31 #265 Bandler, Daniel      12 Hanover                 5:39.9    17:36.1   31   
+ 32 #268 Levy, Mack            9 Hanover                 5:40.2    17:36.7   32   
+ 33 #643 Sassaman, Trevor     12 Oyster River            5:40.5    17:37.8   33   
+ 34 #711 Swainbank, Leo       11 Portsmouth              5:40.6    17:38.2   34   
+ 35 #869 Killian, Michael     10 Windham                 5:43.5    17:47.0   35   
+ 36 #786 Stocker, Owen        11 Sanborn Regional        5:44.3    17:49.7   36   
+ 37 #653 Nottebart, Josh      12 Pelham                  5:44.6    17:50.5   37   
+ 38 #163 Veverka, Danny       11 Con-Val                 5:45.0    17:51.9   38   
+ 39 #269 Nolon, Ian           12 Hanover                 5:45.6    17:53.7   39   
+ 40 #867 Flenniken, Cole      11 Windham                 5:45.6    17:53.7   40   
+ 41 #866 Carter, Logan         9 Windham                 5:46.0    17:54.8   41   
+ 42 #527 Dodenhoff, Ethan     11 Merrimack Valley        5:46.7    17:57.2   42   
+ 43 #529 Mercier, Mark         9 Merrimack Valley        5:48.3    18:02.0   43   
+ 44  #75 Aricanli, Adem       10 Bow                     5:48.8    18:03.6   44   
+ 45 #798 Headington, Thomas   12 Souhegan                5:49.1    18:04.5   45   
+ 46 #158 Deschenes, Haven     11 Con-Val                 5:51.5    18:12.1   46   
+ 47 #264 Aspinwall, Diego     12 Hanover                 5:51.6    18:12.1   47   
+ 48 #797 Headington, Peter    10 Souhegan                5:52.8    18:16.0   48   
+ 49 #157 Beard, Tyler         10 Con-Val                 5:52.9    18:16.3   49   
+ 50 #302 Laborde, Luke         9 Hollis/Brookline        5:53.5    18:18.2   50   
+ 51 #800 Strauss, Andrew      10 Souhegan                5:54.4    18:20.8   51   
+ 52 #300 Kotelly, John        10 Hollis/Brookline        5:54.8    18:22.2   52   
+ 53 #303 Moscatelli, Troy     10 Hollis/Brookline        5:55.6    18:24.8   53   
+ 54 #394 Arsenault, Casey      9 Kingswood               5:57.1    18:29.3   54   
+ 55 #784 Marsh, Ian           12 Sanborn Regional        5:57.8    18:31.7   55   
+ 56 #159 Dreher, Abe          10 Con-Val                 5:58.2    18:32.8   56   
+ 57 #160 Viles, Jamini        10 Con-Val                 5:58.3    18:33.2   57   
+ 58 #640 Hall, Noah           12 Oyster River            5:59.1    18:35.7   58   
+ 59 #785 Pugh, Andrew         10 Sanborn Regional        5:59.2    18:36.0   59   
+ 60 #420 Kennelly, Carlos      9 Lebanon                 5:59.4    18:36.6   60   
+ 61 #297 Burgher, Ryan         9 Hollis/Brookline        5:59.7    18:37.5   61   
+ 62 #710 O'Neil, Michael      10 Portsmouth              6:00.9    18:41.2   62   
+ 63 #780 O'Connell, Gavin      9 Sanborn Regional        6:01.2    18:42.0   63   
+ 64 #530 Oglesby, Christian   12 Merrimack Valley        6:02.7    18:46.8   64   
+ 65 #781 Cavallo, Noah        10 Sanborn Regional        6:03.0    18:47.7   65   
+ 66  #81 Weber, Wyatt         11 Bow                     6:03.4    18:48.8   66   
+ 67 #712 Yeaton, Zach         11 Portsmouth              6:04.6    18:52.7   67   
+ 68 #709 Norris, Nick         11 Portsmouth              6:04.9    18:53.5   68   
+ 69 #822 Genkinger, Nick      12 St. Thomas Aquinas      6:05.1    18:54.3   69   
+ 70  #76 Bernard, Connor      10 Bow                     6:05.4    18:55.1   70   
+ 71 #379 Badger, Keith        12 Kennett                 6:05.7    18:56.0   71   
+ 72 #398 Sheahan, Oleg        11 Kingswood               6:05.8    18:56.5   72   
+ 73 #707 Haley, Jake           9 Portsmouth              6:06.1    18:57.2   73   
+ 74 #396 Huckman, Tim         10 Kingswood               6:06.3    18:57.9   74   
+ 75 #795 Apple, Drew          10 Souhegan                6:06.4    18:58.3   75   
+ 76 #339 Hagan, Jack          12 John Stark              6:06.6    18:58.9   76   
+ 77 #651 Dufault, Cameron     12 Pelham                  6:06.9    18:59.8   77   
+ 78 #872 Ramani, Hirsh        12 Windham                 6:07.0    19:00.1   78   
+ 79 #824 Marsh, JJ            11 St. Thomas Aquinas      6:07.0    19:00.2   79   
+ 80 #384 Smith, Tristen       10 Kennett                 6:07.2    19:00.8   80   
+ 81 #397 Perkins, Matthew     10 Kingswood               6:07.3    19:01.0   81   
+ 82 #528 Linscott, Isaac      10 Merrimack Valley        6:07.5    19:01.7   82   
+ 83  #77 Cardarelli, Matthew  11 Bow                     6:08.2    19:03.7   83   
+ 84 #418 Eshbaugh, Ethan      10 Lebanon                 6:09.5    19:07.9   84   
+ 85 #698 Wolfley, Achius      11 Plymouth Regional       6:10.0    19:09.6   85   
+ 86 #694 Kulig, Michael       12 Plymouth Regional       6:11.4    19:13.8   86   
+ 87 #524 Carey-Matthews, Mar   9 Merrimack Valley        6:11.5    19:14.2   87   
+ 88 #825 O'Connor, Dillon     11 St. Thomas Aquinas      6:11.7    19:14.8   88   
+ 89 #796 Dickinson, Nolan     10 Souhegan                6:12.1    19:16.0   89   
+ 90 #655 Williams, Trip        9 Pelham                  6:12.4    19:16.9   90   
+ 91 #383 Klementovich, Ben    12 Kennett                 6:12.8    19:18.2   91   
+ 92 #251 Hall, Chase           9 Goffstown               6:13.0    19:18.8   92   
+ 93 #706 Crowell, Addison     12 Portsmouth              6:13.2    19:19.5   93   
+ 94 #338 Barnes, Jack          9 John Stark              6:13.3    19:19.7   94   
+ 95 #248 Gendron, Daniel      10 Goffstown               6:13.6    19:20.8   95   
+ 96 #395 Stenard, Mark        11 Kingswood               6:14.5    19:23.5   96   
+ 97 #301 LaBorde, Jake        10 Hollis/Brookline        6:14.8    19:24.3   97   
+ 98 #828 Smith, Ben           11 St. Thomas Aquinas      6:14.9    19:24.7   98   
+ 99 #870 Kuczynski, Jacob     12 Windham                 6:15.8    19:27.3   99   
+100 #416 Brown, Nathaniel     12 Lebanon                 6:18.0    19:34.3  100   
+101 #652 Kenney, Brandon       9 Pelham                  6:20.3    19:41.4  101   
+102 #250 Hagner, Caleb        10 Goffstown               6:21.0    19:43.6  102   
+103 #393 Arinello, Louis      10 Kingswood               6:21.3    19:44.4  103   
+104 #419 Forman, Will         12 Lebanon                 6:21.4    19:44.9  104   
+105 #654 Pawlowicz, Kenny     11 Pelham                  6:22.3    19:47.6  105   
+106 #299 Finnegan, Ayden       9 Hollis/Brookline        6:22.7    19:49.0  106   
+107 #422 Shipman, Sam         10 Lebanon                 6:22.9    19:49.4  107   
+108 #649 Bellahrossi, Ryan    11 Pelham                  6:23.9    19:52.5  108   
+109 #668 Testerman, David     10 Pembroke                6:25.0    19:56.1  109   
+110 #421 Lamontagne, Nichola   9 Lebanon                 6:26.3    20:00.2  110   
+111 #650 Benson, Matt          9 Pelham                  6:26.5    20:00.8  111   
+112 #385 Violette, Logan      11 Kennett                 6:29.3    20:09.5  112   
+113 #823 Hyatt, Peter         10 St. Thomas Aquinas      6:29.9    20:11.4  113   
+114 #525 Forsha, Oliver        9 Merrimack Valley        6:30.2    20:12.1  114   
+115 #526 Dodenhoff, Elisha    11 Merrimack Valley        6:31.7    20:16.7  115   
+116 #380 Biche, Ben            9 Kennett                 6:32.2    20:18.4  116   
+117 #664 Dugas, Ben            9 Pembroke                6:32.6    20:19.8  117   
+118 #826 Reidy, Patrick       11 St. Thomas Aquinas      6:33.0    20:20.8  118   
+119 #382 Hunt, Gavin          11 Kennett                 6:34.1    20:24.2  119   
+120 #342 Patterson, Devin     10 John Stark              6:38.8    20:39.1  120   
+121 #476 Tan, Lucas           10 Manchester West         6:40.2    20:43.4        
+122 #247 Dalton, Nicholas     11 Goffstown               6:41.8    20:48.2  121   
+123 #662 Berkeley, Isaiah      9 Pembroke                6:42.9    20:51.7  122   
+124 #475 Martins, Travis      10 Manchester West         6:45.2    20:58.7        
+125 #249 Gendron, Kris        11 Goffstown               6:45.3    20:59.2  123   
+126 #252 Hansen, Ethan         9 Goffstown               6:46.6    21:03.2  124   
+127 #340 McFall, Marcus       12 John Stark              6:47.6    21:06.2  125   
+128 #663 Chiavaras, Alex      11 Pembroke                6:49.8    21:13.0  126   
+129 #827 Schultz, Peter       12 St. Thomas Aquinas      6:51.5    21:18.4  127   
+130 #696 Philbin, James       12 Plymouth Regional       6:55.5    21:30.9  128   
+131 #667 Shuman, Casey        10 Pembroke                6:57.3    21:36.3  129   
+132 #246 Brigham, Gabriel     10 Goffstown               6:58.8    21:41.1  130   
+133 #666 Goyette, Hayden      11 Pembroke                7:02.0    21:51.0  131   
+134 #665 Garcia, Jesse        11 Pembroke                7:02.6    21:52.8  132   
+135 #341 Montague, Reece      11 John Stark              7:05.4    22:01.5  133   
+136 #539 Caron, Nathan         9 Milford                 7:06.4    22:04.6  134   
+137 #538 Arseneault, James    10 Milford                 7:10.3    22:16.9  135   
+138 #543 Robie, Aidan         10 Milford                 7:12.6    22:24.1  136   
+139 #695 McLeod, Hunter       11 Plymouth Regional       7:13.1    22:25.5  137   
+140 #692 DeRuvo, Samson       12 Plymouth Regional       7:17.4    22:38.7  138   
+141 #697 Ulricson, John       10 Plymouth Regional       7:19.6    22:45.5  139   
+142 #541 Klymok, Nazarri      11 Milford                 7:19.8    22:46.3  140   
+143 #474 Martin, Giovanni     10 Manchester West         7:19.8    22:46.3        
+144 #343 Sigrist, Noah        12 John Stark              7:20.7    22:49.0  141   
+145 #693 Dimick, Kyle         12 Plymouth Regional       7:55.7    24:37.9  142   

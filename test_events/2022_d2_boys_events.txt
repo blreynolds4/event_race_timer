@@ -1,0 +1,127 @@
+1|10|Harriman|Birhanu|12|Lebanon|15:31.0|1
+2|20|Cox|Aidan|12|Coe-Brown|16:10.9|2
+3|30|Wolfe|Thomas|12|Lebanon|16:18.8|3
+4|40|Tkaczyk|Tyler|12|Coe-Brown|16:20.5|4
+5|50|Lano|Jamie|11|Coe-Brown|16:40.0|5
+6|60|Jernigan|Chris|12|Oyster River|16:43.9|6
+7|70|Chavda|Nikhil|12|Coe-Brown|16:48.9|7
+8|80|Lemire|Eli|11|John Stark|16:53.1|8
+9|90|Anderson|Taloosh|11|Souhegan|16:53.7|9
+10|100|Demas|Gavin|12|Coe-Brown|17:00.7|10
+11|110|Noorda|Jaren|12|Souhegan|17:01.6|11
+12|120|Sixon|Daniel|11|Milford|17:03.7|12
+13|130|Williams|Trip|12|Pelham|17:07.9|13
+14|140|Pitre|Jake|10|Sanborn Regional|17:08.0|14
+15|150|Irvine|Finley|11|Souhegan|17:14.1|15
+16|160|Levy|Mack|12|Hanover|17:15.3|16
+17|170|Noorda|Dallen|10|Souhegan|17:15.9|17
+18|180|Miller|Owen|11|Bow|17:20.8|18
+19|190|Parker|Will|11|Hanover|17:20.8|19
+20|200|Stine|Owen|11|Souhegan|17:20.9|20
+21|210|Korthals|Logan|9|Milford|17:22.9|21
+22|220|Ebner|Leo|11|Plymouth Regional|17:23.9|22
+23|230|Lemay|Max|11|Coe-Brown|17:25.2|23
+24|240|Paulini|Baxter|11|Souhegan|17:29.0|24
+25|250|Betterley|Alden|11|Bow|17:32.8|25
+26|260|Hall|Chase|12|Goffstown|17:38.6|26
+27|270|Faris|Ryan|10|Hanover|17:42.1|27
+28|280|Hall|Angus|12|Lebanon|17:48.6|28
+29|290|Gagnon|Alexander|11|Goffstown|17:52.1|29
+30|300|Hourdequin|Ben|9|Hanover|17:53.0|30
+31|310|Kerouac|Luc|10|Coe-Brown|17:54.9|31
+32|320|Dugas|Ben|12|Pembroke|17:55.5|32
+33|330|Valentino|Alexander|10|Hanover|17:56.1|33
+34|340|Whitley|Will|9|Milford|17:56.1|34
+35|350|Burgher|Ryan|12|Hollis-Brookline|18:02.3|35
+36|360|Swiesz|Keane|12|Oyster River|18:07.6|36
+37|370|Biche|Ben|12|Kennett|18:11.6|37
+38|380|Keesee|Mitchell|10|Oyster River|18:13.0|38
+39|390|Valentino|Andrew|10|Hanover|18:14.9|39
+40|400|Marcus|McCammack|9|Hollis-Brookline|18:16.5|40
+41|410|Holodowski|Adam|12|Milford|18:18.2|41
+42|420|Urnezis|Griffin|12|Lebanon|18:18.9|42
+43|430|Hayman|Tate|9|Plymouth Regional|18:19.7|43
+44|440|Fleischer|Theo|12|Oyster River|18:23.1|44
+45|450|Ring|Nicholas|10|Plymouth Regional|18:24.0|45
+46|460|Mehra|Safir|9|Hanover|18:24.6|46
+47|470|Nichols|Samuel|12|Lebanon|18:26.6|47
+48|480|Kennelly|Carlos|12|Lebanon|18:30.8|48
+49|490|Ciminesi|Aiden|11|Bow|18:30.8|49
+50|500|Vore|Patrick|11|Souhegan|18:31.3|50
+51|510|Sargent|Thomas|10|Bow|18:31.7|51
+52|520|Hannon|Joey|11|Oyster River|18:31.9|52
+53|530|Keirstead|Alex|11|John Stark|18:32.4|53
+54|540|Cote|Logan|11|Goffstown|18:33.0|54
+55|550|Reynolds|Mychal|10|Merrimack Valley|18:34.7|55
+56|560|Engert|Nicholas|11|Lebanon|18:36.8|56
+57|570|Forsha|Oliver|12|Merrimack Valley|18:38.1|57
+58|580|LaPointe-Moskwa|Elijah|11|Goffstown|18:43.1|58
+59|590|Ciarametaro|Ryan|12|Merrimack Valley|18:45.3|59
+60|600|Miller|Henry|10|Oyster River|18:51.6|60
+61|610|Barnes|Jack|12|John Stark|18:51.8|61
+62|620|Prouix|Nolan|10|Kennett|18:52.8|62
+63|630|Worcester|Wyatt|9|Bow|18:55.0|63
+64|640|Patenaude|Austin|9|John Stark|19:03.5|64
+65|650|Westenberg|Jake|12|Bow|19:04.0|65
+66|660|Saturley|Caleb|9|Pembroke|19:17.1|66
+67|670|Chudoba|Terrence|12|Merrimack Valley|19:22.5|67
+68|680|Murdock|Gavan|10|Goffstown|19:24.7|68
+69|690|Newton|Ben|9|Merrimack Valley|19:29.7|69
+70|700|Dumont|Logan|11|Pelham|19:36.2|70
+71|710|Kenney|Brandon|12|Pelham|19:36.5|71
+72|720|Carey-Matthews|Marshall|12|Merrimack Valley|19:39.2|72
+73|730|Cote|Cooper|9|Milford|19:39.8|73
+74|740|DeCosta|Gavyn|10|Bow|19:41.6|74
+75|750|McLaughlin|Matthew|12|Hollis-Brookline|19:43.6|75
+76|760|Hoesch|Jacob|9|Hollis-Brookline|19:44.8|76
+77|770|Finnegan|Ayden|12|Hollis-Brookline|19:49.9|77
+78|780|Lynch|Ben|9|Laconia|19:50.7|78
+79|790|Cicchetti|Dom|12|Milford|19:52.2|79
+80|800|Hagen|Henry|12|Oyster River|19:53.6|80
+81|810|Deschenes|Mason|9|Con-Val|19:54.8|81
+82|820|Laughland|Patrick|10|Kennett|20:03.2|82
+83|830|Carpenter|Mack|10|Kingswood|20:03.7|83
+84|840|Klonel|Nathan|11|Con-Val|20:08.6|84
+85|850|Rousseau|RJ|9|Goffstown|20:09.9|85
+86|860|Nereson|Samuel|11|Pembroke|20:13.6|86
+87|870|Olkkola|Tyler|12|Kingswood|20:14.6|87
+88|880|Howie|Thomas|9|Hollis-Brookline|20:18.1|88
+89|890|Odell|William|9|Kennett|20:19.5|89
+90|900|Walker|Jackson|11|Pembroke|20:24.4|90
+91|910|Caron|Nathan|12|Milford|20:26.0|91
+92|920|Mousseau|Holden|9|Laconia|20:28.4|92
+93|930|Bain|Nathan|9|Merrimack Valley|20:36.4|93
+94|940|Butka|Simon|10|Kingswood|20:48.2|94
+95|950|Mao|Nathaniel|12|Con-Val|20:52.6|95
+96|960|Lemay|Kaden|11|Sanborn Regional|20:53.7|96
+97|970|Gallagher|Aidan|11|Goffstown|20:59.0|97
+98|980|Petersons|Hayden|9|Pembroke|21:02.2|98
+99|990|LeClerc|Zander|9|Laconia|21:03.6|99
+100|1000|Steele|Grady|9|Kingswood|21:05.8|100
+101|1010|D'Angelo|David|9|Sanborn Regional|21:15.2|101
+102|1020|Gibney|Jude|9|Pembroke|21:23.3|102
+103|1030|Dellavalla|Joseph|9|Kennett|21:26.0|103
+104|1040|Stephens|Ross|9|Kennett|21:28.7|104
+105|1050|Dixon|Brogan|12|Plymouth Regional|21:30.0|105
+106|1060|Tierney|Jeffery|9|Kennett|21:34.2|106
+107|1070|Roberts|Felix|9|Kingswood|21:37.0|107
+108|1080|Stevens|D.J.|9|Con-Val|21:37.6|108
+109|1090|Smoker|William|11|Plymouth Regional|21:39.8|109
+110|1100|Lambert|Hunter|10|John Stark|21:42.7|110
+111|1110|Alonso|Jake|11|Con-Val|21:49.7|111
+112|1120|Freeman|Austin|9|John Stark|21:52.3|112
+113|1130|Ulricson|Declan|11|Plymouth Regional|21:52.6|113
+114|1140|Demain|Nate|9|Kingswood|22:08.1|114
+115|1150|Medina|Jacob|11|Hollis-Brookline|22:16.8|115
+116|1160|Sutton|Brandon|9|Pelham|22:20.7|116
+117|1170|Bronson|Thomas|9|Kingswood|22:26.0|117
+118|1180|Pelletier|Brady|12|Pelham|22:36.5|118
+119|1190|Defosses|Alex|10|Laconia|22:46.7|119
+120|1200|Heichlinger|Zachary|9|Pembroke|22:52.3|120
+121|1210|Mason|Paul|11|Plymouth Regional|23:05.4|121
+122|1220|Tucker|Samuel|9|Laconia|23:44.8|122
+123|1230|Mazzariello|Adam|10|Pelham|24:29.3|123
+124|1240|Sohl|Wyatt|12|John Stark|24:36.7|124
+125|1250|Tumulty|Jacob|10|Sanborn Regional|25:06.2|125
+126|1260|Ibarra|Sebastian|12|Pelham|25:27.9|126
+127|1270|Morrison|Dennis|9|Sanborn Regional|26:04.5|127

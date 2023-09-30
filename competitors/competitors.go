@@ -24,20 +24,14 @@ func NewCompetitor(name, team string, age, grade int) *Competitor {
 }
 
 // Implement JSON competitor lookup save and load
-func LoadCompetitorLookup(path string) (CompetitorLookup, error) {
+func LoadCompetitorLookup(path string, athletes CompetitorLookup) error {
 	// read json from the path provided and return the lookup
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	athletes := make(CompetitorLookup)
-	err = json.Unmarshal([]byte(file), &athletes)
-	if err != nil {
-		return nil, err
-	}
-
-	return athletes, err
+	return json.Unmarshal([]byte(file), &athletes)
 }
 
 func (cl CompetitorLookup) Store(path string) error {

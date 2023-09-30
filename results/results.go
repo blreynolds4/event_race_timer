@@ -66,17 +66,53 @@ type ResultTarget interface {
 }
 
 type ResultSource interface {
-	GetResult(ctx context.Context) (RaceResult, error)
+	GetResult(ctx context.Context, result *RaceResult, timeout time.Duration) (int, error)
 }
 
 type resultTargetStream struct {
 	rawStream stream.Writer
 }
 
+type resultSourceStream struct {
+	rawStream stream.Reader
+}
+
 func NewResultTarget(raw stream.Writer) ResultTarget {
 	return &resultTargetStream{
 		rawStream: raw,
 	}
+}
+
+func NewResultSource(raw stream.Reader) ResultSource {
+	return &resultSourceStream{
+		rawStream: raw,
+	}
+}
+
+func (rs *resultSourceStream) GetResult(ctx context.Context, result *RaceResult, timeout time.Duration) (int, error) {
+	*result = RaceResult{}
+	msg, err := rs.rawStream.GetMessage(ctx, timeout)
+	if err != nil {
+		return 0, err
+	}
+
+	if msg.IsValid() {
+		resultData, ok := msg.Values[resultValueKey].(string)
+		if !ok {
+			return 0, fmt.Errorf("expected string for result data in stream message")
+		}
+
+		// create a result message and deserialize
+		err := json.Unmarshal([]byte(resultData), result)
+		if err != nil {
+			return 0, err
+		}
+
+		return 1, nil
+	}
+
+	fmt.Println("returning no msg read")
+	return 0, nil
 }
 
 func (rts *resultTargetStream) SendResult(ctx context.Context, rr RaceResult) error {

@@ -3,13 +3,13 @@ package places
 import (
 	"blreynolds4/event-race-timer/events"
 	"blreynolds4/event-race-timer/eventstream"
-	"container/list"
 	"context"
+	"sort"
 )
 
 // Write a placer that takes event source and event target
 type PlaceGenerator interface {
-	GeneratePlaces() error
+	GeneratePlaces(map[string]int) error
 }
 
 type defaultPlaceGenerator struct {
@@ -24,10 +24,10 @@ func NewPlaceGenerator(src events.EventSource, target events.EventTarget) PlaceG
 	}
 }
 
-func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
+func (dpg *defaultPlaceGenerator) GeneratePlaces(sourceRanks map[string]int) error {
 	// cache of finishes with bibs
 	// Sorted by finish time, soonest to latest
-	finishCache := list.New()
+	finishCache := make(map[int]events.FinishEvent)
 
 	// read from the source any finish events with bibs (default_placer consumer group)
 	event, err := dpg.eventSource.GetRaceEvent(context.TODO(), 0)
@@ -41,35 +41,35 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 			finish := event.(events.FinishEvent)
 			if finish.GetBib() != events.NoBib {
 				// only cache finishes with bibs for placement
-				// sort them by finish time earliest to latest
-				var inserted *list.Element
-				currentPlace := 1
-				if finishCache.Len() == 0 {
-					inserted = finishCache.PushFront(finish)
-				} else {
-					for e := finishCache.Front(); e != nil; e = e.Next() {
-						current := e.Value.(events.FinishEvent)
-						if finish.GetFinishTime().Before(current.GetFinishTime()) {
-							//insert in front of current and stop
-							inserted = finishCache.InsertBefore(finish, e)
-							break
-						} else {
-							currentPlace = currentPlace + 1
+				// where the new finish is from a better source
+				if dpg.isBetterFinish(finish, finishCache, sourceRanks) {
+					finishCache[finish.GetBib()] = finish
+					// create a slice of bibs in finish order
+					finishedBibs := make([]int, 0, len(finishCache))
+					for k := range finishCache {
+						finishedBibs = append(finishedBibs, k)
+					}
+					sort.SliceStable(finishedBibs, func(i, j int) bool {
+						return finishCache[finishedBibs[i]].GetFinishTime().Before(finishCache[finishedBibs[j]].GetFinishTime())
+					})
+
+					// loop through the slice and send events for the current bib
+					// and everything after it
+					send := false
+					for i := 0; i < len(finishedBibs); i++ {
+						current := finishCache[finishedBibs[i]]
+						// don't send events till we get to the bib
+						// from last finish
+						if finish.GetBib() == current.GetBib() {
+							send = true
+						}
+
+						if send {
+							// create place event
+							placeEvent := eventstream.NewPlaceEvent("default-placer", current.GetBib(), i+1)
+							dpg.eventTarget.SendRaceEvent(context.TODO(), placeEvent)
 						}
 					}
-
-					if inserted == nil {
-						inserted = finishCache.PushBack(finish)
-					}
-				}
-
-				// send Place events for the new event and everything after it in the cache order
-				for e := inserted; e != nil; e = e.Next() {
-					// create place event
-					current := e.Value.(events.FinishEvent)
-					placeEvent := eventstream.NewPlaceEvent("default_placer", current.GetBib(), currentPlace)
-					currentPlace = currentPlace + 1
-					dpg.eventTarget.SendRaceEvent(context.TODO(), placeEvent)
 				}
 			}
 		}
@@ -80,4 +80,19 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces() error {
 	}
 
 	return nil
+}
+
+func (dpg *defaultPlaceGenerator) isBetterFinish(finish events.FinishEvent, finishCache map[int]events.FinishEvent, sourceRanks map[string]int) bool {
+	previous, exists := finishCache[finish.GetBib()]
+	if !exists {
+		return true
+	}
+
+	// return true if new source is better then previous
+	if sourceRanks[finish.GetSource()] < sourceRanks[previous.GetSource()] {
+		return true
+	}
+
+	// source isn't better
+	return false
 }

@@ -398,8 +398,8 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 	// result events when they are complete
 	now := time.Now().UTC()
 	// Test data
-	finishTime10 := now.Add(5 * time.Minute)
-	finishTime11 := now.Add(6 * time.Minute)
+	finishTime10 := now.Add(6 * time.Minute)
+	finishTime10better := now.Add(5 * time.Minute)
 
 	// 3 events minimum to build a result:  start, finish and place
 	// if the builder doesn't get all 3 no result for the bib is produced
@@ -407,7 +407,7 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 		eventstream.NewStartEvent(t.Name(), now),
 		eventstream.NewPlaceEvent(t.Name(), 10, 1),
 		eventstream.NewFinishEvent("worse", finishTime10, 10),
-		eventstream.NewFinishEvent("better", finishTime10, 10),
+		eventstream.NewFinishEvent("better", finishTime10better, 10),
 	}
 	inputEvents := NewMockRaceEventSource(testEvents)
 
@@ -430,7 +430,7 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 			Bib:          10,
 			Athlete:      athletes[10],
 			Place:        1,
-			Time:         finishTime11.Sub(now),
+			Time:         finishTime10better.Sub(now),
 			FinishSource: "better",
 			PlaceSource:  t.Name(),
 		},

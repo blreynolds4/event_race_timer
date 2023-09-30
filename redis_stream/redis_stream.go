@@ -3,6 +3,7 @@ package redis_stream
 import (
 	"blreynolds4/event-race-timer/stream"
 	"context"
+	"fmt"
 	"time"
 
 	redis "github.com/redis/go-redis/v9"
@@ -58,6 +59,7 @@ func (rs *redisEventStream) GetMessage(ctx context.Context, timeout time.Duratio
 		//timeout duration, 0 is forever
 		Block: timeout,
 	}).Result()
+
 	if err != nil && err != redis.Nil {
 		return stream.Message{}, err
 	}
@@ -72,6 +74,7 @@ func (rs *redisEventStream) GetMessage(ctx context.Context, timeout time.Duratio
 		return result, nil
 	}
 
+	fmt.Println("returning no data")
 	return result, nil
 }
 

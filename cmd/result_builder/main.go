@@ -2,6 +2,7 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/competitors"
+	"blreynolds4/event-race-timer/config"
 	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/redis_stream"
 	"blreynolds4/event-race-timer/results"
@@ -20,11 +21,13 @@ func main() {
 	var claDbNumber int
 	var claRacename string
 	var claCompetitorsPath string
+	var claConfigPath string
 
 	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
 	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
 	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
 	flag.StringVar(&claCompetitorsPath, "competitors", "", "The path to the competitor lookup file (json)")
+	flag.StringVar(&claConfigPath, "config", "", "The path to the config file (json)")
 
 	// parse command line
 	flag.Parse()
@@ -38,9 +41,17 @@ func main() {
 
 	defer rdb.Close()
 
-	athletes, err := competitors.LoadCompetitorLookup(claCompetitorsPath)
+	athletes := make(competitors.CompetitorLookup)
+	err := competitors.LoadCompetitorLookup(claCompetitorsPath, athletes)
 	if err != nil {
 		fmt.Printf("ERROR loading competitors from '%s': %v\n", claCompetitorsPath, err)
+		os.Exit(1)
+	}
+
+	var raceConfig config.RaceConfig
+	err = config.LoadConfigData(claConfigPath, &raceConfig)
+	if err != nil {
+		fmt.Printf("ERROR loading config from '%s': %v\n", claConfigPath, err)
 		os.Exit(1)
 	}
 
@@ -52,9 +63,7 @@ func main() {
 
 	resultBuilder := results.NewResultBuilder()
 
-	// can these be CLA's, multiple instances of an arg?
-	sourceRanking := make(map[string]int)
-	err = resultBuilder.BuildResults(raceEventSrc, athletes, resultEventTarget, sourceRanking)
+	err = resultBuilder.BuildResults(raceEventSrc, athletes, resultEventTarget, raceConfig.SourceRanks)
 	if err != nil {
 		fmt.Println("ERROR generating results:", err)
 	}

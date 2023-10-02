@@ -118,10 +118,10 @@
 118|826|Reidy|Patrick|11|St. Thomas Aquinas|20:20.8|118
 119|382|Hunt|Gavin|11|Kennett|20:24.2|119
 120|342|Patterson|Devin|10|John Stark|20:39.1|120
-121|476|Tan|Lucas|10|Manchester|6:40.2|20:43.4
+121|476|Tan|Lucas|10|Manchester West|20:43.4|0
 122|247|Dalton|Nicholas|11|Goffstown|20:48.2|121
 123|662|Berkeley|Isaiah|9|Pembroke|20:51.7|122
-124|475|Martins|Travis|10|Manchester|6:45.2|20:58.7
+124|475|Martins|Travis|10|Manchester West|20:58.7|0
 125|249|Gendron|Kris|11|Goffstown|20:59.2|123
 126|252|Hansen|Ethan|9|Goffstown|21:03.2|124
 127|340|McFall|Marcus|12|John Stark|21:06.2|125
@@ -140,6 +140,6 @@
 140|692|DeRuvo|Samson|12|Plymouth Regional|22:38.7|138
 141|697|Ulricson|John|10|Plymouth Regional|22:45.5|139
 142|541|Klymok|Nazarri|11|Milford|22:46.3|140
-143|474|Martin|Giovanni|10|Manchester|7:19.8|22:46.3
+143|474|Martin|Giovanni|10|Manchester West|22:46.3|0
 144|343|Sigrist|Noah|12|John Stark|22:49.0|141
 145|693|Dimick|Kyle|12|Plymouth Regional|24:37.9|142

@@ -18,9 +18,13 @@ func TestOverallResultsSimple(t *testing.T) {
 	athletes[11] = competitors.NewCompetitor("MV 4", "MV", 1, 1)
 	athletes[23] = competitors.NewCompetitor("MV 10", "MV", 1, 1)
 
+	ctx := context.Background()
+	cancelCtx, cancel := context.WithCancel(ctx)
+
 	// Need to create Results for each athlete
 	mock := &results.MockResultSource{
-		Results: make([]results.RaceResult, 0, 4),
+		Results:    make([]results.RaceResult, 0, 4),
+		CancelFunc: cancel,
 	}
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")})
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 10, Athlete: athletes[10], Place: 2, Time: durationHelper("26m40s")})
@@ -29,7 +33,7 @@ func TestOverallResultsSimple(t *testing.T) {
 
 	// expected scoring
 	// start with just the scores, fill the rest in
-	expected := []overallResult{
+	expected := []OverallResult{
 		{
 			Athlete:    athletes[1],
 			Place:      1,
@@ -53,8 +57,8 @@ func TestOverallResultsSimple(t *testing.T) {
 	}
 
 	// XCScorer has team results in an array
-	OVR := newOverallResults()
-	err := OVR.ScoreResults(context.TODO(), mock)
+	OVR := NewOverallResults()
+	err := OVR.ScoreResults(cancelCtx, mock)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expected, OVR.overallResults)
@@ -68,8 +72,11 @@ func TestOverallResultsDuplicate(t *testing.T) {
 	athletes[23] = competitors.NewCompetitor("MV 10", "MV", 1, 1)
 
 	// Need to create Results for each athlete
+	ctx := context.Background()
+	cancelCtx, cancel := context.WithCancel(ctx)
 	mock := &results.MockResultSource{
-		Results: make([]results.RaceResult, 0, 4),
+		Results:    make([]results.RaceResult, 0, 4),
+		CancelFunc: cancel,
 	}
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")})
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("22m2s")})
@@ -79,7 +86,7 @@ func TestOverallResultsDuplicate(t *testing.T) {
 
 	// expected scoring
 	// start with just the scores, fill the rest in
-	expected := []overallResult{
+	expected := []OverallResult{
 		{
 			Athlete:    athletes[1],
 			Place:      1,
@@ -103,8 +110,8 @@ func TestOverallResultsDuplicate(t *testing.T) {
 	}
 
 	// XCScorer has team results in an array
-	OVR := newOverallResults()
-	err := OVR.ScoreResults(context.TODO(), mock)
+	OVR := NewOverallResults()
+	err := OVR.ScoreResults(cancelCtx, mock)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expected, OVR.overallResults)
@@ -118,11 +125,16 @@ func TestOverallResultsError(t *testing.T) {
 	athletes[23] = competitors.NewCompetitor("MV 10", "MV", 1, 1)
 
 	// Need to create Results for each athlete
+	ctx := context.Background()
+	cancelCtx, cancel := context.WithCancel(ctx)
 	mock := &results.MockResultSource{
 		Results: make([]results.RaceResult, 0, 4),
-		Get: func(ctx context.Context) (results.RaceResult, error) {
-			return results.RaceResult{}, fmt.Errorf("fail")
+		Get: func(context.Context, *results.RaceResult, time.Duration) (int, error) {
+			// need to cancel or it will just keep trying
+			cancel()
+			return 0, fmt.Errorf("fail")
 		},
+		CancelFunc: cancel,
 	}
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")})
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("22m2s")})
@@ -131,8 +143,8 @@ func TestOverallResultsError(t *testing.T) {
 	mock.Results = append(mock.Results, results.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")})
 
 	// XCScorer has team results in an array
-	OVR := newOverallResults()
-	err := OVR.ScoreResults(context.TODO(), mock)
+	OVR := NewOverallResults()
+	err := OVR.ScoreResults(cancelCtx, mock)
 
 	assert.Error(t, fmt.Errorf("fail"), err)
 }

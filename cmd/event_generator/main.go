@@ -73,7 +73,7 @@ func main() {
 
 	// send a start event
 	startTime := time.Now().UTC()
-	err = eventTarget.SendRaceEvent(context.TODO(), eventstream.NewStartEvent("generator", startTime))
+	err = eventTarget.SendRaceEvent(context.TODO(), eventstream.NewStartEvent("manual", startTime))
 	if err != nil {
 		fmt.Printf("error sending start event: %s", err.Error())
 		os.Exit(-1)

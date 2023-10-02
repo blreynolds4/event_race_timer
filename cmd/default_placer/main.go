@@ -1,11 +1,13 @@
 package main
 
 import (
+	"blreynolds4/event-race-timer/config"
 	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/places"
 	"blreynolds4/event-race-timer/redis_stream"
 	"flag"
 	"fmt"
+	"os"
 
 	redis "github.com/redis/go-redis/v9"
 )
@@ -17,10 +19,12 @@ func main() {
 	var claDbAddress string
 	var claDbNumber int
 	var claRacename string
+	var claConfigPath string
 
 	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
 	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
 	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
+	flag.StringVar(&claConfigPath, "config", "", "The path to the config file (json)")
 
 	// parse command line
 	flag.Parse()
@@ -40,9 +44,16 @@ func main() {
 	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
 	target := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
 
+	var raceConfig config.RaceConfig
+	err := config.LoadConfigData(claConfigPath, &raceConfig)
+	if err != nil {
+		fmt.Printf("ERROR loading config from '%s': %v\n", claConfigPath, err)
+		os.Exit(1)
+	}
+
 	placer := places.NewPlaceGenerator(src, target)
 
-	err := placer.GeneratePlaces()
+	err = placer.GeneratePlaces(raceConfig.SourceRanks)
 	if err != nil {
 		fmt.Println("ERROR generating places:", err)
 	}

@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"io/ioutil"
 )
 
 type RaceConfig struct {
@@ -11,14 +12,13 @@ type RaceConfig struct {
 	SourceRanks  map[string]int
 }
 
-func LoadConfigData(data []byte) (RaceConfig, error) {
-	var raceConfig RaceConfig
-	err := json.Unmarshal([]byte(data), &raceConfig)
+func LoadConfigData(configPath string, raceConfig *RaceConfig) error {
+	file, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		return raceConfig, err
+		return err
 	}
 
-	return raceConfig, err
+	return json.Unmarshal([]byte(file), raceConfig)
 }
 
 func GetConfigData(rc RaceConfig) ([]byte, error) {

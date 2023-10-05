@@ -2,14 +2,13 @@ package stream
 
 import (
 	"context"
-	"fmt"
 	"time"
 )
 
 type MockStream struct {
 	Send   func(ctx context.Context, sm Message) error
-	Get    func(ctx context.Context, timeout time.Duration) (Message, error)
-	Range  func(ctx context.Context, startId, endId string) ([]Message, error)
+	Get    func(ctx context.Context, timeout time.Duration, msg *Message) (bool, error)
+	Range  func(ctx context.Context, startId, endId string, msgs []Message) (int, error)
 	Events []Message
 }
 
@@ -22,33 +21,28 @@ func (mes *MockStream) SendMessage(ctx context.Context, sm Message) error {
 	return nil
 }
 
-func (mes *MockStream) GetMessage(ctx context.Context, timeout time.Duration) (Message, error) {
+func (mes *MockStream) GetMessage(ctx context.Context, timeout time.Duration, msg *Message) (bool, error) {
 	if mes.Get != nil {
-		return mes.Get(ctx, timeout)
+		return mes.Get(ctx, timeout, msg)
 	}
-	fmt.Println("mes.Events", mes.Events)
 	if len(mes.Events) > 0 {
-		result := mes.Events[0]
+		*msg = mes.Events[0]
 		mes.Events = mes.Events[1:]
-		fmt.Println("result", result)
-		return result, nil
+		return true, nil
 	}
 
-	fmt.Println("default return")
-	return Message{}, nil
+	return false, nil
 }
 
-func (mes *MockStream) GetMessageRange(ctx context.Context, startId, endId string) ([]Message, error) {
-	if mes.Get != nil {
-		return mes.Range(ctx, startId, endId)
+func (mes *MockStream) GetMessageRange(ctx context.Context, startId, endId string, msgs []Message) (int, error) {
+	if mes.Range != nil {
+		return mes.Range(ctx, startId, endId, msgs)
 	}
 	if len(mes.Events) > 0 {
-		result := mes.Events[0]
+		msgs[0] = mes.Events[0]
 		mes.Events = mes.Events[1:]
-		fmt.Println("result", result)
-		return []Message{result}, nil
+		return len(msgs), nil
 	}
 
-	fmt.Println("default return")
-	return []Message{}, nil
+	return 0, nil
 }

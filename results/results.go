@@ -22,7 +22,7 @@ type RaceResult struct {
 }
 
 func (rr RaceResult) IsComplete() bool {
-	// the un-set, zero value for Athlete is nil because Competitor is an interface
+	// the un-set, zero value for Athlete is nil
 	// if the bib is not 0, athlete is not nil, the place is not 0 and there is a duration, the result is complete
 	return (rr.Bib > 0) &&
 		(rr.Athlete != nil) &&

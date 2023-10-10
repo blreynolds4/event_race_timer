@@ -77,7 +77,7 @@ func (rs *RedisEventStream) GetMessageRange(ctx context.Context, startId, endId 
 	if len(resultMessages) == 0 {
 		return 0, fmt.Errorf("can't get message range with empty buffer")
 	}
-	data, err := rs.client.XRange(ctx, rs.stream, startId, endId).Result()
+	data, err := rs.client.XRangeN(ctx, rs.stream, startId, endId, int64(len(resultMessages))).Result()
 	if err != nil && err != redis.Nil {
 		return 0, err
 	}

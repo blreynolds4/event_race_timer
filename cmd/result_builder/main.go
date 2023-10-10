@@ -3,7 +3,7 @@ package main
 import (
 	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/config"
-	"blreynolds4/event-race-timer/eventstream"
+	"blreynolds4/event-race-timer/raceevents"
 	"blreynolds4/event-race-timer/redis_stream"
 	"blreynolds4/event-race-timer/results"
 	"flag"
@@ -55,15 +55,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
-	raceEventSrc := eventstream.NewRaceEventSource(rawRead, eventstream.StreamMessageToRaceEvent)
+	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+	eventStream := raceevents.NewEventStream(rawStream)
 
-	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename+"_results")
-	resultEventTarget := results.NewResultTarget(rawWrite)
+	rawResultStream := redis_stream.NewRedisEventStream(rdb, claRacename+"_results")
+	resultStream := results.NewResultStream(rawResultStream)
 
 	resultBuilder := results.NewResultBuilder()
 
-	err = resultBuilder.BuildResults(raceEventSrc, athletes, resultEventTarget, raceConfig.SourceRanks)
+	err = resultBuilder.BuildResults(eventStream, athletes, resultStream, raceConfig.SourceRanks)
 	if err != nil {
 		fmt.Println("ERROR generating results:", err)
 	}

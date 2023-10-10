@@ -15,8 +15,7 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/events"
-	"blreynolds4/event-race-timer/eventstream"
+	"blreynolds4/event-race-timer/raceevents"
 	"blreynolds4/event-race-timer/redis_stream"
 	"bufio"
 	"context"
@@ -65,15 +64,18 @@ func main() {
 	}
 
 	// create event target
-	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
-	eventTarget := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
+	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+	eventStream := raceevents.NewEventStream(rawStream)
 
 	// create and save competitor data
 	athletes := make(competitors.CompetitorLookup)
 
 	// send a start event
 	startTime := time.Now().UTC()
-	err = eventTarget.SendRaceEvent(context.TODO(), eventstream.NewStartEvent("manual", startTime))
+	err = eventStream.SendStartEvent(context.TODO(), raceevents.StartEvent{
+		Source:    "manual",
+		StartTime: startTime,
+	})
 	if err != nil {
 		fmt.Printf("error sending start event: %s", err.Error())
 		os.Exit(-1)
@@ -131,7 +133,11 @@ func main() {
 				}
 
 				// generate a finish event for each timestamp from the finish
-				eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("reader-1", startTime.Add(runDuration), bib))
+				eventStream.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
+					Source:     "reader-1",
+					FinishTime: startTime.Add(runDuration),
+					Bib:        bib,
+				})
 
 				// get a random number 1 - 3 to decide on additional finish events for the athlete
 				random := rand.Intn(3)
@@ -139,14 +145,22 @@ func main() {
 					// add a another event a little slower than first event with no bib
 					// set a bib about half the time
 					if rand.Intn(2) > 0 {
-						bib = events.NoBib
+						bib = raceevents.NoBib
 					}
-					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-slow", startTime.Add(runDuration).Add(time.Millisecond*500), bib))
+					eventStream.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
+						Source:     "generator-slow",
+						FinishTime: startTime.Add(runDuration).Add(time.Millisecond * 500),
+						Bib:        bib,
+					})
 				}
 
 				if random >= 2 {
 					// add a third reader event a little faster
-					eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent("generator-fast", startTime.Add(runDuration).Add(time.Millisecond*-500), bib))
+					eventStream.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
+						Source:     "generator-fast",
+						FinishTime: startTime.Add(runDuration).Add(time.Millisecond * -500),
+						Bib:        bib,
+					})
 				}
 			}
 		} else {

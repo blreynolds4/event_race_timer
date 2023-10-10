@@ -30,102 +30,59 @@ func (rr RaceResult) IsComplete() bool {
 		(rr.Time.Milliseconds() > 0)
 }
 
-func (rr *RaceResult) ToStreamMessage() (stream.Message, error) {
-	resultData, err := json.Marshal(rr)
-	if err != nil {
-		return stream.Message{}, err
-	}
-
-	msg := stream.Message{
-		Values: map[string]interface{}{
-			resultValueKey: string(resultData),
-		},
-	}
-
-	return msg, nil
+type ResultStream struct {
+	rawStream     stream.ReaderWriter
+	lastMessageId string
 }
 
-func (rr *RaceResult) FromStreamMessage(msg stream.Message) error {
-	data, ok := msg.Values[resultValueKey].(string)
-	if ok {
-		err := json.Unmarshal([]byte(data), &rr)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-
-	return fmt.Errorf("Values data was not a string, can't build RaceResult")
-
-}
-
-// ResultTarget is a result publisher.  It makes results available to things like scoring
-// that need to look at each result so athletes can see them.
-type ResultTarget interface {
-	SendResult(ctx context.Context, rr RaceResult) error
-}
-
-type ResultSource interface {
-	GetResult(ctx context.Context, result *RaceResult, timeout time.Duration) (int, error)
-}
-
-type resultTargetStream struct {
-	rawStream stream.Writer
-}
-
-type resultSourceStream struct {
-	rawStream stream.Reader
-}
-
-func NewResultTarget(raw stream.Writer) ResultTarget {
-	return &resultTargetStream{
-		rawStream: raw,
+func NewResultStream(raw stream.ReaderWriter) *ResultStream {
+	return &ResultStream{
+		rawStream:     raw,
+		lastMessageId: "",
 	}
 }
 
-func NewResultSource(raw stream.Reader) ResultSource {
-	return &resultSourceStream{
-		rawStream: raw,
+func (rs *ResultStream) GetResults(ctx context.Context, results []RaceResult) (int, error) {
+	if len(results) == 0 {
+		return 0, fmt.Errorf("can't get results with zero length buffer")
 	}
-}
 
-func (rs *resultSourceStream) GetResult(ctx context.Context, result *RaceResult, timeout time.Duration) (int, error) {
-	*result = RaceResult{}
-	msg, err := rs.rawStream.GetMessage(ctx, timeout)
+	msgBuffer := make([]stream.Message, len(results))
+	count, err := rs.rawStream.GetMessageRange(ctx, rs.lastMessageId, "", msgBuffer)
 	if err != nil {
 		return 0, err
 	}
 
-	if msg.IsValid() {
-		resultData, ok := msg.Values[resultValueKey].(string)
-		if !ok {
-			return 0, fmt.Errorf("expected string for result data in stream message")
-		}
-
+	for i := 0; i < count; i++ {
 		// create a result message and deserialize
-		err := json.Unmarshal([]byte(resultData), result)
+		// using the temp copy here means that the athlete pointer
+		// doesn't get shared with each read
+		// (assigning to results[i] directly only kept last competitor for all)
+		// using rr creates new space that escapes into the result
+		var rr RaceResult
+		err = json.Unmarshal(msgBuffer[i].Data, &rr)
 		if err != nil {
 			return 0, err
 		}
-
-		return 1, nil
+		results[i] = rr
+		rs.lastMessageId = msgBuffer[i].ID
 	}
 
-	fmt.Println("returning no msg read")
-	return 0, nil
+	return count, nil
 }
 
-func (rts *resultTargetStream) SendResult(ctx context.Context, rr RaceResult) error {
-	msg, err := rr.ToStreamMessage()
+func (rts *ResultStream) SendResult(ctx context.Context, rr RaceResult) error {
+	resData, err := json.Marshal(rr)
 	if err != nil {
 		return err
 	}
 
-	err = rts.rawStream.SendMessage(ctx, msg)
+	err = rts.rawStream.SendMessage(ctx, stream.Message{
+		Data: resData,
+	})
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("sent")
 	return nil
 }

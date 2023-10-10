@@ -1,8 +1,7 @@
 package command
 
 import (
-	"blreynolds4/event-race-timer/events"
-	"blreynolds4/event-race-timer/eventstream"
+	"blreynolds4/event-race-timer/raceevents"
 	"context"
 	"fmt"
 	"math/rand"
@@ -62,7 +61,7 @@ func NewPingCommand(rdb *redis.Client) Command {
 	}
 }
 
-func NewStartCommand(eventTarget events.EventTarget) Command {
+func NewStartCommand(eventTarget *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			startTime := time.Now().UTC()
@@ -75,17 +74,20 @@ func NewStartCommand(eventTarget events.EventTarget) Command {
 				return false, err
 			}
 
-			return false, eventTarget.SendRaceEvent(context.TODO(), eventstream.NewStartEvent(clientName, startTime.Add(-seedDuration)))
+			return false, eventTarget.SendStartEvent(context.TODO(), raceevents.StartEvent{
+				Source:    clientName,
+				StartTime: startTime.Add(-seedDuration),
+			})
 		},
 	}
 
 }
 
-func NewFinishCommand(eventTarget events.EventTarget) Command {
+func NewFinishCommand(eventTarget *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			var err error
-			bib := events.NoBib
+			bib := raceevents.NoBib
 			if len(args) > 0 && len(args[0]) > 0 {
 				bib, err = strconv.Atoi(args[0])
 				if err != nil {
@@ -94,16 +96,20 @@ func NewFinishCommand(eventTarget events.EventTarget) Command {
 				}
 			}
 
-			return false, eventTarget.SendRaceEvent(context.TODO(), eventstream.NewFinishEvent(clientName, time.Now().UTC(), bib))
+			return false, eventTarget.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
+				Source:     clientName,
+				FinishTime: time.Now().UTC(),
+				Bib:        bib,
+			})
 		},
 	}
 }
 
-func NewPlaceCommand(eventTarget events.EventTarget) Command {
+func NewPlaceCommand(eventTarget *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			var err error
-			bib, place := events.NoBib, 0
+			bib, place := raceevents.NoBib, 0
 			if len(args) > 1 {
 				bib, err = strconv.Atoi(args[0])
 				if err != nil {
@@ -115,7 +121,11 @@ func NewPlaceCommand(eventTarget events.EventTarget) Command {
 					return false, err
 				}
 
-				return false, eventTarget.SendRaceEvent(context.TODO(), eventstream.NewPlaceEvent(clientName, bib, place))
+				return false, eventTarget.SendPlaceEvent(context.TODO(), raceevents.PlaceEvent{
+					Source: clientName,
+					Bib:    bib,
+					Place:  place,
+				})
 			}
 
 			return false, fmt.Errorf("missing bib or place argument")
@@ -123,29 +133,31 @@ func NewPlaceCommand(eventTarget events.EventTarget) Command {
 	}
 }
 
-func NewListFinishCommand(eventSource events.EventSource) Command {
+func NewListFinishCommand(eventSource *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			var err error
-			var startEvent events.StartEvent
-			finishes := make([]events.FinishEvent, 0, 100)
+			var startEvent raceevents.StartEvent
+			finishes := make([]raceevents.Event, 0, 100)
+			hasStart := false
 			// read all the events and print them out
-			var current events.RaceEvent
-			current, err = eventSource.GetRaceEvent(context.TODO(), time.Second)
+			var current raceevents.Event
+			readEvent, err := eventSource.GetRaceEvent(context.TODO(), time.Second, &current)
 			if err != nil {
 				return false, err
 			}
 
-			for current != nil {
-				switch current.GetType() {
-				case events.StartEventType:
-					startEvent = current.(events.StartEvent)
-				case events.FinishEventType:
-					finishes = append(finishes, current.(events.FinishEvent))
+			for readEvent {
+				switch current.Data.(type) {
+				case raceevents.StartEvent:
+					startEvent = current.Data.(raceevents.StartEvent)
+					hasStart = true
+				case raceevents.FinishEvent:
+					finishes = append(finishes, current)
 				default:
 				}
 
-				current, err = eventSource.GetRaceEvent(context.TODO(), time.Second)
+				readEvent, err = eventSource.GetRaceEvent(context.TODO(), time.Second, &current)
 				if err != nil {
 					return false, err
 				}
@@ -153,10 +165,11 @@ func NewListFinishCommand(eventSource events.EventSource) Command {
 
 			// print the finish events in order with a duration base on the start event
 			// can't print finishes with out a start event
-			if startEvent != nil {
+			if hasStart {
 				fmt.Printf("%20s %20s %6s\n", "Event ID", "Time", "Bib")
-				for _, fe := range finishes {
-					fmt.Printf("%20s %20s %6d\n", fe.GetID(), fe.GetFinishTime().Sub(startEvent.GetStartTime()), fe.GetBib())
+				for _, e := range finishes {
+					fe := e.Data.(raceevents.FinishEvent)
+					fmt.Printf("%20s %20s %6d\n", e.ID, fe.FinishTime.Sub(startEvent.StartTime), fe.Bib)
 				}
 			}
 
@@ -165,7 +178,7 @@ func NewListFinishCommand(eventSource events.EventSource) Command {
 	}
 }
 
-func NewAddBibCommand(eventSource events.EventSource, eventTarget events.EventTarget) Command {
+func NewAddBibCommand(eventStream *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			//get the event with the event id and resend it with a bib attached
@@ -178,24 +191,26 @@ func NewAddBibCommand(eventSource events.EventSource, eventTarget events.EventTa
 				return false, err
 			}
 
-			eventRange, err := eventSource.GetRaceEventRange(context.TODO(), args[0], args[0])
+			msgBuffer := make([]raceevents.Event, 5)
+			countRead, err := eventStream.GetRaceEventRange(context.TODO(), args[0], args[0], msgBuffer)
 			if err != nil {
 				return false, err
 			}
-			if len(eventRange) != 1 {
+			if countRead != 1 {
 				return false, fmt.Errorf("event id did not return 1 event")
 			}
 
-			if len(eventRange) == 1 {
-				finishEvent, ok := eventRange[0].(events.FinishEvent)
-				if !ok || finishEvent.GetType() != events.FinishEventType {
-					return false, fmt.Errorf("expected event id to be for finish event, skipping")
-				}
-
-				// create updated event with new bib
-				updated := eventstream.NewFinishEvent(finishEvent.GetSource(), finishEvent.GetFinishTime(), bib)
-				eventTarget.SendRaceEvent(context.TODO(), updated)
+			finishEvent, ok := msgBuffer[0].Data.(raceevents.FinishEvent)
+			if !ok {
+				return false, fmt.Errorf("expected event id to be for finish event, skipping")
 			}
+
+			// create updated event with new bib
+			eventStream.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
+				Source:     finishEvent.Source,
+				Bib:        bib,
+				FinishTime: finishEvent.FinishTime,
+			})
 
 			return false, nil
 		},

@@ -90,9 +90,9 @@ func (es EventStream) GetRaceEventRange(ctx context.Context, startId, endId stri
 	}
 
 	read := 0
-	for i, msg := range msgs {
+	for i := 0; i < count; i++ {
 		var e Event
-		err = json.Unmarshal(msg.Data, &e)
+		err = json.Unmarshal(msgs[i].Data, &e)
 		if err != nil {
 			return 0, err
 		}

@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+const (
+	NoBib = -1
+)
+
 type Event struct {
 	ID        string
 	EventTime time.Time

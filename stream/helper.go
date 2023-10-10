@@ -41,7 +41,9 @@ func (mes *MockStream) GetMessageRange(ctx context.Context, startId, endId strin
 	if len(mes.Events) > 0 {
 		msgs[0] = mes.Events[0]
 		mes.Events = mes.Events[1:]
-		return len(msgs), nil
+		// returning 1 because it should be count returned, not buffer size
+		// mock only returns 1 at a time
+		return 1, nil
 	}
 
 	return 0, nil

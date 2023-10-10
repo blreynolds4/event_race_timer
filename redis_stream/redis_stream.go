@@ -9,35 +9,30 @@ import (
 	redis "github.com/redis/go-redis/v9"
 )
 
-type redisEventStream struct {
+// dataKey is used to store message payloads in AddXArg Values map
+const dataKey = "data"
+
+type RedisEventStream struct {
 	client    *redis.Client
 	stream    string
 	lastMsgId string
 }
 
-func NewRedisStreamReader(c *redis.Client, name string) stream.Reader {
-	result := newRedisStream(c, name)
-	return &result
-}
-
-func NewRedisStreamWriter(c *redis.Client, name string) stream.Writer {
-	result := newRedisStream(c, name)
-	return &result
-}
-
-func newRedisStream(c *redis.Client, name string) redisEventStream {
-	return redisEventStream{
+func NewRedisEventStream(c *redis.Client, name string) *RedisEventStream {
+	return &RedisEventStream{
 		client:    c,
 		stream:    name,
 		lastMsgId: "0",
 	}
 }
 
-func (rs *redisEventStream) SendMessage(ctx context.Context, sm stream.Message) error {
+func (rs *RedisEventStream) SendMessage(ctx context.Context, sm stream.Message) error {
 	addArgs := redis.XAddArgs{
 		Stream: rs.stream,
 		ID:     sm.ID,
-		Values: sm.Values,
+		Values: map[string]interface{}{
+			dataKey: sm.Data,
+		},
 	}
 
 	result := rs.client.XAdd(ctx, &addArgs)
@@ -48,47 +43,54 @@ func (rs *redisEventStream) SendMessage(ctx context.Context, sm stream.Message) 
 	return nil
 }
 
-func (rs *redisEventStream) GetMessage(ctx context.Context, timeout time.Duration) (stream.Message, error) {
-	result := stream.Message{} // isValid() is false until successful read
-
+func (rs *RedisEventStream) GetMessage(ctx context.Context, timeout time.Duration, resultMsg *stream.Message) (bool, error) {
 	data, err := rs.client.XRead(ctx, &redis.XReadArgs{
 		Streams: []string{rs.stream, rs.lastMsgId},
 		//count is number of entries we want to read from redis
 		Count: 1,
-		//we use the block command to make sure if no entry is found we wait
+		//we use the block argument to make sure if no entry is found we wait
 		//timeout duration, 0 is forever
 		Block: timeout,
 	}).Result()
 
 	if err != nil && err != redis.Nil {
-		return stream.Message{}, err
+		return false, err
 	}
 
 	if err != redis.Nil && len(data[0].Messages) > 0 {
-		msg := data[0].Messages[0]
-		result.ID = msg.ID
-		result.Values = msg.Values
+		redisMsg := data[0].Messages[0]
+		resultMsg.ID = redisMsg.ID
+		if _, ok := redisMsg.Values[dataKey].([]byte); !ok {
+			return false, fmt.Errorf("unknown msg data type")
+		}
+		resultMsg.Data = redisMsg.Values[dataKey].([]byte)
 
-		rs.lastMsgId = msg.ID
+		rs.lastMsgId = redisMsg.ID
 
-		return result, nil
+		return true, nil
 	}
 
-	fmt.Println("returning no data")
-	return result, nil
+	return false, nil
 }
 
-func (rs *redisEventStream) GetMessageRange(ctx context.Context, startId, endId string) ([]stream.Message, error) {
-	data, err := rs.client.XRange(ctx, rs.stream, startId, endId).Result()
+func (rs *RedisEventStream) GetMessageRange(ctx context.Context, startId, endId string, resultMessages []stream.Message) (int, error) {
+	if len(resultMessages) == 0 {
+		return 0, fmt.Errorf("can't get message range with empty buffer")
+	}
+	data, err := rs.client.XRangeN(ctx, rs.stream, startId, endId, int64(len(resultMessages))).Result()
 	if err != nil && err != redis.Nil {
-		return nil, err
+		return 0, err
 	}
 
-	// convert the data to RaceEvents and return them
-	result := make([]stream.Message, 0)
-	for _, msg := range data {
-		result = append(result, stream.Message{ID: msg.ID, Values: msg.Values})
+	// put result messages into the result slice.  Only return up to the capacity of the slice
+	bufferLength := len(resultMessages)
+	for i := 0; i < bufferLength; i++ {
+		rawMsgData := data[i].Values[dataKey]
+		if _, ok := rawMsgData.([]byte); !ok {
+			return 0, fmt.Errorf("unknown msg data type in range")
+		}
+		resultMessages[i] = stream.Message{ID: data[i].ID, Data: rawMsgData.([]byte)}
 	}
 
-	return result, nil
+	return len(resultMessages), nil
 }

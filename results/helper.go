@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-type MockResultSource struct {
+type MockResultStream struct {
 	Get        func(ctx context.Context, result *RaceResult, timeout time.Duration) (int, error)
 	Results    []RaceResult
 	CancelFunc func()
 }
 
-func (mrs *MockResultSource) GetResult(ctx context.Context, result *RaceResult, timeout time.Duration) (int, error) {
+func (mrs *MockResultStream) GetResult(ctx context.Context, result *RaceResult, timeout time.Duration) (int, error) {
 	if mrs.Get != nil {
 		return mrs.Get(ctx, result, timeout)
 	}

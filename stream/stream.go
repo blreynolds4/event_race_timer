@@ -8,13 +8,8 @@ import (
 // Message represents the data sent on a stream.
 // It needs an id and dictionary
 type Message struct {
-	ID     string
-	Values map[string]interface{}
-}
-
-func (msg Message) IsValid() bool {
-	// a message is valid if it has and ID and non nil Values
-	return (len(msg.ID) > 0) && (msg.Values != nil)
+	ID   string
+	Data []byte
 }
 
 type Writer interface {
@@ -22,6 +17,11 @@ type Writer interface {
 }
 
 type Reader interface {
-	GetMessage(ctx context.Context, timeout time.Duration) (Message, error)
-	GetMessageRange(ctx context.Context, startId, endId string) ([]Message, error)
+	GetMessage(ctx context.Context, timeout time.Duration, msg *Message) (bool, error)
+	GetMessageRange(ctx context.Context, startId, endId string, msgs []Message) (int, error)
+}
+
+type ReaderWriter interface {
+	Reader
+	Writer
 }

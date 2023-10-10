@@ -71,17 +71,11 @@ func TestIsCompleteFalse(t *testing.T) {
 	}
 }
 
-func TestStreamConstructors(t *testing.T) {
-	actualW := NewResultTarget(&stream.MockStream{})
-	_, ok := actualW.(*resultTargetStream)
-	assert.True(t, ok)
-}
-
 func TestSendResult(t *testing.T) {
 	mock := &stream.MockStream{
 		Events: make([]stream.Message, 0),
 	}
-	evStream := NewResultTarget(mock)
+	evStream := NewResultStream(mock)
 
 	rr := RaceResult{
 		Bib:     1,
@@ -94,10 +88,11 @@ func TestSendResult(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(mock.Events))
 
-	actual := RaceResult{}
-	err = actual.FromStreamMessage(mock.Events[0])
+	actual := make([]RaceResult, 2)
+	resultCount, err := evStream.GetResults(context.TODO(), actual)
 	assert.NoError(t, err)
-	assert.Equal(t, rr, actual)
+	assert.Equal(t, 1, resultCount)
+	assert.Equal(t, rr, actual[0])
 }
 
 func TestSendResultFails(t *testing.T) {
@@ -107,7 +102,7 @@ func TestSendResultFails(t *testing.T) {
 			return expErr
 		},
 	}
-	evStream := NewResultTarget(mock)
+	evStream := NewResultStream(mock)
 
 	rr := RaceResult{
 		Bib:     1,
@@ -118,4 +113,32 @@ func TestSendResultFails(t *testing.T) {
 
 	err := evStream.SendResult(context.TODO(), rr)
 	assert.Equal(t, expErr, err)
+}
+
+func TestGetResultsEmptyBuffer(t *testing.T) {
+	mock := &stream.MockStream{
+		Events: make([]stream.Message, 0),
+	}
+	evStream := NewResultStream(mock)
+
+	buf := make([]RaceResult, 0)
+	count, err := evStream.GetResults(context.TODO(), buf)
+	assert.Equal(t, fmt.Errorf("can't get results with zero length buffer"), err)
+	assert.Zero(t, count)
+}
+
+func TestGetResultsReadFailuer(t *testing.T) {
+	expErr := fmt.Errorf("boom")
+
+	mock := &stream.MockStream{
+		Range: func(ctx context.Context, startId, endId string, msgs []stream.Message) (int, error) {
+			return 0, expErr
+		},
+	}
+	evStream := NewResultStream(mock)
+
+	buf := make([]RaceResult, 1)
+	count, err := evStream.GetResults(context.TODO(), buf)
+	assert.Equal(t, expErr, err)
+	assert.Zero(t, count)
 }

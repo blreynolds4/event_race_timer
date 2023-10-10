@@ -2,8 +2,8 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/config"
-	"blreynolds4/event-race-timer/eventstream"
 	"blreynolds4/event-race-timer/places"
+	"blreynolds4/event-race-timer/raceevents"
 	"blreynolds4/event-race-timer/redis_stream"
 	"flag"
 	"fmt"
@@ -38,11 +38,8 @@ func main() {
 
 	defer rdb.Close()
 
-	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
-	src := eventstream.NewRaceEventSource(rawRead, eventstream.StreamMessageToRaceEvent)
-
-	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
-	target := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
+	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+	eventStream := raceevents.NewEventStream(rawStream)
 
 	var raceConfig config.RaceConfig
 	err := config.LoadConfigData(claConfigPath, &raceConfig)
@@ -51,7 +48,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	placer := places.NewPlaceGenerator(src, target)
+	placer := places.NewPlaceGenerator(eventStream)
 
 	err = placer.GeneratePlaces(raceConfig.SourceRanks)
 	if err != nil {

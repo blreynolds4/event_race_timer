@@ -37,11 +37,11 @@ func main() {
 
 	defer rdb.Close()
 
-	resultStream := claRacename + "_results"
+	resultStreamName := claRacename + "_results"
 
-	fmt.Println("building result reader reader for", resultStream)
-	rawRead := redis_stream.NewRedisStreamReader(rdb, resultStream)
-	resultEventSource := results.NewResultSource(rawRead)
+	fmt.Println("building result reader reader for", resultStreamName)
+	rawResultStream := redis_stream.NewRedisEventStream(rdb, claRacename+"_results")
+	resultStream := results.NewResultStream(rawResultStream)
 
 	resultScorer := overall.NewOverallResults()
 
@@ -59,7 +59,7 @@ func main() {
 	}()
 
 	fmt.Println("building overall results")
-	err := resultScorer.ScoreResults(cancelCtx, resultEventSource)
+	err := resultScorer.ScoreResults(cancelCtx, resultStream)
 	if err != nil {
 		fmt.Println("ERROR scoring results:", err)
 	}

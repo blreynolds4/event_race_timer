@@ -2,7 +2,7 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/command"
-	"blreynolds4/event-race-timer/eventstream"
+	"blreynolds4/event-race-timer/raceevents"
 	"blreynolds4/event-race-timer/redis_stream"
 	"bufio"
 	"flag"
@@ -37,15 +37,12 @@ func main() {
 
 	defer rdb.Close()
 
-	rawWrite := redis_stream.NewRedisStreamWriter(rdb, claRacename)
-	eventTarget := eventstream.NewRaceEventTarget(rawWrite, eventstream.RaceEventToStreamMessage)
-
-	rawRead := redis_stream.NewRedisStreamReader(rdb, claRacename)
-	eventSource := eventstream.NewRaceEventSource(rawRead, eventstream.StreamMessageToRaceEvent)
+	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+	eventStream := raceevents.NewEventStream(rawStream)
 
 	// create the command map
 	loopCommands := make(map[string]command.Command)
-	finishCommand := command.NewFinishCommand(eventTarget)
+	finishCommand := command.NewFinishCommand(eventStream)
 
 	loopCommands["quit"] = command.NewQuitCommand()
 	loopCommands["q"] = command.NewQuitCommand()
@@ -54,15 +51,15 @@ func main() {
 
 	loopCommands["ping"] = command.NewPingCommand(rdb)
 
-	loopCommands["start"] = command.NewStartCommand(eventTarget)
-	loopCommands["s"] = command.NewStartCommand(eventTarget)
+	loopCommands["start"] = command.NewStartCommand(eventStream)
+	loopCommands["s"] = command.NewStartCommand(eventStream)
 
-	loopCommands["place"] = command.NewPlaceCommand(eventTarget)
-	loopCommands["p"] = command.NewPlaceCommand(eventTarget)
+	loopCommands["place"] = command.NewPlaceCommand(eventStream)
+	loopCommands["p"] = command.NewPlaceCommand(eventStream)
 
-	loopCommands["list"] = command.NewListFinishCommand(eventSource)
+	loopCommands["list"] = command.NewListFinishCommand(eventStream)
 
-	loopCommands["bib"] = command.NewAddBibCommand(eventSource, eventTarget)
+	loopCommands["bib"] = command.NewAddBibCommand(eventStream)
 
 	loopCommands["finish"] = finishCommand
 	loopCommands["f"] = finishCommand

@@ -1,9 +1,10 @@
 package places
 
 import (
-	"blreynolds4/event-race-timer/events"
-	"blreynolds4/event-race-timer/eventstream"
+	"blreynolds4/event-race-timer/raceevents"
+	"blreynolds4/event-race-timer/stream"
 	"context"
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -26,39 +27,84 @@ func TestNormalPlacingInOrderSkipNoBib(t *testing.T) {
 	sourceRanks[bestSource] = 1
 	sourceRanks[slowSource] = 2
 
-	testEvents := []events.RaceEvent{
-		eventstream.NewStartEvent(bestSource, now),
-		eventstream.NewFinishEvent(bestSource, finishTime10, 10),
-		eventstream.NewFinishEvent(bestSource, finishTime12, events.NoBib),
-		eventstream.NewFinishEvent(bestSource, finishTime11, 11),
-		eventstream.NewFinishEvent(bestSource, finishTime13, 13),
+	testEvents := []raceevents.Event{
+		{
+			EventTime: now,
+			Data: raceevents.StartEvent{
+				Source:    bestSource,
+				StartTime: now,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime10,
+				Bib:        10,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime12,
+				Bib:        raceevents.NoBib,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime11,
+				Bib:        11,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime13,
+				Bib:        13,
+			},
+		},
 	}
-	inputEvents := NewMockRaceEventSource(testEvents)
 
-	actualResults := &mockEventTarget{
-		Events: make([]events.RaceEvent, 0, 5),
+	placesSent := make([]raceevents.Event, 0)
+	mockEventStream := &stream.MockStream{
+		Events: buildEventMessages(testEvents),
+		Send: func(ctx context.Context, sm stream.Message) error {
+			var e raceevents.Event
+			err := json.Unmarshal(sm.Data, &e)
+			if err != nil {
+				panic(err)
+			}
+			placesSent = append(placesSent, e)
+			return nil
+		},
 	}
+	inputEvents := raceevents.NewEventStream(mockEventStream)
 
-	builder := NewPlaceGenerator(inputEvents, actualResults)
+	builder := NewPlaceGenerator(inputEvents)
 	err := builder.GeneratePlaces(sourceRanks)
 	assert.NoError(t, err)
-	assert.Equal(t, 3, len(actualResults.Events))
+	// slice off the beginning of the event stream to get to what places were sent
+	assert.Equal(t, 3, len(placesSent))
 
 	// verify the bibs and places match what we expect
-	pe, ok := actualResults.Events[0].(events.PlaceEvent)
+	pe, ok := placesSent[0].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 10, pe.GetBib())
-	assert.Equal(t, 1, pe.GetPlace())
+	assert.Equal(t, 10, pe.Bib)
+	assert.Equal(t, 1, pe.Place)
 
-	pe, ok = actualResults.Events[1].(events.PlaceEvent)
+	pe, ok = placesSent[1].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 11, pe.GetBib())
-	assert.Equal(t, 2, pe.GetPlace())
+	assert.Equal(t, 11, pe.Bib)
+	assert.Equal(t, 2, pe.Place)
 
-	pe, ok = actualResults.Events[2].(events.PlaceEvent)
+	pe, ok = placesSent[2].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 13, pe.GetBib())
-	assert.Equal(t, 3, pe.GetPlace())
+	assert.Equal(t, 13, pe.Bib)
+	assert.Equal(t, 3, pe.Place)
 }
 
 func TestNoisyMultiSourceEvents(t *testing.T) {
@@ -79,51 +125,111 @@ func TestNoisyMultiSourceEvents(t *testing.T) {
 
 	// multiple events per finish, should only use the best time
 	// test getting best time first or second
-	testEvents := []events.RaceEvent{
-		eventstream.NewStartEvent(bestSource, now),
-
-		eventstream.NewFinishEvent(slowSource, finishTime10.Add(time.Second), 10),
-		eventstream.NewFinishEvent(bestSource, finishTime10, 10),
-
-		eventstream.NewFinishEvent(bestSource, finishTime12, events.NoBib),
-
-		eventstream.NewFinishEvent(bestSource, finishTime11, 11),
-		eventstream.NewFinishEvent(slowSource, finishTime11.Add(time.Minute), 11),
-
-		eventstream.NewFinishEvent(bestSource, finishTime13, 13),
-		eventstream.NewFinishEvent(slowSource, finishTime13.Add(-time.Minute), 13),
+	testEvents := []raceevents.Event{
+		{
+			EventTime: now,
+			Data: raceevents.StartEvent{
+				Source:    bestSource,
+				StartTime: now,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     slowSource,
+				FinishTime: finishTime10.Add(time.Second),
+				Bib:        10,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime10,
+				Bib:        10,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime12,
+				Bib:        raceevents.NoBib,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime11,
+				Bib:        11,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     slowSource,
+				FinishTime: finishTime11.Add(time.Minute),
+				Bib:        11,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime13,
+				Bib:        13,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     slowSource,
+				FinishTime: finishTime13.Add(-time.Minute),
+				Bib:        13,
+			},
+		},
 	}
-	inputEvents := NewMockRaceEventSource(testEvents)
-
-	actualResults := &mockEventTarget{
-		Events: make([]events.RaceEvent, 0, 4),
+	placesSent := make([]raceevents.Event, 0)
+	mockEventStream := &stream.MockStream{
+		Events: buildEventMessages(testEvents),
+		Send: func(ctx context.Context, sm stream.Message) error {
+			var e raceevents.Event
+			err := json.Unmarshal(sm.Data, &e)
+			if err != nil {
+				panic(err)
+			}
+			placesSent = append(placesSent, e)
+			return nil
+		},
 	}
+	inputEvents := raceevents.NewEventStream(mockEventStream)
 
-	builder := NewPlaceGenerator(inputEvents, actualResults)
+	builder := NewPlaceGenerator(inputEvents)
 	err := builder.GeneratePlaces(sourceRanks)
 	assert.NoError(t, err)
-	assert.Equal(t, 4, len(actualResults.Events))
+	assert.Equal(t, 4, len(placesSent))
 
 	// verify the bibs and places match what we expect
-	pe, ok := actualResults.Events[0].(events.PlaceEvent)
+	pe, ok := placesSent[0].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 10, pe.GetBib())
-	assert.Equal(t, 1, pe.GetPlace())
+	assert.Equal(t, 10, pe.Bib)
+	assert.Equal(t, 1, pe.Place)
 
-	pe, ok = actualResults.Events[1].(events.PlaceEvent)
+	pe, ok = placesSent[1].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 10, pe.GetBib())
-	assert.Equal(t, 1, pe.GetPlace())
+	assert.Equal(t, 10, pe.Bib)
+	assert.Equal(t, 1, pe.Place)
 
-	pe, ok = actualResults.Events[2].(events.PlaceEvent)
+	pe, ok = placesSent[2].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 11, pe.GetBib())
-	assert.Equal(t, 2, pe.GetPlace())
+	assert.Equal(t, 11, pe.Bib)
+	assert.Equal(t, 2, pe.Place)
 
-	pe, ok = actualResults.Events[3].(events.PlaceEvent)
+	pe, ok = placesSent[3].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 13, pe.GetBib())
-	assert.Equal(t, 3, pe.GetPlace())
+	assert.Equal(t, 13, pe.Bib)
+	assert.Equal(t, 3, pe.Place)
 }
 
 func TestEventsArriveOutOfOrder(t *testing.T) {
@@ -137,83 +243,105 @@ func TestEventsArriveOutOfOrder(t *testing.T) {
 
 	sourceRanks := make(map[string]int)
 
-	testEvents := []events.RaceEvent{
-		eventstream.NewFinishEvent(t.Name(), finishTime13, 13),
-		eventstream.NewFinishEvent(t.Name(), finishTime11, 11),
-		eventstream.NewFinishEvent(t.Name(), finishTime10, 10),
+	testEvents := []raceevents.Event{
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				FinishTime: finishTime13,
+				Bib:        13,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				FinishTime: finishTime11,
+				Bib:        11,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				FinishTime: finishTime10,
+				Bib:        10,
+			},
+		},
 	}
-	inputEvents := NewMockRaceEventSource(testEvents)
-
-	actualResults := &mockEventTarget{
-		Events: make([]events.RaceEvent, 0, 6),
+	placesSent := make([]raceevents.Event, 0)
+	mockEventStream := &stream.MockStream{
+		Events: buildEventMessages(testEvents),
+		Send: func(ctx context.Context, sm stream.Message) error {
+			var e raceevents.Event
+			err := json.Unmarshal(sm.Data, &e)
+			if err != nil {
+				panic(err)
+			}
+			placesSent = append(placesSent, e)
+			return nil
+		},
 	}
+	inputEvents := raceevents.NewEventStream(mockEventStream)
 
-	builder := NewPlaceGenerator(inputEvents, actualResults)
+	builder := NewPlaceGenerator(inputEvents)
 	err := builder.GeneratePlaces(sourceRanks)
 	assert.NoError(t, err)
-	assert.Equal(t, 6, len(actualResults.Events))
+	assert.Equal(t, 6, len(placesSent))
 
 	// verify the bibs and places match what we expect
-	pe, ok := actualResults.Events[0].(events.PlaceEvent)
+	pe, ok := placesSent[0].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 13, pe.GetBib())
-	assert.Equal(t, 1, pe.GetPlace())
+	assert.Equal(t, 13, pe.Bib)
+	assert.Equal(t, 1, pe.Place)
 
-	pe, ok = actualResults.Events[1].(events.PlaceEvent)
+	pe, ok = placesSent[1].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 11, pe.GetBib())
-	assert.Equal(t, 1, pe.GetPlace())
+	assert.Equal(t, 11, pe.Bib)
+	assert.Equal(t, 1, pe.Place)
 
-	pe, ok = actualResults.Events[2].(events.PlaceEvent)
+	pe, ok = placesSent[2].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 13, pe.GetBib())
-	assert.Equal(t, 2, pe.GetPlace())
+	assert.Equal(t, 13, pe.Bib)
+	assert.Equal(t, 2, pe.Place)
 
-	pe, ok = actualResults.Events[3].(events.PlaceEvent)
+	pe, ok = placesSent[3].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 10, pe.GetBib())
-	assert.Equal(t, 1, pe.GetPlace())
+	assert.Equal(t, 10, pe.Bib)
+	assert.Equal(t, 1, pe.Place)
 
-	pe, ok = actualResults.Events[4].(events.PlaceEvent)
+	pe, ok = placesSent[4].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 11, pe.GetBib())
-	assert.Equal(t, 2, pe.GetPlace())
+	assert.Equal(t, 11, pe.Bib)
+	assert.Equal(t, 2, pe.Place)
 
-	pe, ok = actualResults.Events[5].(events.PlaceEvent)
+	pe, ok = placesSent[5].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 13, pe.GetBib())
-	assert.Equal(t, 3, pe.GetPlace())
+	assert.Equal(t, 13, pe.Bib)
+	assert.Equal(t, 3, pe.Place)
 }
 
-func NewMockRaceEventSource(testEvents []events.RaceEvent) events.EventSource {
-	return &mockEventSource{events: testEvents}
-}
-
-type mockEventSource struct {
-	events []events.RaceEvent
-}
-
-func (mes *mockEventSource) GetRaceEvent(ctx context.Context, timeout time.Duration) (events.RaceEvent, error) {
-	if len(mes.events) > 0 {
-		var result events.RaceEvent
-		// remove the first item in the list and shift everything else up
-		result, mes.events = mes.events[0], mes.events[1:]
-
-		return result, nil
+func buildEventMessages(testEvents []raceevents.Event) []stream.Message {
+	result := make([]stream.Message, len(testEvents))
+	for i, e := range testEvents {
+		eData, err := json.Marshal(e)
+		if err != nil {
+			panic(err)
+		}
+		result[i] = stream.Message{
+			ID:   e.ID,
+			Data: eData,
+		}
 	}
 
-	return nil, nil
+	return result
 }
 
-func (mes *mockEventSource) GetRaceEventRange(ctx context.Context, start, end string) ([]events.RaceEvent, error) {
-	return []events.RaceEvent{}, nil
-}
+func buildActualEvents(rawMessages []stream.Message) []raceevents.Event {
+	result := make([]raceevents.Event, len(rawMessages))
+	for i, msg := range rawMessages {
+		err := json.Unmarshal(msg.Data, &result[i])
+		if err != nil {
+			panic(err)
+		}
+	}
 
-type mockEventTarget struct {
-	Events []events.RaceEvent
-}
-
-func (mrt *mockEventTarget) SendRaceEvent(ctx context.Context, e events.RaceEvent) error {
-	mrt.Events = append(mrt.Events, e)
-	return nil
+	return result
 }

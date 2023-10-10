@@ -1,9 +1,10 @@
 package command
 
 import (
-	"blreynolds4/event-race-timer/events"
-	"blreynolds4/event-race-timer/eventstream"
+	"blreynolds4/event-race-timer/raceevents"
+	"blreynolds4/event-race-timer/stream"
 	"context"
+	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -36,161 +37,187 @@ func TestPingCommand(t *testing.T) {
 }
 
 func TestStartCommandNoTime(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	start := NewStartCommand(mockTarget)
+	start := NewStartCommand(inputEvents)
 	// no seed duration arugment
 	q, err := start.Run([]string{})
 	assert.NoError(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 1, len(mockTarget.Events))
+	assert.Equal(t, 1, len(mockInStream.Events))
+	actualEvents := buildActualResults(mockInStream)
 
-	assert.Equal(t, events.StartEventType, mockTarget.Events[0].GetType())
-	se, ok := mockTarget.Events[0].(events.StartEvent)
+	se, ok := actualEvents[0].Data.(raceevents.StartEvent)
 	assert.True(t, ok)
-	startTime := se.GetStartTime()
+	startTime := se.StartTime
 	assert.False(t, startTime.IsZero())
 }
 
 func TestStartCommandWithTime(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
 	now := time.Now().UTC()
 
-	start := NewStartCommand(mockTarget)
+	start := NewStartCommand(inputEvents)
 	// with duration argument
 	q, err := start.Run([]string{time.Minute.String()})
 	assert.NoError(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 1, len(mockTarget.Events))
+	assert.Equal(t, 1, len(mockInStream.Events))
+	actuaEvents := buildActualResults(mockInStream)
 
-	se, ok := mockTarget.Events[0].(events.StartEvent)
+	se, ok := actuaEvents[0].Data.(raceevents.StartEvent)
 	assert.True(t, ok)
-	startTime := se.GetStartTime()
-	assert.True(t, startTime.Before(now))
+	assert.True(t, se.StartTime.Before(now))
 }
 
 func TestStartCommandWithBadTime(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	start := NewStartCommand(mockTarget)
+	start := NewStartCommand(inputEvents)
 	// with duration argument
 	q, err := start.Run([]string{"bad"})
 	assert.Error(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 0, len(mockTarget.Events))
+	assert.Equal(t, 0, len(mockInStream.Events))
 }
 
 func TestFinishCommandNoBib(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewFinishCommand(mockTarget)
+	place := NewFinishCommand(inputEvents)
 	q, err := place.Run([]string{})
 	assert.NoError(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 1, len(mockTarget.Events))
+	assert.Equal(t, 1, len(mockInStream.Events))
+	actualEvents := buildActualResults(mockInStream)
 
-	pe, ok := mockTarget.Events[0].(events.FinishEvent)
+	fe, ok := actualEvents[0].Data.(raceevents.FinishEvent)
 	assert.True(t, ok)
-	assert.Equal(t, events.NoBib, pe.GetBib())
+	assert.Equal(t, raceevents.NoBib, fe.Bib)
 }
 
 func TestFinishCommandWithBib(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewFinishCommand(mockTarget)
+	place := NewFinishCommand(inputEvents)
 	q, err := place.Run([]string{"1"})
 	assert.NoError(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 1, len(mockTarget.Events))
+	assert.Equal(t, 1, len(mockInStream.Events))
+	actualEvents := buildActualResults(mockInStream)
 
-	pe, ok := mockTarget.Events[0].(events.FinishEvent)
+	fe, ok := actualEvents[0].Data.(raceevents.FinishEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 1, pe.GetBib())
+	assert.Equal(t, 1, fe.Bib)
 }
 
 func TestFinishCommandWithBadBib(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewFinishCommand(mockTarget)
+	place := NewFinishCommand(inputEvents)
 	q, err := place.Run([]string{"x"})
 	assert.Error(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 0, len(mockTarget.Events))
+	assert.Equal(t, 0, len(mockInStream.Events))
 }
 
 func TestPlacetCommandNoBib(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(mockTarget)
+	place := NewPlaceCommand(inputEvents)
 	q, err := place.Run([]string{"1", "1"})
 	assert.NoError(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 1, len(mockTarget.Events))
+	assert.Equal(t, 1, len(mockInStream.Events))
+	actualEvents := buildActualResults(mockInStream)
 
-	pe, ok := mockTarget.Events[0].(events.PlaceEvent)
+	pe, ok := actualEvents[0].Data.(raceevents.PlaceEvent)
 	assert.True(t, ok)
-	assert.Equal(t, 1, pe.GetPlace())
-	assert.Equal(t, 1, pe.GetBib())
+	assert.Equal(t, 1, pe.Place)
+	assert.Equal(t, 1, pe.Bib)
 }
 
 func TestPlacetCommandMissingArg(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(mockTarget)
+	place := NewPlaceCommand(inputEvents)
 	q, err := place.Run([]string{"1"})
 	assert.Error(t, err)
 	assert.False(t, q)
 }
 
 func TestPlacetCommandBadBib(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(mockTarget)
+	place := NewPlaceCommand(inputEvents)
 	q, err := place.Run([]string{"x", "1"})
 	assert.Error(t, err)
 	assert.False(t, q)
 }
 
 func TestPlacetCommandBadPlace(t *testing.T) {
-	mockTarget := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(mockTarget)
+	place := NewPlaceCommand(inputEvents)
 	q, err := place.Run([]string{"1", "x"})
 	assert.Error(t, err)
 	assert.False(t, q)
 }
 
 func TestStartListFinishes(t *testing.T) {
-	mockSource := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
 	// seed a start and finish event
-	mockSource.Events = append(mockSource.Events, eventstream.NewStartEvent(t.Name(), time.Now().UTC()))
-	mockSource.Events = append(mockSource.Events, eventstream.NewFinishEvent(t.Name(), time.Now().UTC(), events.NoBib))
 
-	list := NewListFinishCommand(mockSource)
+	mockInStream.Events = append(mockInStream.Events, toMsg(raceevents.Event{
+		EventTime: time.Now().UTC(),
+		Data: raceevents.StartEvent{
+			StartTime: time.Now().UTC(),
+		},
+	}))
+	mockInStream.Events = append(mockInStream.Events, toMsg(raceevents.Event{
+		EventTime: time.Now().UTC(),
+		Data: raceevents.FinishEvent{
+			FinishTime: time.Now().UTC(),
+			Bib:        raceevents.NoBib,
+		},
+	}))
+	list := NewListFinishCommand(inputEvents)
+
 	// no seed duration arugment
 	q, err := list.Run([]string{})
 	assert.NoError(t, err)
@@ -199,15 +226,16 @@ func TestStartListFinishes(t *testing.T) {
 
 func TestStartListFinishesFailFirstGet(t *testing.T) {
 	expErr := fmt.Errorf("fail")
-	mockSource := &events.MockRaceEventStream{
-		Get: func(ctx context.Context, t time.Duration) (events.RaceEvent, error) {
+	mockInStream := &stream.MockStream{
+		Get: func(ctx context.Context, timeout time.Duration, msg *stream.Message) (bool, error) {
 			fmt.Println("returnning error")
-			return nil, expErr
+			return false, expErr
 		},
-		Events: make([]events.RaceEvent, 0),
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewListFinishCommand(mockSource)
+	list := NewListFinishCommand(inputEvents)
 	// no seed duration arugment
 	q, err := list.Run([]string{})
 	assert.Equal(t, expErr, err)
@@ -215,23 +243,30 @@ func TestStartListFinishesFailFirstGet(t *testing.T) {
 }
 
 func TestStartListFinishesFailSecondGet(t *testing.T) {
-	raceEvents := []events.RaceEvent{
-		eventstream.NewStartEvent(t.Name(), time.Now().UTC()),
-	}
-
+	raceMessages := buildEventMessages(
+		[]raceevents.Event{
+			{
+				EventTime: time.Now().UTC(),
+				Data: raceevents.StartEvent{
+					Source:    t.Name(),
+					StartTime: time.Now().UTC(),
+				},
+			},
+		})
 	expErr := fmt.Errorf("fail")
-	mockSource := &events.MockRaceEventStream{
-		Get: func(ctx context.Context, t time.Duration) (events.RaceEvent, error) {
-			if len(raceEvents) > 0 {
-				result := raceEvents[0]
-				raceEvents = raceEvents[1:]
-				return result, nil
+	mockInStream := &stream.MockStream{
+		Get: func(ctx context.Context, timeout time.Duration, msg *stream.Message) (bool, error) {
+			if len(raceMessages) > 0 {
+				*msg = raceMessages[0]
+				raceMessages = raceMessages[1:]
+				return true, nil
 			}
-			return nil, expErr
+			return false, expErr
 		},
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewListFinishCommand(mockSource)
+	list := NewListFinishCommand(inputEvents)
 	// no seed duration arugment
 	q, err := list.Run([]string{})
 	assert.Equal(t, expErr, err)
@@ -239,11 +274,12 @@ func TestStartListFinishesFailSecondGet(t *testing.T) {
 }
 
 func TestAddBibMissingArgs(t *testing.T) {
-	mockEvents := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewAddBibCommand(mockEvents, mockEvents)
+	list := NewAddBibCommand(inputEvents)
 	// missing
 	q, err := list.Run([]string{})
 	assert.Error(t, err)
@@ -251,11 +287,12 @@ func TestAddBibMissingArgs(t *testing.T) {
 }
 
 func TestAddBibMissingBadBib(t *testing.T) {
-	mockEvents := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewAddBibCommand(mockEvents, mockEvents)
+	list := NewAddBibCommand(inputEvents)
 	q, err := list.Run([]string{"x", "y"})
 	assert.Error(t, err)
 	assert.False(t, q)
@@ -263,13 +300,15 @@ func TestAddBibMissingBadBib(t *testing.T) {
 
 func TestAddBibMissingBibRangeFails(t *testing.T) {
 	expErr := fmt.Errorf("fail")
-	mockEvents := &events.MockRaceEventStream{
-		Range: func(ctx context.Context, start, end string) ([]events.RaceEvent, error) {
-			return []events.RaceEvent{}, expErr
+	mockInStream := &stream.MockStream{
+		Range: func(ctx context.Context, startId, endId string, msgs []stream.Message) (int, error) {
+			return 0, expErr
 		},
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewAddBibCommand(mockEvents, mockEvents)
+	list := NewAddBibCommand(inputEvents)
 	q, err := list.Run([]string{"msgid", "1"})
 	assert.Equal(t, expErr, err)
 	assert.False(t, q)
@@ -277,11 +316,15 @@ func TestAddBibMissingBibRangeFails(t *testing.T) {
 
 func TestAddBibMissingEvent(t *testing.T) {
 	expErr := fmt.Errorf("event id did not return 1 event")
-	mockEvents := &events.MockRaceEventStream{
-		Events: make([]events.RaceEvent, 0),
+	mockInStream := &stream.MockStream{
+		Range: func(ctx context.Context, startId, endId string, msgs []stream.Message) (int, error) {
+			return 0, expErr
+		},
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewAddBibCommand(mockEvents, mockEvents)
+	list := NewAddBibCommand(inputEvents)
 	q, err := list.Run([]string{"msgid", "1"})
 	assert.Equal(t, expErr, err)
 	assert.False(t, q)
@@ -289,27 +332,78 @@ func TestAddBibMissingEvent(t *testing.T) {
 
 func TestAddBibWrongEventType(t *testing.T) {
 	expErr := fmt.Errorf("expected event id to be for finish event, skipping")
-	mockEvents := &events.MockRaceEventStream{
-		Events: []events.RaceEvent{eventstream.NewStartEvent(t.Name(), time.Now().UTC())},
+	mockInStream := &stream.MockStream{
+		Range: func(ctx context.Context, startId, endId string, msgs []stream.Message) (int, error) {
+			return 0, expErr
+		},
+		Events: make([]stream.Message, 0),
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewAddBibCommand(mockEvents, mockEvents)
+	list := NewAddBibCommand(inputEvents)
 	q, err := list.Run([]string{"msgid", "1"})
 	assert.Equal(t, expErr, err)
 	assert.False(t, q)
 }
 
 func TestAddBib(t *testing.T) {
-	mockEvents := &events.MockRaceEventStream{
-		Events: []events.RaceEvent{eventstream.NewFinishEvent(t.Name(), time.Now().UTC(), events.NoBib)},
+	mockInStream := &stream.MockStream{
+		Events: []stream.Message{toMsg(raceevents.Event{
+			Data: raceevents.FinishEvent{
+				Source:     t.Name(),
+				FinishTime: time.Now().UTC(),
+				Bib:        raceevents.NoBib,
+			},
+		})},
 	}
+	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	list := NewAddBibCommand(mockEvents, mockEvents)
+	list := NewAddBibCommand(inputEvents)
 	q, err := list.Run([]string{"msgid", "1"})
 	assert.NoError(t, err)
 	assert.False(t, q)
-	assert.Equal(t, 1, len(mockEvents.Events))
-	assert.Equal(t, events.FinishEventType, mockEvents.Events[0].GetType())
-	fe := mockEvents.Events[0].(events.FinishEvent)
-	assert.Equal(t, 1, fe.GetBib())
+	assert.Equal(t, 1, len(mockInStream.Events))
+	actualEvents := buildActualResults(mockInStream)
+
+	fe := actualEvents[0].Data.(raceevents.FinishEvent)
+	assert.Equal(t, 1, fe.Bib)
+}
+
+func buildActualResults(rawOutput *stream.MockStream) []raceevents.Event {
+	result := make([]raceevents.Event, len(rawOutput.Events))
+	for i, msg := range rawOutput.Events {
+		err := json.Unmarshal(msg.Data, &result[i])
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return result
+}
+
+func toMsg(r raceevents.Event) stream.Message {
+	var msg stream.Message
+	msgData, err := json.Marshal(r)
+	if err != nil {
+		panic(err)
+	}
+	msg.Data = msgData
+
+	return msg
+}
+
+func buildEventMessages(testEvents []raceevents.Event) []stream.Message {
+	result := make([]stream.Message, len(testEvents))
+	for i, e := range testEvents {
+		eData, err := json.Marshal(e)
+		if err != nil {
+			panic(err)
+		}
+		result[i] = stream.Message{
+			ID:   e.ID,
+			Data: eData,
+		}
+	}
+
+	return result
 }

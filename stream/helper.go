@@ -34,6 +34,18 @@ func (mes *MockStream) GetMessage(ctx context.Context, timeout time.Duration, ms
 	return false, nil
 }
 
+func (mes *MockStream) RangeQueryMin() string {
+	return "-"
+}
+
+func (mes *MockStream) ExclusiveQueryStart(string) string {
+	return "("
+}
+
+func (mes *MockStream) RangeQueryMax() string {
+	return "+"
+}
+
 func (mes *MockStream) GetMessageRange(ctx context.Context, startId, endId string, msgs []Message) (int, error) {
 	if mes.Range != nil {
 		return mes.Range(ctx, startId, endId, msgs)

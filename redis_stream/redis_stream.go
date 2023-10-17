@@ -60,10 +60,10 @@ func (rs *RedisEventStream) GetMessage(ctx context.Context, timeout time.Duratio
 	if err != redis.Nil && len(data[0].Messages) > 0 {
 		redisMsg := data[0].Messages[0]
 		resultMsg.ID = redisMsg.ID
-		if _, ok := redisMsg.Values[dataKey].([]byte); !ok {
-			return false, fmt.Errorf("unknown msg data type")
+		resultMsg.Data, err = rs.decodeMessageData(redisMsg.Values[dataKey])
+		if err != nil {
+			return false, err
 		}
-		resultMsg.Data = redisMsg.Values[dataKey].([]byte)
 
 		rs.lastMsgId = redisMsg.ID
 
@@ -73,24 +73,51 @@ func (rs *RedisEventStream) GetMessage(ctx context.Context, timeout time.Duratio
 	return false, nil
 }
 
+func (rs *RedisEventStream) decodeMessageData(data any) ([]byte, error) {
+	switch data.(type) {
+	case []byte:
+		return data.([]byte), nil
+	case string:
+		stringData := data.(string)
+		return []byte(stringData), nil
+	default:
+		return nil, fmt.Errorf("unknown msg data type")
+	}
+
+}
+
+func (rs *RedisEventStream) RangeQueryMin() string {
+	return "-"
+}
+
+func (rs *RedisEventStream) ExclusiveQueryStart(id string) string {
+	return "(" + id
+}
+
+func (rs *RedisEventStream) RangeQueryMax() string {
+	return "+"
+}
+
 func (rs *RedisEventStream) GetMessageRange(ctx context.Context, startId, endId string, resultMessages []stream.Message) (int, error) {
 	if len(resultMessages) == 0 {
 		return 0, fmt.Errorf("can't get message range with empty buffer")
 	}
+
 	data, err := rs.client.XRangeN(ctx, rs.stream, startId, endId, int64(len(resultMessages))).Result()
 	if err != nil && err != redis.Nil {
 		return 0, err
 	}
 
-	// put result messages into the result slice.  Only return up to the capacity of the slice
-	bufferLength := len(resultMessages)
-	for i := 0; i < bufferLength; i++ {
-		rawMsgData := data[i].Values[dataKey]
-		if _, ok := rawMsgData.([]byte); !ok {
-			return 0, fmt.Errorf("unknown msg data type in range")
+	// put result messages into the result slice.  Only return up to the length of what was returned
+	resultCount := len(data)
+	for i := 0; i < resultCount; i++ {
+		decodedData, err := rs.decodeMessageData(data[i].Values[dataKey])
+		if err != nil {
+			return 0, err
 		}
-		resultMessages[i] = stream.Message{ID: data[i].ID, Data: rawMsgData.([]byte)}
+
+		resultMessages[i] = stream.Message{ID: data[i].ID, Data: decodedData}
 	}
 
-	return len(resultMessages), nil
+	return resultCount, nil
 }

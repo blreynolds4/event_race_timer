@@ -1,6 +1,7 @@
 package main
 
 import (
+	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/config"
 	"blreynolds4/event-race-timer/places"
 	"blreynolds4/event-race-timer/raceevents"
@@ -20,11 +21,13 @@ func main() {
 	var claDbNumber int
 	var claRacename string
 	var claConfigPath string
+	var claCompetitorsPath string
 
 	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
 	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
 	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
 	flag.StringVar(&claConfigPath, "config", "", "The path to the config file (json)")
+	flag.StringVar(&claCompetitorsPath, "competitors", "", "The path to the competitor lookup file (json)")
 
 	// parse command line
 	flag.Parse()
@@ -48,9 +51,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	athletes := make(competitors.CompetitorLookup)
+	err = competitors.LoadCompetitorLookup(claCompetitorsPath, athletes)
+	if err != nil {
+		fmt.Printf("ERROR loading competitors from '%s': %v\n", claCompetitorsPath, err)
+		os.Exit(1)
+	}
+
 	placer := places.NewPlaceGenerator(eventStream)
 
-	err = placer.GeneratePlaces(raceConfig.SourceRanks)
+	err = placer.GeneratePlaces(athletes, raceConfig.SourceRanks)
 	if err != nil {
 		fmt.Println("ERROR generating places:", err)
 	}

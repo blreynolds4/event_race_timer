@@ -20,16 +20,15 @@ func TestIsComplete(t *testing.T) {
 			Age:   1,
 			Grade: 1,
 		},
-		Place: 1,
-		Time:  time.Second,
+		Place:       1,
+		PlaceSource: "y",
 	}
-
 	assert.True(t, rr.IsComplete())
 }
 
 func TestIsCompleteFalse(t *testing.T) {
 	results := []RaceResult{
-		{
+		{ //Bib is 0
 			Athlete: &competitors.Competitor{
 				Name:  t.Name(),
 				Team:  t.Name(),
@@ -40,11 +39,13 @@ func TestIsCompleteFalse(t *testing.T) {
 			Time:  time.Second,
 		},
 		{
+			// Athlete is nil
 			Bib:   1,
 			Place: 1,
 			Time:  time.Second,
 		},
 		{
+			// place is 0
 			Bib: 1,
 			Athlete: &competitors.Competitor{
 				Name:  t.Name(),
@@ -54,7 +55,19 @@ func TestIsCompleteFalse(t *testing.T) {
 			},
 			Time: time.Second,
 		},
+		// {
+		// 	// Time is zero
+		// 	Bib: 1,
+		// 	Athlete: &competitors.Competitor{
+		// 		Name:  t.Name(),
+		// 		Team:  t.Name(),
+		// 		Age:   1,
+		// 		Grade: 1,
+		// 	},
+		// 	Place: 1,
+		// },
 		{
+			// place source is ""
 			Bib: 1,
 			Athlete: &competitors.Competitor{
 				Name:  t.Name(),
@@ -62,8 +75,21 @@ func TestIsCompleteFalse(t *testing.T) {
 				Age:   1,
 				Grade: 1,
 			},
-			Place: 1,
+			Place:        1,
+			FinishSource: "y",
 		},
+		// {
+		// 	// finish source is ""
+		// 	Bib: 1,
+		// 	Athlete: &competitors.Competitor{
+		// 		Name:  t.Name(),
+		// 		Team:  t.Name(),
+		// 		Age:   1,
+		// 		Grade: 1,
+		// 	},
+		// 	Place:       1,
+		// 	PlaceSource: "y",
+		// },
 	}
 
 	for _, rr := range results {
@@ -127,7 +153,7 @@ func TestGetResultsEmptyBuffer(t *testing.T) {
 	assert.Zero(t, count)
 }
 
-func TestGetResultsReadFailuer(t *testing.T) {
+func TestGetResultsReadFailure(t *testing.T) {
 	expErr := fmt.Errorf("boom")
 
 	mock := &stream.MockStream{

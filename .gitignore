@@ -1,3 +1,10 @@
 race-cmd
 cli
 placer
+webhooks
+da-import
+overall-scorer
+result-builder
+generator
+*.html
+raceweb

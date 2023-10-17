@@ -6,10 +6,10 @@ import (
 )
 
 type RaceConfig struct {
-	RaceName     string
-	RedisAddress string
-	RedisDbumber int
-	SourceRanks  map[string]int
+	// RaceName     string
+	// RedisAddress string
+	// RedisDbumber int
+	SourceRanks map[string]int
 }
 
 func LoadConfigData(configPath string, raceConfig *RaceConfig) error {

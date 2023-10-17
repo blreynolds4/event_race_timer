@@ -42,7 +42,8 @@ func TestStartCommandNoTime(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	start := NewStartCommand(inputEvents)
+	eventSource := t.Name()
+	start := NewStartCommand(eventSource, inputEvents)
 	// no seed duration arugment
 	q, err := start.Run([]string{})
 	assert.NoError(t, err)
@@ -54,6 +55,7 @@ func TestStartCommandNoTime(t *testing.T) {
 	assert.True(t, ok)
 	startTime := se.StartTime
 	assert.False(t, startTime.IsZero())
+	assert.Equal(t, eventSource, se.Source)
 }
 
 func TestStartCommandWithTime(t *testing.T) {
@@ -64,7 +66,8 @@ func TestStartCommandWithTime(t *testing.T) {
 
 	now := time.Now().UTC()
 
-	start := NewStartCommand(inputEvents)
+	eventSource := t.Name()
+	start := NewStartCommand(eventSource, inputEvents)
 	// with duration argument
 	q, err := start.Run([]string{time.Minute.String()})
 	assert.NoError(t, err)
@@ -75,6 +78,7 @@ func TestStartCommandWithTime(t *testing.T) {
 	se, ok := actuaEvents[0].Data.(raceevents.StartEvent)
 	assert.True(t, ok)
 	assert.True(t, se.StartTime.Before(now))
+	assert.Equal(t, eventSource, se.Source)
 }
 
 func TestStartCommandWithBadTime(t *testing.T) {
@@ -83,7 +87,7 @@ func TestStartCommandWithBadTime(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	start := NewStartCommand(inputEvents)
+	start := NewStartCommand(t.Name(), inputEvents)
 	// with duration argument
 	q, err := start.Run([]string{"bad"})
 	assert.Error(t, err)
@@ -97,7 +101,8 @@ func TestFinishCommandNoBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewFinishCommand(inputEvents)
+	eventSource := t.Name()
+	place := NewFinishCommand(eventSource, inputEvents)
 	q, err := place.Run([]string{})
 	assert.NoError(t, err)
 	assert.False(t, q)
@@ -107,6 +112,7 @@ func TestFinishCommandNoBib(t *testing.T) {
 	fe, ok := actualEvents[0].Data.(raceevents.FinishEvent)
 	assert.True(t, ok)
 	assert.Equal(t, raceevents.NoBib, fe.Bib)
+	assert.Equal(t, eventSource, fe.Source)
 }
 
 func TestFinishCommandWithBib(t *testing.T) {
@@ -115,7 +121,8 @@ func TestFinishCommandWithBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewFinishCommand(inputEvents)
+	eventSource := t.Name()
+	place := NewFinishCommand(eventSource, inputEvents)
 	q, err := place.Run([]string{"1"})
 	assert.NoError(t, err)
 	assert.False(t, q)
@@ -125,6 +132,7 @@ func TestFinishCommandWithBib(t *testing.T) {
 	fe, ok := actualEvents[0].Data.(raceevents.FinishEvent)
 	assert.True(t, ok)
 	assert.Equal(t, 1, fe.Bib)
+	assert.Equal(t, eventSource, fe.Source)
 }
 
 func TestFinishCommandWithBadBib(t *testing.T) {
@@ -133,7 +141,7 @@ func TestFinishCommandWithBadBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewFinishCommand(inputEvents)
+	place := NewFinishCommand(t.Name(), inputEvents)
 	q, err := place.Run([]string{"x"})
 	assert.Error(t, err)
 	assert.False(t, q)
@@ -146,7 +154,8 @@ func TestPlacetCommandNoBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(inputEvents)
+	eventSource := t.Name()
+	place := NewPlaceCommand(eventSource, inputEvents)
 	q, err := place.Run([]string{"1", "1"})
 	assert.NoError(t, err)
 	assert.False(t, q)
@@ -157,6 +166,7 @@ func TestPlacetCommandNoBib(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, 1, pe.Place)
 	assert.Equal(t, 1, pe.Bib)
+	assert.Equal(t, eventSource, pe.Source)
 }
 
 func TestPlacetCommandMissingArg(t *testing.T) {
@@ -165,7 +175,7 @@ func TestPlacetCommandMissingArg(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(inputEvents)
+	place := NewPlaceCommand(t.Name(), inputEvents)
 	q, err := place.Run([]string{"1"})
 	assert.Error(t, err)
 	assert.False(t, q)
@@ -177,7 +187,7 @@ func TestPlacetCommandBadBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(inputEvents)
+	place := NewPlaceCommand(t.Name(), inputEvents)
 	q, err := place.Run([]string{"x", "1"})
 	assert.Error(t, err)
 	assert.False(t, q)
@@ -189,7 +199,7 @@ func TestPlacetCommandBadPlace(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	place := NewPlaceCommand(inputEvents)
+	place := NewPlaceCommand(t.Name(), inputEvents)
 	q, err := place.Run([]string{"1", "x"})
 	assert.Error(t, err)
 	assert.False(t, q)

@@ -1,14 +1,18 @@
 package places
 
 import (
+	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/raceevents"
 	"context"
+	"fmt"
 	"sort"
 )
 
+const placerSourceName = "default-placer"
+
 // Write a placer that takes event source and event target
 type PlaceGenerator interface {
-	GeneratePlaces(map[string]int) error
+	GeneratePlaces(competitors.CompetitorLookup, map[string]int) error
 }
 
 type defaultPlaceGenerator struct {
@@ -21,10 +25,13 @@ func NewPlaceGenerator(es *raceevents.EventStream) PlaceGenerator {
 	}
 }
 
-func (dpg *defaultPlaceGenerator) GeneratePlaces(sourceRanks map[string]int) error {
+// preserve order of arrival of the bibs
+
+func (dpg *defaultPlaceGenerator) GeneratePlaces(athletes competitors.CompetitorLookup, sourceRanks map[string]int) error {
 	// cache of finishes with bibs
-	// Sorted by finish time, soonest to latest
 	finishCache := make(map[int]raceevents.FinishEvent)
+	// start sorting with bibs in arrival order so the sort can use arrival to break ties
+	finishedBibs := make([]int, 0)
 
 	// read from the source any finish events with bibs (default_placer consumer group)
 	var event raceevents.Event
@@ -37,25 +44,30 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces(sourceRanks map[string]int) err
 		switch event.Data.(type) {
 		case raceevents.FinishEvent:
 			finish := event.Data.(raceevents.FinishEvent)
-			if finish.Bib != raceevents.NoBib {
-				// only cache finishes with bibs for placement
+			_, bibFound := athletes[finish.Bib]
+			if bibFound {
+				previous, existed := finishCache[finish.Bib]
+				if !existed {
+					finishedBibs = append(finishedBibs, finish.Bib)
+					finishCache[finish.Bib] = finish
+				}
+
+				// only cache finishes with bibs of known athletes for placement
 				// where the new finish is from a better source
-				if dpg.isBetterFinish(finish, finishCache, sourceRanks) {
+				if sourceRanks[finish.Source] < sourceRanks[previous.Source] || !existed {
 					finishCache[finish.Bib] = finish
 					// create a slice of bibs in finish order
-					finishedBibs := make([]int, 0, len(finishCache))
-					for k := range finishCache {
-						finishedBibs = append(finishedBibs, k)
-					}
-					sort.SliceStable(finishedBibs, func(i, j int) bool {
-						return finishCache[finishedBibs[i]].FinishTime.Before(finishCache[finishedBibs[j]].FinishTime)
+					sorted := make([]int, len(finishedBibs))
+					copy(sorted, finishedBibs)
+					sort.SliceStable(sorted, func(i, j int) bool {
+						return finishCache[sorted[i]].FinishTime.Before(finishCache[sorted[j]].FinishTime)
 					})
 
 					// loop through the slice and send events for the current bib
 					// and everything after it
 					send := false
-					for i := 0; i < len(finishedBibs); i++ {
-						current := finishCache[finishedBibs[i]]
+					for i := 0; i < len(sorted); i++ {
+						current := finishCache[sorted[i]]
 						// don't send events till we get to the bib
 						// from last finish
 						if finish.Bib == current.Bib {
@@ -65,10 +77,11 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces(sourceRanks map[string]int) err
 						if send {
 							// send place event
 							dpg.stream.SendPlaceEvent(context.TODO(), raceevents.PlaceEvent{
-								Source: "default-placer",
+								Source: placerSourceName,
 								Place:  i + 1,
 								Bib:    current.Bib,
 							})
+							fmt.Printf("Place sent for bib %d %d\n", current.Bib, i+1)
 						}
 					}
 				}
@@ -82,19 +95,4 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces(sourceRanks map[string]int) err
 	}
 
 	return nil
-}
-
-func (dpg *defaultPlaceGenerator) isBetterFinish(finish raceevents.FinishEvent, finishCache map[int]raceevents.FinishEvent, sourceRanks map[string]int) bool {
-	previous, exists := finishCache[finish.Bib]
-	if !exists {
-		return true
-	}
-
-	// return true if new source is better then previous
-	if sourceRanks[finish.Source] < sourceRanks[previous.Source] {
-		return true
-	}
-
-	// source isn't better
-	return false
 }

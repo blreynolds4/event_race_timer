@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"time"
 
 	redis "github.com/redis/go-redis/v9"
 )
@@ -48,21 +49,19 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
-	bgCtx := context.Background()
-	cancelCtx, cancel := context.WithCancel(bgCtx)
-
-	go func() {
-		<-c
-		// cancel the scorer
-		cancel()
-		fmt.Println("Cancelled Scorer")
-	}()
-
 	fmt.Println("building overall results")
-	err := resultScorer.ScoreResults(cancelCtx, resultStream)
-	if err != nil {
-		fmt.Println("ERROR scoring results:", err)
-	}
+	for {
+		err := resultScorer.ScoreResults(context.TODO(), resultStream)
+		if err != nil {
+			fmt.Println("ERROR scoring results:", err)
+		}
 
-	fmt.Println("Scoring Exiting")
+		t := time.NewTicker(time.Second * 1)
+		select {
+		case <-c:
+			fmt.Println("Overall Scorer Exiting")
+			os.Exit(0)
+		case <-t.C:
+		}
+	}
 }

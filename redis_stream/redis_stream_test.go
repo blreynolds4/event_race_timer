@@ -131,7 +131,7 @@ func TestGetMessageBadData(t *testing.T) {
 				{
 					ID: msg.ID,
 					Values: map[string]interface{}{
-						dataKey: "oops",
+						dataKey: 1,
 					},
 				},
 			},
@@ -224,7 +224,7 @@ func TestGetMessageRangeBufferSizeEqualMsgCount(t *testing.T) {
 			Values: map[string]interface{}{dataKey: expMsgs[0].Data},
 		},
 	}
-	mock.ExpectXRange(streamName, "start", "end").SetVal(rawMsgs)
+	mock.ExpectXRangeN(streamName, "start", "end", int64(len(rawMsgs))).SetVal(rawMsgs)
 
 	rs := NewRedisEventStream(db, streamName)
 	actualMsgs := make([]stream.Message, 1)
@@ -251,16 +251,16 @@ func TestGetMessageRangeBadData(t *testing.T) {
 	rawMsgs := []redis.XMessage{
 		{
 			ID:     expMsgs[0].ID,
-			Values: map[string]interface{}{dataKey: "oops"},
+			Values: map[string]interface{}{dataKey: 1},
 		},
 	}
-	mock.ExpectXRange(streamName, "start", "end").SetVal(rawMsgs)
+	mock.ExpectXRangeN(streamName, "start", "end", int64(len(rawMsgs))).SetVal(rawMsgs)
 
 	rs := NewRedisEventStream(db, streamName)
 	actualMsgs := make([]stream.Message, 1)
 	countRead, err := rs.GetMessageRange(context.TODO(), "start", "end", actualMsgs)
 	assert.Error(t, err)
-	assert.Equal(t, fmt.Errorf("unknown msg data type in range"), err)
+	assert.Equal(t, fmt.Errorf("unknown msg data type"), err)
 	assert.Equal(t, 0, countRead)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
@@ -285,7 +285,7 @@ func TestGetMessageRangeError(t *testing.T) {
 
 	expErr := fmt.Errorf("Fail")
 	streamName := "stream"
-	mock.ExpectXRange(streamName, "start", "end").SetErr(expErr)
+	mock.ExpectXRangeN(streamName, "start", "end", 1).SetErr(expErr)
 
 	rs := NewRedisEventStream(db, streamName)
 	actualMessages := make([]stream.Message, 1)

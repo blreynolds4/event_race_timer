@@ -23,22 +23,23 @@ type RaceResult struct {
 
 func (rr RaceResult) IsComplete() bool {
 	// the un-set, zero value for Athlete is nil
-	// if the bib is not 0, athlete is not nil, the place is not 0 and there is a duration, the result is complete
+	// if the bib is not 0, athlete is not nil, the place is not 0 and has a source
+	// then the result can be published
 	return (rr.Bib > 0) &&
 		(rr.Athlete != nil) &&
 		(rr.Place > 0) &&
-		(rr.Time.Milliseconds() > 0)
+		(rr.PlaceSource != "")
 }
 
 type ResultStream struct {
-	rawStream     stream.ReaderWriter
-	lastMessageId string
+	rawStream       stream.ReaderWriter
+	rangeQueryStart string
 }
 
 func NewResultStream(raw stream.ReaderWriter) *ResultStream {
 	return &ResultStream{
-		rawStream:     raw,
-		lastMessageId: "",
+		rawStream:       raw,
+		rangeQueryStart: raw.RangeQueryMin(), // default to earliest stream msg
 	}
 }
 
@@ -48,7 +49,7 @@ func (rs *ResultStream) GetResults(ctx context.Context, results []RaceResult) (i
 	}
 
 	msgBuffer := make([]stream.Message, len(results))
-	count, err := rs.rawStream.GetMessageRange(ctx, rs.lastMessageId, "", msgBuffer)
+	count, err := rs.rawStream.GetMessageRange(ctx, rs.rangeQueryStart, rs.rawStream.RangeQueryMax(), msgBuffer)
 	if err != nil {
 		return 0, err
 	}
@@ -65,7 +66,9 @@ func (rs *ResultStream) GetResults(ctx context.Context, results []RaceResult) (i
 			return 0, err
 		}
 		results[i] = rr
-		rs.lastMessageId = msgBuffer[i].ID
+
+		// update query start id to start with last read msg but not include it in next result
+		rs.rangeQueryStart = rs.rawStream.ExclusiveQueryStart(msgBuffer[i].ID)
 	}
 
 	return count, nil

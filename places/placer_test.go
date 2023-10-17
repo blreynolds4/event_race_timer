@@ -1,6 +1,7 @@
 package places
 
 import (
+	"blreynolds4/event-race-timer/competitors"
 	"blreynolds4/event-race-timer/raceevents"
 	"blreynolds4/event-race-timer/stream"
 	"context"
@@ -20,6 +21,20 @@ func TestNormalPlacingInOrderSkipNoBib(t *testing.T) {
 	finishTime12 := now.Add(5*time.Minute + (time.Millisecond * 1))
 	finishTime11 := now.Add(5*time.Minute + (time.Second * 5))
 	finishTime13 := now.Add(5*time.Minute + (time.Second * 29))
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = &competitors.Competitor{
+		Name: "bib 10",
+	}
+	athletes[11] = &competitors.Competitor{
+		Name: "bib 11",
+	}
+	athletes[12] = &competitors.Competitor{
+		Name: "bib 12",
+	}
+	athletes[13] = &competitors.Competitor{
+		Name: "bib 13",
+	}
 
 	sourceRanks := make(map[string]int)
 	bestSource := t.Name()
@@ -85,7 +100,116 @@ func TestNormalPlacingInOrderSkipNoBib(t *testing.T) {
 	inputEvents := raceevents.NewEventStream(mockEventStream)
 
 	builder := NewPlaceGenerator(inputEvents)
-	err := builder.GeneratePlaces(sourceRanks)
+	err := builder.GeneratePlaces(athletes, sourceRanks)
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(placesSent))
+
+	// verify the bibs and places match what we expect
+	pe, ok := placesSent[0].Data.(raceevents.PlaceEvent)
+	assert.True(t, ok)
+	assert.Equal(t, 10, pe.Bib)
+	assert.Equal(t, 1, pe.Place)
+
+	pe, ok = placesSent[1].Data.(raceevents.PlaceEvent)
+	assert.True(t, ok)
+	assert.Equal(t, 11, pe.Bib)
+	assert.Equal(t, 2, pe.Place)
+
+	pe, ok = placesSent[2].Data.(raceevents.PlaceEvent)
+	assert.True(t, ok)
+	assert.Equal(t, 13, pe.Bib)
+	assert.Equal(t, 3, pe.Place)
+}
+
+func TestNormalPlacingInOrderSkipUnknownBib(t *testing.T) {
+	// given a set of events on the source
+	// produce the set of events on the target
+	now := time.Now().UTC()
+	// Test data
+	finishTime10 := now.Add(5 * time.Minute)
+	finishTime12 := now.Add(5*time.Minute + (time.Millisecond * 1))
+	finishTime11 := now.Add(5*time.Minute + (time.Second * 5))
+	finishTime13 := now.Add(5*time.Minute + (time.Second * 29))
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = &competitors.Competitor{
+		Name: "bib 10",
+	}
+	athletes[11] = &competitors.Competitor{
+		Name: "bib 11",
+	}
+	athletes[12] = &competitors.Competitor{
+		Name: "bib 12",
+	}
+	athletes[13] = &competitors.Competitor{
+		Name: "bib 13",
+	}
+
+	sourceRanks := make(map[string]int)
+	bestSource := t.Name()
+	slowSource := t.Name() + "-slow"
+	sourceRanks[bestSource] = 1
+	sourceRanks[slowSource] = 2
+
+	testEvents := []raceevents.Event{
+		{
+			EventTime: now,
+			Data: raceevents.StartEvent{
+				Source:    bestSource,
+				StartTime: now,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime10,
+				Bib:        10,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime12,
+				Bib:        999,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime11,
+				Bib:        11,
+			},
+		},
+		{
+			EventTime: now,
+			Data: raceevents.FinishEvent{
+				Source:     bestSource,
+				FinishTime: finishTime13,
+				Bib:        13,
+			},
+		},
+	}
+
+	placesSent := make([]raceevents.Event, 0)
+	mockEventStream := &stream.MockStream{
+		Events: buildEventMessages(testEvents),
+		Send: func(ctx context.Context, sm stream.Message) error {
+			var e raceevents.Event
+			err := json.Unmarshal(sm.Data, &e)
+			if err != nil {
+				panic(err)
+			}
+			placesSent = append(placesSent, e)
+			return nil
+		},
+	}
+	inputEvents := raceevents.NewEventStream(mockEventStream)
+
+	builder := NewPlaceGenerator(inputEvents)
+	err := builder.GeneratePlaces(athletes, sourceRanks)
 	assert.NoError(t, err)
 	// slice off the beginning of the event stream to get to what places were sent
 	assert.Equal(t, 3, len(placesSent))
@@ -116,6 +240,20 @@ func TestNoisyMultiSourceEvents(t *testing.T) {
 	finishTime12 := now.Add(5*time.Minute + (time.Millisecond * 1))
 	finishTime11 := now.Add(5*time.Minute + (time.Second * 5))
 	finishTime13 := now.Add(5*time.Minute + (time.Second * 29))
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = &competitors.Competitor{
+		Name: "bib 10",
+	}
+	athletes[11] = &competitors.Competitor{
+		Name: "bib 11",
+	}
+	athletes[12] = &competitors.Competitor{
+		Name: "bib 12",
+	}
+	athletes[13] = &competitors.Competitor{
+		Name: "bib 13",
+	}
 
 	sourceRanks := make(map[string]int)
 	bestSource := t.Name()
@@ -206,7 +344,7 @@ func TestNoisyMultiSourceEvents(t *testing.T) {
 	inputEvents := raceevents.NewEventStream(mockEventStream)
 
 	builder := NewPlaceGenerator(inputEvents)
-	err := builder.GeneratePlaces(sourceRanks)
+	err := builder.GeneratePlaces(athletes, sourceRanks)
 	assert.NoError(t, err)
 	assert.Equal(t, 4, len(placesSent))
 
@@ -233,13 +371,25 @@ func TestNoisyMultiSourceEvents(t *testing.T) {
 }
 
 func TestEventsArriveOutOfOrder(t *testing.T) {
-	// given a set of events on the source
-	// produce the set of events on the target
 	now := time.Now().UTC()
 	// Test data
 	finishTime10 := now.Add(5 * time.Minute)
 	finishTime11 := now.Add(5*time.Minute + (time.Second * 5))
 	finishTime13 := now.Add(5*time.Minute + (time.Second * 29))
+
+	athletes := make(competitors.CompetitorLookup)
+	athletes[10] = &competitors.Competitor{
+		Name: "bib 10",
+	}
+	athletes[11] = &competitors.Competitor{
+		Name: "bib 11",
+	}
+	athletes[12] = &competitors.Competitor{
+		Name: "bib 12",
+	}
+	athletes[13] = &competitors.Competitor{
+		Name: "bib 13",
+	}
 
 	sourceRanks := make(map[string]int)
 
@@ -282,7 +432,7 @@ func TestEventsArriveOutOfOrder(t *testing.T) {
 	inputEvents := raceevents.NewEventStream(mockEventStream)
 
 	builder := NewPlaceGenerator(inputEvents)
-	err := builder.GeneratePlaces(sourceRanks)
+	err := builder.GeneratePlaces(athletes, sourceRanks)
 	assert.NoError(t, err)
 	assert.Equal(t, 6, len(placesSent))
 
@@ -328,18 +478,6 @@ func buildEventMessages(testEvents []raceevents.Event) []stream.Message {
 		result[i] = stream.Message{
 			ID:   e.ID,
 			Data: eData,
-		}
-	}
-
-	return result
-}
-
-func buildActualEvents(rawMessages []stream.Message) []raceevents.Event {
-	result := make([]raceevents.Event, len(rawMessages))
-	for i, msg := range rawMessages {
-		err := json.Unmarshal(msg.Data, &result[i])
-		if err != nil {
-			panic(err)
 		}
 	}
 

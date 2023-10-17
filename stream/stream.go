@@ -19,6 +19,9 @@ type Writer interface {
 type Reader interface {
 	GetMessage(ctx context.Context, timeout time.Duration, msg *Message) (bool, error)
 	GetMessageRange(ctx context.Context, startId, endId string, msgs []Message) (int, error)
+	RangeQueryMin() string
+	ExclusiveQueryStart(string) string
+	RangeQueryMax() string
 }
 
 type ReaderWriter interface {

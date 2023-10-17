@@ -13,6 +13,8 @@ import (
 	redis "github.com/redis/go-redis/v9"
 )
 
+const sourceName = "manual"
+
 func main() {
 	// connect to redis
 	// cli for db address, username, password, db, stream name?
@@ -42,7 +44,7 @@ func main() {
 
 	// create the command map
 	loopCommands := make(map[string]command.Command)
-	finishCommand := command.NewFinishCommand(eventStream)
+	finishCommand := command.NewFinishCommand(sourceName, eventStream)
 
 	loopCommands["quit"] = command.NewQuitCommand()
 	loopCommands["q"] = command.NewQuitCommand()
@@ -51,11 +53,11 @@ func main() {
 
 	loopCommands["ping"] = command.NewPingCommand(rdb)
 
-	loopCommands["start"] = command.NewStartCommand(eventStream)
-	loopCommands["s"] = command.NewStartCommand(eventStream)
+	loopCommands["start"] = command.NewStartCommand(sourceName, eventStream)
+	loopCommands["s"] = command.NewStartCommand(sourceName, eventStream)
 
-	loopCommands["place"] = command.NewPlaceCommand(eventStream)
-	loopCommands["p"] = command.NewPlaceCommand(eventStream)
+	loopCommands["place"] = command.NewPlaceCommand(sourceName, eventStream)
+	loopCommands["p"] = command.NewPlaceCommand(sourceName, eventStream)
 
 	loopCommands["list"] = command.NewListFinishCommand(eventStream)
 

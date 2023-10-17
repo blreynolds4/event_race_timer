@@ -4,8 +4,6 @@ import (
 	"blreynolds4/event-race-timer/raceevents"
 	"context"
 	"fmt"
-	"math/rand"
-	"os"
 	"strconv"
 	"time"
 
@@ -13,20 +11,20 @@ import (
 )
 
 // unique name for a client
-var clientName string
+// var clientName string
 
 type Command interface {
 	Run(args []string) (bool, error)
 }
 
-func init() {
-	var err error
-	clientName, err = os.Hostname()
-	if err != nil {
-		// use a random number
-		clientName = fmt.Sprintf("race-cli-%d", rand.Intn(100))
-	}
-}
+// func init() {
+// 	var err error
+// 	clientName, err = os.Hostname()
+// 	if err != nil {
+// 		// use a random number
+// 		clientName = fmt.Sprintf("race-cli-%d", rand.Intn(100))
+// 	}
+// }
 
 type noStateCommand struct {
 	CmdFunc func(args []string) (bool, error)
@@ -61,7 +59,7 @@ func NewPingCommand(rdb *redis.Client) Command {
 	}
 }
 
-func NewStartCommand(eventTarget *raceevents.EventStream) Command {
+func NewStartCommand(sourceName string, eventTarget *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			startTime := time.Now().UTC()
@@ -75,7 +73,7 @@ func NewStartCommand(eventTarget *raceevents.EventStream) Command {
 			}
 
 			return false, eventTarget.SendStartEvent(context.TODO(), raceevents.StartEvent{
-				Source:    clientName,
+				Source:    sourceName,
 				StartTime: startTime.Add(-seedDuration),
 			})
 		},
@@ -83,7 +81,7 @@ func NewStartCommand(eventTarget *raceevents.EventStream) Command {
 
 }
 
-func NewFinishCommand(eventTarget *raceevents.EventStream) Command {
+func NewFinishCommand(sourceName string, eventTarget *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			var err error
@@ -97,7 +95,7 @@ func NewFinishCommand(eventTarget *raceevents.EventStream) Command {
 			}
 
 			return false, eventTarget.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
-				Source:     clientName,
+				Source:     sourceName,
 				FinishTime: time.Now().UTC(),
 				Bib:        bib,
 			})
@@ -105,7 +103,7 @@ func NewFinishCommand(eventTarget *raceevents.EventStream) Command {
 	}
 }
 
-func NewPlaceCommand(eventTarget *raceevents.EventStream) Command {
+func NewPlaceCommand(sourceName string, eventTarget *raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			var err error
@@ -122,7 +120,7 @@ func NewPlaceCommand(eventTarget *raceevents.EventStream) Command {
 				}
 
 				return false, eventTarget.SendPlaceEvent(context.TODO(), raceevents.PlaceEvent{
-					Source: clientName,
+					Source: sourceName,
 					Bib:    bib,
 					Place:  place,
 				})

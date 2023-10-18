@@ -1,0 +1,578 @@
+{
+ "1": {
+  "Name": "Henry Ashworth",
+  "Team": "Belmont",
+  "Age": 0,
+  "Grade": 9
+ },
+ "10": {
+  "Name": "Baidyn Lewis",
+  "Team": "Belmont",
+  "Age": 0,
+  "Grade": 12
+ },
+ "103": {
+  "Name": "Carter Forest",
+  "Team": "Gilford",
+  "Age": 0,
+  "Grade": 12
+ },
+ "105": {
+  "Name": "Bocelli Howland-Vlahakis",
+  "Team": "Gilford",
+  "Age": 0,
+  "Grade": 9
+ },
+ "109": {
+  "Name": "Gunnar  Marvel",
+  "Team": "Gilford",
+  "Age": 0,
+  "Grade": 10
+ },
+ "115": {
+  "Name": "Benjamin  Smith",
+  "Team": "Gilford",
+  "Age": 0,
+  "Grade": 11
+ },
+ "116": {
+  "Name": "Benjamin Suranji",
+  "Team": "Gilford",
+  "Age": 0,
+  "Grade": 12
+ },
+ "120": {
+  "Name": "Alden Townsend",
+  "Team": "Gilford",
+  "Age": 0,
+  "Grade": 12
+ },
+ "126": {
+  "Name": "Anthony Cauley",
+  "Team": "Hopkinton",
+  "Age": 0,
+  "Grade": 12
+ },
+ "127": {
+  "Name": "Andrew Clarner",
+  "Team": "Hopkinton",
+  "Age": 0,
+  "Grade": 9
+ },
+ "128": {
+  "Name": "Matt Clarner",
+  "Team": "Hopkinton",
+  "Age": 0,
+  "Grade": 12
+ },
+ "13": {
+  "Name": "Brayden Townsend",
+  "Team": "Belmont",
+  "Age": 0,
+  "Grade": 10
+ },
+ "130": {
+  "Name": "Ben Daniels",
+  "Team": "Hopkinton",
+  "Age": 0,
+  "Grade": 12
+ },
+ "132": {
+  "Name": "Jorge Guerra",
+  "Team": "Hopkinton",
+  "Age": 0,
+  "Grade": 11
+ },
+ "137": {
+  "Name": "Liam O'Rourke",
+  "Team": "Hopkinton",
+  "Age": 0,
+  "Grade": 12
+ },
+ "14": {
+  "Name": "David Tripp",
+  "Team": "Belmont",
+  "Age": 0,
+  "Grade": 11
+ },
+ "144": {
+  "Name": "Adrian Whiteknact",
+  "Team": "Hopkinton",
+  "Age": 0,
+  "Grade": 10
+ },
+ "148": {
+  "Name": "Jesse Foran",
+  "Team": "Inter-Lakes",
+  "Age": 0,
+  "Grade": 12
+ },
+ "150": {
+  "Name": "Devin Gasque",
+  "Team": "Inter-Lakes",
+  "Age": 0,
+  "Grade": 11
+ },
+ "151": {
+  "Name": "Ronan Hird",
+  "Team": "Inter-Lakes",
+  "Age": 0,
+  "Grade": 12
+ },
+ "153": {
+  "Name": "Leo Kusch",
+  "Team": "Inter-Lakes",
+  "Age": 0,
+  "Grade": 11
+ },
+ "156": {
+  "Name": "Issac Nudd-Homeyer",
+  "Team": "Inter-Lakes",
+  "Age": 0,
+  "Grade": 11
+ },
+ "159": {
+  "Name": "David Walker",
+  "Team": "Inter-Lakes",
+  "Age": 0,
+  "Grade": 10
+ },
+ "161": {
+  "Name": "Gavin Arel",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 9
+ },
+ "165": {
+  "Name": "Shane Brunini",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 9
+ },
+ "168": {
+  "Name": "Austin Freeman",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 10
+ },
+ "169": {
+  "Name": "Evan Furness",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 9
+ },
+ "170": {
+  "Name": "Alex Keirstead",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 12
+ },
+ "172": {
+  "Name": "Eli Lemire",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 12
+ },
+ "175": {
+  "Name": "Austin Patenaude",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 10
+ },
+ "179": {
+  "Name": "Thomas Cicoria",
+  "Team": "Kearsarge",
+  "Age": 0,
+  "Grade": 10
+ },
+ "18": {
+  "Name": "James Horangic",
+  "Team": "Bishop Brady",
+  "Age": 0,
+  "Grade": 10
+ },
+ "180": {
+  "Name": "Quinton Cloutier",
+  "Team": "Kearsarge",
+  "Age": 0,
+  "Grade": 12
+ },
+ "181": {
+  "Name": "Daniel Dalbec",
+  "Team": "Kearsarge",
+  "Age": 0,
+  "Grade": 11
+ },
+ "187": {
+  "Name": "Nethaniel Stepp",
+  "Team": "Kearsarge",
+  "Age": 0,
+  "Grade": 10
+ },
+ "190": {
+  "Name": "Nathan Bain",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 10
+ },
+ "191": {
+  "Name": "Christopher Bode",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 9
+ },
+ "198": {
+  "Name": "Ben Geoffroy",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 9
+ },
+ "2": {
+  "Name": "Evan Christensen",
+  "Team": "Belmont",
+  "Age": 0,
+  "Grade": 12
+ },
+ "202": {
+  "Name": "Samuel Jensen",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 12
+ },
+ "207": {
+  "Name": "Ben Newton",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 10
+ },
+ "208": {
+  "Name": "Mychal Reynolds",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 11
+ },
+ "210": {
+  "Name": "Tony Wang",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 9
+ },
+ "214": {
+  "Name": "Kelton Austin",
+  "Team": "Newfound Regional",
+  "Age": 0,
+  "Grade": 10
+ },
+ "220": {
+  "Name": "Julian  Field ",
+  "Team": "Newfound Regional",
+  "Age": 0,
+  "Grade": 11
+ },
+ "221": {
+  "Name": "Colin Foster ",
+  "Team": "Newfound Regional",
+  "Age": 0,
+  "Grade": 9
+ },
+ "222": {
+  "Name": "Evan Foster",
+  "Team": "Newfound Regional",
+  "Age": 0,
+  "Grade": 12
+ },
+ "23": {
+  "Name": "Earl Mitchell",
+  "Team": "Bishop Brady",
+  "Age": 0,
+  "Grade": 9
+ },
+ "237": {
+  "Name": "Zachary Heichlinger",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 10
+ },
+ "239": {
+  "Name": "Samuel Nereson",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 12
+ },
+ "24": {
+  "Name": "Brody Palmateer",
+  "Team": "Bishop Brady",
+  "Age": 0,
+  "Grade": 12
+ },
+ "240": {
+  "Name": "Matthew Palleschi",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 10
+ },
+ "241": {
+  "Name": "Hayden Petersons",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 10
+ },
+ "242": {
+  "Name": "Caleb Saturley",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 10
+ },
+ "246": {
+  "Name": "William Green",
+  "Team": "Proctor Academy",
+  "Age": 0,
+  "Grade": 12
+ },
+ "248": {
+  "Name": "Wilkin Paulino",
+  "Team": "Proctor Academy",
+  "Age": 0,
+  "Grade": 11
+ },
+ "249": {
+  "Name": "Max Preuss",
+  "Team": "Proctor Academy",
+  "Age": 0,
+  "Grade": 10
+ },
+ "250": {
+  "Name": "Andrew  Pullin",
+  "Team": "Proctor Academy",
+  "Age": 0,
+  "Grade": 11
+ },
+ "252": {
+  "Name": "Noah Taylor",
+  "Team": "Proctor Academy",
+  "Age": 0,
+  "Grade": 10
+ },
+ "258": {
+  "Name": "Avery Giunta",
+  "Team": "Prospect Mountain",
+  "Age": 0,
+  "Grade": 10
+ },
+ "26": {
+  "Name": "LJ Putnam",
+  "Team": "Bishop Brady",
+  "Age": 0,
+  "Grade": 10
+ },
+ "261": {
+  "Name": "Joey  Howlett",
+  "Team": "Prospect Mountain",
+  "Age": 0,
+  "Grade": 12
+ },
+ "263": {
+  "Name": "Declan  McCausland",
+  "Team": "Prospect Mountain",
+  "Age": 0,
+  "Grade": 10
+ },
+ "264": {
+  "Name": "Dawson Meehan",
+  "Team": "Prospect Mountain",
+  "Age": 0,
+  "Grade": 9
+ },
+ "265": {
+  "Name": "Trew Reed",
+  "Team": "Prospect Mountain",
+  "Age": 0,
+  "Grade": 9
+ },
+ "267": {
+  "Name": "Caiden Wainwright",
+  "Team": "Prospect Mountain",
+  "Age": 0,
+  "Grade": 9
+ },
+ "269": {
+  "Name": "Parker Wood",
+  "Team": "Prospect Mountain",
+  "Age": 0,
+  "Grade": 11
+ },
+ "276": {
+  "Name": "Andrew Carroll",
+  "Team": "St. Paul's School",
+  "Age": 0,
+  "Grade": 11
+ },
+ "277": {
+  "Name": "Chappy Carroll",
+  "Team": "St. Paul's School",
+  "Age": 0,
+  "Grade": 9
+ },
+ "278": {
+  "Name": "Ian Chang",
+  "Team": "St. Paul's School",
+  "Age": 0,
+  "Grade": 11
+ },
+ "279": {
+  "Name": "Jonathan Dase",
+  "Team": "St. Paul's School",
+  "Age": 0,
+  "Grade": 12
+ },
+ "282": {
+  "Name": "Owen Gorenc",
+  "Team": "St. Paul's School",
+  "Age": 0,
+  "Grade": 9
+ },
+ "284": {
+  "Name": "Linus Krenkel",
+  "Team": "St. Paul's School",
+  "Age": 0,
+  "Grade": 9
+ },
+ "288": {
+  "Name": "Cameron Perry",
+  "Team": "St. Paul's School",
+  "Age": 0,
+  "Grade": 12
+ },
+ "29": {
+  "Name": "Alan Yap",
+  "Team": "Bishop Brady",
+  "Age": 0,
+  "Grade": 12
+ },
+ "290": {
+  "Name": "Dylan  Allard",
+  "Team": "Winnisquam",
+  "Age": 0,
+  "Grade": 12
+ },
+ "292": {
+  "Name": "Chris Collins",
+  "Team": "Winnisquam",
+  "Age": 0,
+  "Grade": 9
+ },
+ "295": {
+  "Name": "Luke Larrabee",
+  "Team": "Winnisquam",
+  "Age": 0,
+  "Grade": 9
+ },
+ "298": {
+  "Name": "David Swain",
+  "Team": "Winnisquam",
+  "Age": 0,
+  "Grade": 11
+ },
+ "30": {
+  "Name": "ALDEN Betterley",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 12
+ },
+ "31": {
+  "Name": "Aiden Ciminesi",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 12
+ },
+ "38": {
+  "Name": "Jack Kohl",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 11
+ },
+ "4": {
+  "Name": "Nicholas Daigneault",
+  "Team": "Belmont",
+  "Age": 0,
+  "Grade": 12
+ },
+ "41": {
+  "Name": "Owen Miller",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 12
+ },
+ "42": {
+  "Name": "Jack Noce",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 11
+ },
+ "46": {
+  "Name": "Thomas Sargent",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 11
+ },
+ "50": {
+  "Name": "Wyatt Worcester",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 10
+ },
+ "54": {
+  "Name": "William Chorlian",
+  "Team": "Concord",
+  "Age": 0,
+  "Grade": 12
+ },
+ "56": {
+  "Name": "Josiah Conley",
+  "Team": "Concord",
+  "Age": 0,
+  "Grade": 10
+ },
+ "57": {
+  "Name": "Oliver Conley",
+  "Team": "Concord",
+  "Age": 0,
+  "Grade": 9
+ },
+ "64": {
+  "Name": "Lucky Doperalski",
+  "Team": "Concord",
+  "Age": 0,
+  "Grade": 12
+ },
+ "7": {
+  "Name": "Wyatt Divers",
+  "Team": "Belmont",
+  "Age": 0,
+  "Grade": 10
+ },
+ "75": {
+  "Name": "Ian Mamos",
+  "Team": "Concord",
+  "Age": 0,
+  "Grade": 9
+ },
+ "90": {
+  "Name": "Tyler Watt",
+  "Team": "Concord",
+  "Age": 0,
+  "Grade": 12
+ },
+ "91": {
+  "Name": "David Wicks",
+  "Team": "Concord",
+  "Age": 0,
+  "Grade": 12
+ },
+ "96": {
+  "Name": "Malcolm Breton",
+  "Team": "Gilford",
+  "Age": 0,
+  "Grade": 10
+ }
+}

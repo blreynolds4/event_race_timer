@@ -1,0 +1,140 @@
+Place Name                             Grade Team                             Time
+===== ================================ ===== ================================ ========
+    1 David Reynolds                   12    Merrimack Valley                 16m44.8s
+    2 Andrew O'Brien                   10    Oyster River                     16m48.6s
+    3 Dawson Dubois                    11    Coe-Brown                        16m49.2s
+    4 Luke Tkaczyk                     10    Coe-Brown                        16m55.3s
+    5 Dylan Khalil                     10    Sanborn Regional                 16m59s  
+    6 Wyatt Mackey                     10    Coe-Brown                        17m8.8s 
+    7 Myles Carrico                    11    Oyster River                     17m10.6s
+    8 Logan Mihelich                   10    Coe-Brown                        17m12.6s
+    9 Matt Reynolds                    12    Merrimack Valley                 17m19.7s
+   10 Caleb Korthals                   10    Milford                          17m21.4s
+   11 Brandon Langdon                  12    John Stark                       17m25.5s
+   12 Henry Keegan                     12    Oyster River                     17m25.5s
+   13 Sam Murray                       9     Hanover                          17m29.3s
+   14 Evan Coyne                       12    Con-Val                          17m32.3s
+   15 Jack Lynch                       12    Hanover                          17m32.5s
+   16 Harrison Kim                     11    Con-Val                          17m33.1s
+   17 Owen Stocker                     10    Sanborn Regional                 17m35.2s
+   18 Henry Duisberg                   11    Oyster River                     17m36.9s
+   19 Nathan Stine                     12    Souhegan                         17m37.5s
+   20 Daniel Bandler                   11    Hanover                          17m37.6s
+   21 Kenny Corsetti                   12    Hollis/Brookline                 17m37.8s
+   22 Rohan Rai                        10    Windham                          17m38.7s
+   23 Daniel Frost                     10    Hanover                          17m41.1s
+   24 Gavyn Lewis                      12    Coe-Brown                        17m42.6s
+   25 Carter Schade                    12    Souhegan                         17m46.5s
+   26 Ben Stone                        12    Oyster River                     17m48.7s
+   27 Rowan Brown                      10    Oyster River                     17m51.5s
+   28 Mason Silk                       10    Souhegan                         17m53.3s
+   29 Owen Fleischer                   10    Oyster River                     17m56.6s
+   30 Kirpal Demian                    12    Bow                              17m56.6s
+   31 Matthew Bonner                   11    Hanover                          17m59s  
+   32 Ethan McFee                      10    Souhegan                         18m0.5s 
+   33 Patrick Hill                     10    Coe-Brown                        18m9s   
+   34 Carter Sylvester                 10    Coe-Brown                        18m9.9s 
+   35 Colin Lessard                    11    Bow                              18m10.5s
+   36 Sam Berube                       12    Bow                              18m12.8s
+   37 Jacob Kuczynski                  11    Windham                          18m21.5s
+   38 Maxwell Frazier                  12    Manchester West                  18m25.1s
+   39 Gabriel Neff                     11    Bow                              18m25.4s
+   40 August Kotula                    10    Con-Val                          18m26.4s
+   41 Brent Coope                      12    Kingswood                        18m27.4s
+   42 Danny Veverka                    10    Con-Val                          18m27.5s
+   43 John Kotelly                     9     Hollis/Brookline                 18m29.4s
+   44 Jack Lange                       9     Hanover                          18m33.2s
+   45 Ari Montville                    11    Portsmouth                       18m36.6s
+   46 Thomas Headington                11    Souhegan                         18m38.1s
+   47 Cole Flenniken                   10    Windham                          18m39.3s
+   48 Trevor Siegel                    11    Hanover                          18m40.3s
+   49 Ian Marsh                        11    Sanborn Regional                 18m42.1s
+   50 Max Boisvert                     12    Con-Val                          19m0.1s 
+   51 Noah Cavallo                     9     Sanborn Regional                 19m2.1s 
+   52 Andrew Pugh                      9     Sanborn Regional                 19m3.1s 
+   53 Hunter Krebs                     12    Kennett                          19m3.4s 
+   54 Keith Badger                     11    Kennett                          19m4.3s 
+   55 Ethan Dodenhoff                  10    Merrimack Valley                 19m6.7s 
+   56 Haven Deschenes                  10    Con-Val                          19m7.4s 
+   57 Julian Kilgore                   12    Goffstown                        19m10s  
+   58 Bill Drake                       12    Souhegan                         19m11.4s
+   59 Cameron Scherr                   12    Portsmouth                       19m12.2s
+   60 Christoph Desmaris               11    Kennett                          19m14.7s
+   61 Josh Nottebart                   11    Pelham                           19m14.9s
+   62 Tyler Beard                      9     Con-Val                          19m17.3s
+   63 Connor Butt                      12    Merrimack Valley                 19m17.9s
+   64 Leo Swainbank                    10    Portsmouth                       19m19.4s
+   65 Boone Mixer-Bailey               10    Kennett                          19m27.2s
+   66 Grady Livingston                 9     Kennett                          19m27.7s
+   67 Andrew Strauss                   9     Souhegan                         19m28.1s
+   68 Matthew Hutchinson               12    Hollis/Brookline                 19m28.1s
+   69 Nick Genkinger                   11    St. Thomas Aquinas               19m32.5s
+   70 Jake LaBorde                     9     Hollis/Brookline                 19m34s  
+   71 Michael Kulig                    11    Plymouth Regional                19m36.9s
+   72 Joseph Wasson                    11    Kingswood                        19m37.4s
+   73 Conor Brown                      12    Goffstown                        19m39.6s
+   74 Benjamin Neff                    10    Bow                              19m39.6s
+   75 Cameron Dufault                  11    Pelham                           19m42s  
+   76 Zach Yeaton                      10    Portsmouth                       19m43.7s
+   77 Nick Norris                      10    Portsmouth                       19m44.2s
+   78 Owen Tebo                        10    Sanborn Regional                 19m45.3s
+   79 Trey Gonzalez                    10    Windham                          19m47s  
+   80 Paul Gendron                     12    Goffstown                        19m51.9s
+   81 Samuel Skilling                  9     Windham                          19m55.4s
+   82 Nathaniel Sartell                11    Hollis/Brookline                 20m2.7s 
+   83 Daniel DeLong                    12    Hollis/Brookline                 20m7.4s 
+   84 Oleg Sheahan                     10    Kingswood                        20m11.5s
+   85 Mitchell Norris                  12    Portsmouth                       20m14.8s
+   86 Cooper Walsh                     12    St. Thomas Aquinas               20m15.4s
+   87 Erik Hilyard                     12    John Stark                       20m15.9s
+   88 Nathan Demers                    12    Bow                              20m16.4s
+   89 Kenny Pawlowicz                  10    Pelham                           20m22.2s
+   90 Camden Patten                    12    Kingswood                        20m23.8s
+   91 Steven Doe                       12    Windham                          20m25.6s
+   92 Kevin McDermott                  12    Portsmouth                       20m27.4s
+   93 Griffin Hansen                   12    Goffstown                        20m29.1s
+   94 David Testerman                  9     Pembroke                         20m34s  
+   95 Matthew Perkins                  9     Kingswood                        20m36.5s
+   96 Cameron Donnell                  12    Plymouth Regional                20m37.3s
+   97 Jake Tedford                     10    Sanborn Regional                 20m38.8s
+   98 Garrick Porter                   12    Kennett                          20m40.2s
+   99 Tim Huckman                      9     Kingswood                        20m41.9s
+  100 Hirsh Ramani                     11    Windham                          20m42.1s
+  101 Ryan Miller                      11    Pelham                           20m42.3s
+  102 Mason Arseneau                   10    Milford                          20m46s  
+  103 Christian Oglesby                11    Merrimack Valley                 20m52.1s
+  104 Luc Bisson                       9     Plymouth Regional                20m53.2s
+  105 Isaac Linscott                   9     Merrimack Valley                 20m54.5s
+  106 Robbie Bourdeau                  10    Kingswood                        20m55.3s
+  107 Cody Bryan                       12    Kennett                          20m55.5s
+  108 Caeleb Fortunato                 10    Milford                          20m58s  
+  109 Soldevilla Cayarga               11    St. Thomas Aquinas               20m59.9s
+  110 Caleb Olson                      12    Bow                              21m6.6s 
+  111 Jacob Dwyer                      9     Hollis/Brookline                 21m18.4s
+  112 Owen Payeur                      12    John Stark                       21m24.2s
+  113 Nathan Warren                    9     Plymouth Regional                21m25.6s
+  114 Peter Schultz                    11    St. Thomas Aquinas               21m26.1s
+  115 Nicholas Dalton                  10    Goffstown                        21m27.1s
+  116 Collin Astholz                   12    John Stark                       21m27.7s
+  117 Shawn Tremblay                   11    Pembroke                         21m28.3s
+  118 Dillon O'Connor                  10    St. Thomas Aquinas               21m28.7s
+  119 Jack Harkness                    10    Pembroke                         21m30.4s
+  120 Hunter McLeod                    10    Plymouth Regional                21m34.4s
+  121 Oscar Gamache                    10    Pembroke                         21m35s  
+  122 Lucas Tan                        9     Manchester West                  21m36.3s
+  123 Peter Hyatt                      9     St. Thomas Aquinas               21m45.3s
+  124 Marcus McFall                    11    John Stark                       21m46.9s
+  125 Reece Montague                   10    John Stark                       21m48.2s
+  126 Jarren Fox                       12    Goffstown                        21m49.1s
+  127 Cyrus Adl-Zarabi                 10    Milford                          21m52.6s
+  128 JJ Marsh                         10    St. Thomas Aquinas               21m54.8s
+  129 Ethan Whitman                    12    Plymouth Regional                22m8.1s 
+  130 Caleb Hagner                     9     Goffstown                        22m12.4s
+  131 Ryan Bellahrossi                 10    Pelham                           22m15.7s
+  132 James Philbin                    11    Plymouth Regional                22m19.2s
+  133 Alex Chiavaras                   10    Pembroke                         22m33.8s
+  134 Shuman Casey                     9     Pembroke                         23m2.6s 
+  135 John Elie                        11    Pelham                           23m13.9s
+  136 Tomas Valenti                    10    Merrimack Valley                 23m26.7s
+  137 Pedro Guerra                     12    Pelham                           23m59.9s
+  138 Andrew Chase                     12    Pembroke                         24m44.1s

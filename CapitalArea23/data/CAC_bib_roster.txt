@@ -1,0 +1,300 @@
+Belmont                          1    Henry Ashworth                       Boys Varsity Race                       
+Belmont                          2    Evan Christensen                     Boys Varsity Race                       
+Belmont                          3    Hailey Clairmont                     Girls Varsity Race                      
+Belmont                          4    Nicholas Daigneault                  Boys Varsity Race                       
+Belmont                          5    Emilie Defrancesco                   Girls Varsity Race                      
+Belmont                          6    Riley Degange                        Girls Varsity Race                      
+Belmont                          7    Wyatt Divers                         Boys Varsity Race                       
+Belmont                          8    Rebekah Edgren                       Girls Varsity Race                      
+Belmont                          9    Aspen Filebrown                      Girls Varsity Race                      
+Belmont                          10   Baidyn Lewis                         Boys Varsity Race                       
+Belmont                          11   Lyla McSheffrey                      Girls Varsity Race                      
+Belmont                          12   Adeline Takantjas                    Girls Varsity Race                      
+Belmont                          13   Brayden Townsend                     Boys Varsity Race                       
+Belmont                          14   David Tripp                          Boys Varsity Race                       
+Bishop Brady                     15   Paul Badau                           Combined JV Race                        
+Bishop Brady                     16   Elise Barnard                        Girls Varsity Race                      
+Bishop Brady                     17   Calen Chaudhari                      Combined JV Race                        
+Bishop Brady                     18   James Horangic                       Boys Varsity Race                       
+Bishop Brady                     19   Alyssa LaValley                      Girls Varsity Race                      
+Bishop Brady                     20   Elizabeth  McKinney                  Girls Varsity Race                      
+Bishop Brady                     21   Briana Medina                        Girls Varsity Race                      
+Bishop Brady                     22   Kailyn Medina                        Girls Varsity Race                      
+Bishop Brady                     23   Earl Mitchell                        Boys Varsity Race                       
+Bishop Brady                     24   Brody Palmateer                      Boys Varsity Race                       
+Bishop Brady                     25   Jessie  Putnam                       Combined JV Race                        
+Bishop Brady                     26   LJ Putnam                            Boys Varsity Race                       
+Bishop Brady                     27   Aleah Ryan                           Girls Varsity Race                      
+Bishop Brady                     28   Avery Sahr                           Girls Varsity Race                      
+Bishop Brady                     29   Alan Yap                             Boys Varsity Race                       
+Bow                              30   ALDEN Betterley                      Boys Varsity Race                       
+Bow                              31   Aiden Ciminesi                       Boys Varsity Race                       
+Bow                              32   Adeesh Cooper                        Girls Varsity Race                      
+Bow                              33   Madelyn Fish                         Girls Varsity Race                      
+Bow                              34   Tristan Fragola                      Combined JV Race                        
+Bow                              35   Charlie Garland                      Combined JV Race                        
+Bow                              36   Julia Hou                            Girls Varsity Race                      
+Bow                              37   Zachery Ingram                       Combined JV Race                        
+Bow                              38   Jack Kohl                            Boys Varsity Race                       
+Bow                              39   Ben McDowell                         Combined JV Race                        
+Bow                              40   Joe McDowell                         Combined JV Race                        
+Bow                              41   Owen Miller                          Boys Varsity Race                       
+Bow                              42   Jack Noce                            Boys Varsity Race                       
+Bow                              43   Lauren Oppold                        Girls Varsity Race                      
+Bow                              44   David Owen                           Combined JV Race                        
+Bow                              45   Hannah Pawlowski                     Girls Varsity Race                      
+Bow                              46   Thomas Sargent                       Boys Varsity Race                       
+Bow                              47   Lucas Slayton                        Combined JV Race                        
+Bow                              48   Lena Thompson                        Girls Varsity Race                      
+Bow                              49   Asher Wilkening                      Combined JV Race                        
+Bow                              50   Wyatt Worcester                      Boys Varsity Race                       
+Concord                          51   Grayson Barth                        Combined JV Race                        
+Concord                          52   Penny Brown                          Combined JV Race                        
+Concord                          53   Mahalie  Burdette                    Girls Varsity Race                      
+Concord                          54   William Chorlian                     Boys Varsity Race                       
+Concord                          55   Elliot Clendenning                   Combined JV Race                        
+Concord                          56   Josiah Conley                        Boys Varsity Race                       
+Concord                          57   Oliver Conley                        Boys Varsity Race                       
+Concord                          58   William Corbett                      Combined JV Race                        
+Concord                          59   Phoebe  Dater-Roberts                Combined JV Race                        
+Concord                          60   Morgan Doherty                       Girls Varsity Race                      
+Concord                          61   Quinn Doherty                        Girls Varsity Race                      
+Concord                          62   August Doperalski                    Combined JV Race                        
+Concord                          63   Clover Doperalski                    Combined JV Race                        
+Concord                          64   Lucky Doperalski                     Boys Varsity Race                       
+Concord                          65   Ross Dow                             Combined JV Race                        
+Concord                          66   Sydney Genest                        Combined JV Race                        
+Concord                          67   William George                       Combined JV Race                        
+Concord                          68   Gianna Gualtieri                     Combined JV Race                        
+Concord                          69   Chloe Gudas                          Girls Varsity Race                      
+Concord                          70   Joshua Gurtner                       Combined JV Race                        
+Concord                          71   David Hartmann                       Combined JV Race                        
+Concord                          72   Jonathan Kleiner                     Combined JV Race                        
+Concord                          73   Bella Komorek                        Girls Varsity Race                      
+Concord                          74   Cavin Luneau                         Combined JV Race                        
+Concord                          75   Ian Mamos                            Boys Varsity Race                       
+Concord                          76   Viktor Miner                         Combined JV Race                        
+Concord                          77   Colby O'Brien                        Combined JV Race                        
+Concord                          78   Emma  O'Connor                       Combined JV Race                        
+Concord                          79   Myrick Oxnard                        Combined JV Race                        
+Concord                          80   Camryn Palement                      Combined JV Race                        
+Concord                          81   Calen Peace                          Combined JV Race                        
+Concord                          82   Ava Philbrook                        Girls Varsity Race                      
+Concord                          83   George Pinault                       Combined JV Race                        
+Concord                          84   Sophia Regan                         Combined JV Race                        
+Concord                          85   Ian Schumacher                       Combined JV Race                        
+Concord                          86   Madeleine Short                      Combined JV Race                        
+Concord                          87   Shelly Smith                         Girls Varsity Race                      
+Concord                          88   Parker Steinberg                     Combined JV Race                        
+Concord                          89   Jayden Stewart                       Combined JV Race                        
+Concord                          90   Tyler Watt                           Boys Varsity Race                       
+Concord                          91   David Wicks                          Boys Varsity Race                       
+Concord                          92   Landen Willmott                      Combined JV Race                        
+Concord                          93   Michael Willmott                     Combined JV Race                        
+Gilford                          94   Sydney Bartlett                      Combined JV Race                        
+Gilford                          95   Athena  Booth                        Girls Varsity Race                      
+Gilford                          96   Malcolm Breton                       Boys Varsity Race                       
+Gilford                          97   Emilia Burlock                       Combined JV Race                        
+Gilford                          98   Madeline  Burlock                    Girls Varsity Race                      
+Gilford                          99   Camryn Coutts                        Girls Varsity Race                      
+Gilford                          100  Riley Coutts                         Combined JV Race                        
+Gilford                          101  Sydney Eastman                       Girls Varsity Race                      
+Gilford                          102  Georgia Eckhardt                     Girls Varsity Race                      
+Gilford                          103  Carter Forest                        Boys Varsity Race                       
+Gilford                          104  Kyle Gandini                         Combined JV Race                        
+Gilford                          105  Bocelli Howland-Vlahakis             Boys Varsity Race                       
+Gilford                          106  Megan  Hughes                        Combined JV Race                        
+Gilford                          107  Sophia  Jarvis                       Combined JV Race                        
+Gilford                          108  Ian Lofblad                          Combined JV Race                        
+Gilford                          109  Gunnar  Marvel                       Boys Varsity Race                       
+Gilford                          110  Alissa O'Brien                       Combined JV Race                        
+Gilford                          111  Kaitlyn O'Brien                      Combined JV Race                        
+Gilford                          112  Wren Reinholz                        Combined JV Race                        
+Gilford                          113  Alana Sawyer                         Girls Varsity Race                      
+Gilford                          114  Jaimen Sawyer                        Combined JV Race                        
+Gilford                          115  Benjamin  Smith                      Boys Varsity Race                       
+Gilford                          116  Benjamin Suranji                     Boys Varsity Race                       
+Gilford                          117  Noah  Suranji                        Combined JV Race                        
+Gilford                          118  Brode Testa                          Combined JV Race                        
+Gilford                          119  Maria Tilley                         Girls Varsity Race                      
+Gilford                          120  Alden Townsend                       Boys Varsity Race                       
+Gilford                          121  Benjamin Wolpin                      Combined JV Race                        
+Gilford                          122  Dylan Wright                         Combined JV Race                        
+Hopkinton                        123  Lucy Beardmore                       Girls Varsity Race                      
+Hopkinton                        124  Edward Blagriff                      Combined JV Race                        
+Hopkinton                        125  Reese Bove                           Girls Varsity Race                      
+Hopkinton                        126  Anthony Cauley                       Boys Varsity Race                       
+Hopkinton                        127  Andrew Clarner                       Boys Varsity Race                       
+Hopkinton                        128  Matt Clarner                         Boys Varsity Race                       
+Hopkinton                        129  Annie Daniels                        Girls Varsity Race                      
+Hopkinton                        130  Ben Daniels                          Boys Varsity Race                       
+Hopkinton                        131  Nicholas Goddard                     Combined JV Race                        
+Hopkinton                        132  Jorge Guerra                         Boys Varsity Race                       
+Hopkinton                        133  Greta Jansson                        Combined JV Race                        
+Hopkinton                        134  Madeleine Lane                       Girls Varsity Race                      
+Hopkinton                        135  Ethan Lasher                         Combined JV Race                        
+Hopkinton                        136  Shaylee Murdough                     Girls Varsity Race                      
+Hopkinton                        137  Liam O'Rourke                        Boys Varsity Race                       
+Hopkinton                        138  John Reddy                           Combined JV Race                        
+Hopkinton                        139  Nico Sala                            Combined JV Race                        
+Hopkinton                        140  William Shepard                      Combined JV Race                        
+Hopkinton                        141  Savannah Smith                       Combined JV Race                        
+Hopkinton                        142  Elizabeth Trafton                    Girls Varsity Race                      
+Hopkinton                        143  Amelia Walsh                         Girls Varsity Race                      
+Hopkinton                        144  Adrian Whiteknact                    Boys Varsity Race                       
+Inter-Lakes                      145  Gracie Arcane                        Combined JV Race                        
+Inter-Lakes                      146  Andrew Bucell                        Combined JV Race                        
+Inter-Lakes                      147  Elihu Dunn                           Combined JV Race                        
+Inter-Lakes                      148  Jesse Foran                          Boys Varsity Race                       
+Inter-Lakes                      149  Abigail Furlan                       Combined JV Race                        
+Inter-Lakes                      150  Devin Gasque                         Boys Varsity Race                       
+Inter-Lakes                      151  Ronan Hird                           Boys Varsity Race                       
+Inter-Lakes                      152  Dan Hodge                            Combined JV Race                        
+Inter-Lakes                      153  Leo Kusch                            Boys Varsity Race                       
+Inter-Lakes                      154  Hayes Livernois                      Combined JV Race                        
+Inter-Lakes                      155  Julius Nelson                        Combined JV Race                        
+Inter-Lakes                      156  Issac Nudd-Homeyer                   Boys Varsity Race                       
+Inter-Lakes                      157  Kayleen Pestana                      Combined JV Race                        
+Inter-Lakes                      158  Keegan Snyder                        Combined JV Race                        
+Inter-Lakes                      159  David Walker                         Boys Varsity Race                       
+Inter-Lakes                      160  Daniel  Weeks                        Combined JV Race                        
+John Stark                       161  Gavin Arel                           Boys Varsity Race                       
+John Stark                       162  Rylee Barnard                        Girls Varsity Race                      
+John Stark                       163  Kayla Barriere                       Girls Varsity Race                      
+John Stark                       164  Rachel Berube                        Girls Varsity Race                      
+John Stark                       165  Shane Brunini                        Boys Varsity Race                       
+John Stark                       166  Anna Chasse                          Girls Varsity Race                      
+John Stark                       167  Yuliana Chavez                       Combined JV Race                        
+John Stark                       168  Austin Freeman                       Boys Varsity Race                       
+John Stark                       169  Evan Furness                         Boys Varsity Race                       
+John Stark                       170  Alex Keirstead                       Boys Varsity Race                       
+John Stark                       171  Izabel Korbet                        Girls Varsity Race                      
+John Stark                       172  Eli Lemire                           Boys Varsity Race                       
+John Stark                       173  Amanda Leonard                       Girls Varsity Race                      
+John Stark                       174  Kyle Nichols                         Combined JV Race                        
+John Stark                       175  Austin Patenaude                     Boys Varsity Race                       
+John Stark                       176  Katie Patterson                      Girls Varsity Race                      
+John Stark                       177  Sam Robinson                         Combined JV Race                        
+John Stark                       178  Elsa Westphal                        Combined JV Race                        
+Kearsarge                        179  Thomas Cicoria                       Boys Varsity Race                       
+Kearsarge                        180  Quinton Cloutier                     Boys Varsity Race                       
+Kearsarge                        181  Daniel Dalbec                        Boys Varsity Race                       
+Kearsarge                        182  Annelise DelGrosso                   Girls Varsity Race                      
+Kearsarge                        183  Molly Ellison                        Girls Varsity Race                      
+Kearsarge                        184  Juliet Faria                         Girls Varsity Race                      
+Kearsarge                        185  Amelia Lefebvre                      Girls Varsity Race                      
+Kearsarge                        186  Riley Raynes                         Girls Varsity Race                      
+Kearsarge                        187  Nethaniel Stepp                      Boys Varsity Race                       
+Kearsarge                        188  Taylor White                         Girls Varsity Race                      
+Merrimack Valley                 189  Emily Baca                           Girls Varsity Race                      
+Merrimack Valley                 190  Nathan Bain                          Boys Varsity Race                       
+Merrimack Valley                 191  Christopher Bode                     Boys Varsity Race                       
+Merrimack Valley                 192  Sam Bush                             Combined JV Race                        
+Merrimack Valley                 193  Westin Chevalier                     Combined JV Race                        
+Merrimack Valley                 194  Keira Cote                           Girls Varsity Race                      
+Merrimack Valley                 195  Kendra Davidson                      Girls Varsity Race                      
+Merrimack Valley                 196  Madison Geddes                       Girls Varsity Race                      
+Merrimack Valley                 197  Nicole Geoffrion                     Combined JV Race                        
+Merrimack Valley                 198  Ben Geoffroy                         Boys Varsity Race                       
+Merrimack Valley                 199  Cooper Hedderig                      Combined JV Race                        
+Merrimack Valley                 200  Elizabeth Henderson                  Combined JV Race                        
+Merrimack Valley                 201  Reagan Jefferson                     Girls Varsity Race                      
+Merrimack Valley                 202  Samuel Jensen                        Boys Varsity Race                       
+Merrimack Valley                 203  Degges Jonathan                      Combined JV Race                        
+Merrimack Valley                 204  Lydia Likas                          Combined JV Race                        
+Merrimack Valley                 205  Tessa Lynch                          Combined JV Race                        
+Merrimack Valley                 206  Lily Moser                           Girls Varsity Race                      
+Merrimack Valley                 207  Ben Newton                           Boys Varsity Race                       
+Merrimack Valley                 208  Mychal Reynolds                      Boys Varsity Race                       
+Merrimack Valley                 209  Sydney Spack                         Girls Varsity Race                      
+Merrimack Valley                 210  Tony Wang                            Boys Varsity Race                       
+Merrimack Valley                 211  Silas Webb                           Combined JV Race                        
+Newfound Regional                212  Addison Alpers                       Girls Varsity Race                      
+Newfound Regional                213  Caleb Anair                          Combined JV Race                        
+Newfound Regional                214  Kelton Austin                        Boys Varsity Race                       
+Newfound Regional                215  Emerald  Briggs                      Girls Varsity Race                      
+Newfound Regional                216  Reece Cutting                        Girls Varsity Race                      
+Newfound Regional                217  Jack DiFilippe                       Combined JV Race                        
+Newfound Regional                218  Tobias  Eckert                       Combined JV Race                        
+Newfound Regional                219  Broderick Edwards                    Combined JV Race                        
+Newfound Regional                220  Julian  Field                        Boys Varsity Race                       
+Newfound Regional                221  Colin Foster                         Boys Varsity Race                       
+Newfound Regional                222  Evan Foster                          Boys Varsity Race                       
+Newfound Regional                223  Sophie  Garlick-Drake                Combined JV Race                        
+Newfound Regional                224  Benjamin  Gilbert                    Combined JV Race                        
+Newfound Regional                225  Soraya  Glidden                      Girls Varsity Race                      
+Newfound Regional                226  Josie Halle                          Girls Varsity Race                      
+Newfound Regional                227  Ceili Irving                         Girls Varsity Race                      
+Newfound Regional                228  Charlotte  Kaempfer                  Combined JV Race                        
+Newfound Regional                229  Xander Krom                          Combined JV Race                        
+Newfound Regional                230  Isa  LaPlume                         Combined JV Race                        
+Newfound Regional                231  Tucker Magrauth                      Combined JV Race                        
+Newfound Regional                232  Laurel  McKellar                     Combined JV Race                        
+Newfound Regional                233  Wyatt  Towne                         Combined JV Race                        
+Newfound Regional                234  Gabrielle Valliere                   Girls Varsity Race                      
+Pembroke                         235  Jasmine Blake                        Girls Varsity Race                      
+Pembroke                         236  Layla Couture                        Girls Varsity Race                      
+Pembroke                         237  Zachary Heichlinger                  Boys Varsity Race                       
+Pembroke                         238  Alayna Maguire                       Girls Varsity Race                      
+Pembroke                         239  Samuel Nereson                       Boys Varsity Race                       
+Pembroke                         240  Matthew Palleschi                    Boys Varsity Race                       
+Pembroke                         241  Hayden Petersons                     Boys Varsity Race                       
+Pembroke                         242  Caleb Saturley                       Boys Varsity Race                       
+Proctor Academy                  243  Emily Alexander                      Girls Varsity Race                      
+Proctor Academy                  244  Niko Cole-Johnson                    Girls Varsity Race                      
+Proctor Academy                  245  Sophia German                        Girls Varsity Race                      
+Proctor Academy                  246  William Green                        Boys Varsity Race                       
+Proctor Academy                  247  Natalie Hadnot                       Girls Varsity Race                      
+Proctor Academy                  248  Wilkin Paulino                       Boys Varsity Race                       
+Proctor Academy                  249  Max Preuss                           Boys Varsity Race                       
+Proctor Academy                  250  Andrew  Pullin                       Boys Varsity Race                       
+Proctor Academy                  251  Boo Reynolds                         Girls Varsity Race                      
+Proctor Academy                  252  Noah Taylor                          Boys Varsity Race                       
+Prospect Mountain                253  Layla Baker                          Girls Varsity Race                      
+Prospect Mountain                254  Alexis Briggs                        Girls Varsity Race                      
+Prospect Mountain                255  Madelyn Briggs                       Girls Varsity Race                      
+Prospect Mountain                256  Victoria Cowser                      Girls Varsity Race                      
+Prospect Mountain                257  Patricia Elglehart                   Combined JV Race                        
+Prospect Mountain                258  Avery Giunta                         Boys Varsity Race                       
+Prospect Mountain                259  Whitney Good                         Girls Varsity Race                      
+Prospect Mountain                260  Page Harding                         Girls Varsity Race                      
+Prospect Mountain                261  Joey  Howlett                        Boys Varsity Race                       
+Prospect Mountain                262  Eva McCartney                        Combined JV Race                        
+Prospect Mountain                263  Declan  McCausland                   Boys Varsity Race                       
+Prospect Mountain                264  Dawson Meehan                        Boys Varsity Race                       
+Prospect Mountain                265  Trew Reed                            Boys Varsity Race                       
+Prospect Mountain                266  Krysten Richerdson                   Combined JV Race                        
+Prospect Mountain                267  Caiden Wainwright                    Boys Varsity Race                       
+Prospect Mountain                268  Lyndi White                          Girls Varsity Race                      
+Prospect Mountain                269  Parker Wood                          Boys Varsity Race                       
+St. Paul's School                270  Rebecca Barnard                      Combined JV Race                        
+St. Paul's School                271  Mackenzie Barrette                   Girls Varsity Race                      
+St. Paul's School                272  Olivia Blanchard                     Girls Varsity Race                      
+St. Paul's School                273  Brooks Boyd                          Girls Varsity Race                      
+St. Paul's School                274  Alexandra Cabot                      Girls Varsity Race                      
+St. Paul's School                275  Lily Campbell                        Combined JV Race                        
+St. Paul's School                276  Andrew Carroll                       Boys Varsity Race                       
+St. Paul's School                277  Chappy Carroll                       Boys Varsity Race                       
+St. Paul's School                278  Ian Chang                            Boys Varsity Race                       
+St. Paul's School                279  Jonathan Dase                        Boys Varsity Race                       
+St. Paul's School                280  Shaoqian Du                          Combined JV Race                        
+St. Paul's School                281  Lillian Ehlinger                     Combined JV Race                        
+St. Paul's School                282  Owen Gorenc                          Boys Varsity Race                       
+St. Paul's School                283  Aedyn Kourakos                       Girls Varsity Race                      
+St. Paul's School                284  Linus Krenkel                        Boys Varsity Race                       
+St. Paul's School                285  Sidney Magnus                        Combined JV Race                        
+St. Paul's School                286  Hary Moyer                           Combined JV Race                        
+St. Paul's School                287  Maeve  O'Connell                     Girls Varsity Race                      
+St. Paul's School                288  Cameron Perry                        Boys Varsity Race                       
+St. Paul's School                289  Katy Scott                           Girls Varsity Race                      
+Winnisquam                       290  Dylan  Allard                        Boys Varsity Race                       
+Winnisquam                       291  Gabby Allard                         Girls Varsity Race                      
+Winnisquam                       292  Chris Collins                        Boys Varsity Race                       
+Winnisquam                       293  Bella Dalzell                        Girls Varsity Race                      
+Winnisquam                       294  Elise Langevin                       Girls Varsity Race                      
+Winnisquam                       295  Luke Larrabee                        Boys Varsity Race                       
+Winnisquam                       296  Abigail Osmer                        Girls Varsity Race                      
+Winnisquam                       297  Penelope Sprague                     Girls Varsity Race                      
+Winnisquam                       298  David Swain                          Boys Varsity Race                       
+Winnisquam                       299  Emily Tripple                        Girls Varsity Race                      
+Winnisquam                       300  Natalie Wolfe                        Girls Varsity Race                      

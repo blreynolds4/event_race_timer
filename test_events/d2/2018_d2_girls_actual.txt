@@ -1,0 +1,135 @@
+Place Name                             Grade Team                             Time
+===== ================================ ===== ================================ ========
+    1 Sophia Reynolds                  9     Merrimack Valley                 18m32.9s
+    2 Julia Robitaille                 12    Manchester West                  18m48.9s
+    3 Corinne Robitaille               12    Manchester West                  19m7.5s 
+    4 Addison Cox                      10    Coe-Brown                        19m17s  
+    5 Clare Veverka                    12    Con-Val                          19m20s  
+    6 Rachel Hurley                    12    Con-Val                          19m23.5s
+    7 Lauren Robinson                  12    Milford                          19m27s  
+    8 Chloe Trudel                     9     Souhegan                         19m34.3s
+    9 Arielle Zlotnick                 12    Souhegan                         19m47.7s
+   10 Ella Malone                      10    Coe-Brown                        19m51.1s
+   11 Schuyler Michalak                12    Con-Val                          20m4.2s 
+   12 Abigail O'Connor                 11    Coe-Brown                        20m15.8s
+   13 Abby Halloran                    9     Milford                          20m20.1s
+   14 Leila Trummel                    12    Hanover                          20m21.1s
+   15 Avery Scully                     12    Sanborn Regional                 20m26.4s
+   16 Ellen Baker                      12    Portsmouth                       20m37.2s
+   17 Christine Aman                   11    Hanover                          20m40s  
+   18 Lily Doody                       11    Oyster River                     20m41.8s
+   19 Emma York                        11    Merrimack Valley                 20m46.3s
+   20 Olivia Lenk                      11    Oyster River                     20m50.8s
+   21 Morgan Bell                      10    St. Thomas Aquinas               21m0.2s 
+   22 Amy Pattelena                    9     Hollis/Brookline                 21m1.1s 
+   23 Miranda Compton                  10    Coe-Brown                        21m6.7s 
+   24 Sarah Newell                     12    Con-Val                          21m9.3s 
+   25 Amelia Edmonds                   9     Coe-Brown                        21m15.8s
+   26 Sarah Huckman                    12    Kingswood                        21m16.4s
+   27 Tessa Millette                   10    Coe-Brown                        21m16.4s
+   28 Madison Hoppler                  11    Oyster River                     21m19.1s
+   29 Molly Jennings                   10    Souhegan                         21m27.5s
+   30 Zara Cheney                      12    Kennett                          21m29.6s
+   31 Jenny Ladd                       12    Souhegan                         21m32.3s
+   32 Ainsley Towers                   11    Plymouth Regional                21m32.5s
+   33 Kadence Murphy                   11    Oyster River                     21m32.8s
+   34 April Weeks                      10    Portsmouth                       21m32.8s
+   35 Caroline Loescher                10    Hanover                          21m39.2s
+   36 Adrianna Zlotnick                10    Souhegan                         21m40.5s
+   37 Sophie Sullivan                  10    Oyster River                     21m45.6s
+   38 Charlotte Tagupa                 9     Hanover                          21m48.5s
+   39 Brianna Langdon                  9     John Stark                       21m52.5s
+   40 Kay Partridge                    12    Hollis/Brookline                 21m54.9s
+   41 Paige Hurst                      10    Pelham                           21m58.8s
+   42 Alice Garner                     11    Hanover                          22m1.6s 
+   43 Madison McDonald                 10    John Stark                       22m1.9s 
+   44 Sam Kelley-Derzon                12    Portsmouth                       22m3.4s 
+   45 Autumn Graham                    12    Coe-Brown                        22m4.8s 
+   46 Hannah Thelemarck                12    Kennett                          22m5.7s 
+   47 Emily Bregou                     12    Hanover                          22m5.9s 
+   48 Kennedy Lange                    12    Hanover                          22m7.3s 
+   49 Marlee Yoder                     10    Oyster River                     22m9.4s 
+   50 Leslie MacGrath                  10    Milford                          22m15.8s
+   51 Molly Janoch                     12    Con-Val                          22m18.4s
+   52 Lori DeMambro                    11    Milford                          22m21s  
+   53 Grace Castonguay                 11    Oyster River                     22m21.3s
+   54 Madisyn Garrity                  11    Merrimack Valley                 22m30.9s
+   55 Reagan Riffle                    10    Con-Val                          22m33.3s
+   56 Marina McMahon                   11    Con-Val                          22m38.8s
+   57 Amy Burton                       9     Kennett                          22m38.9s
+   58 Sophie Unger                     12    Souhegan                         22m39.8s
+   59 Rosemary Carpenter               10    Kingswood                        22m40.9s
+   60 Jona Valazquez                   9     Milford                          22m43.8s
+   61 Elizabe VanDeMoere               12    Plymouth Regional                22m44.4s
+   62 Abby Hughes                      10    Windham                          22m47.4s
+   63 Kali Slover                      9     Portsmouth                       22m51.1s
+   64 Sarah Ciotti                     12    Bow                              22m51.2s
+   65 Grace Harootian                  11    Windham                          22m53.6s
+   66 Angela Hagstrom                  10    Portsmouth                       22m54.6s
+   67 Lexi Labour                      9     Milford                          22m59s  
+   68 Carolyn Day                      10    Kingswood                        23m0.1s 
+   69 Jenna Skilling                   11    Windham                          23m2.9s 
+   70 Lily Jackson                     11    Hollis/Brookline                 23m4.8s 
+   71 Paige DeVries                    10    Windham                          23m5.1s 
+   72 Grace Perley                     9     Kennett                          23m10.5s
+   73 Sierra Abrams                    11    Kennett                          23m12.7s
+   74 Tory Burke                       11    Bow                              23m13.5s
+   75 Emma Herrero                     9     Souhegan                         23m14s  
+   76 Kaitlyn Fay                      12    Kennett                          23m17.9s
+   77 Autumn Boisvert                  10    Bow                              23m24.6s
+   78 Haleigh Bilodeau                 12    John Stark                       23m29.1s
+   79 Leah Boisvert                    9     Bow                              23m33s  
+   80 Emily Loranger                   9     St. Thomas Aquinas               23m35.1s
+   81 Sarah Carpenter                  10    Kingswood                        23m35.6s
+   82 Ashley Ulricson                  12    Plymouth Regional                23m40.4s
+   83 Libby Parker                     12    Bow                              23m44s  
+   84 Katy Donovan                     11    Goffstown                        23m45.6s
+   85 Emily Locandro                   12    Portsmouth                       23m54.6s
+   86 Corinna Flynn                    9     Plymouth Regional                24m9.1s 
+   87 Libby Barnes                     10    John Stark                       24m14.3s
+   88 Valerie Johnston                 11    Plymouth Regional                24m15.2s
+   89 Kayla Dimick                     9     Plymouth Regional                24m16.1s
+   90 Kaelyn Haggerty                  11    Windham                          24m18.1s
+   91 Madelyn Marcotte                 11    Kennett                          24m19.6s
+   92 Isabella Williams                10    St. Thomas Aquinas               24m22.1s
+   93 Hailey Erskine                   12    John Stark                       24m22.7s
+   94 Maiz Thurber-Wells               12    Merrimack Valley                 24m25.1s
+   95 Ella Brousseau                   10    St. Thomas Aquinas               24m32.4s
+   96 Chloe Lozan                      12    Portsmouth                       24m33.9s
+   97 Elizabeth Morrison               11    Kingswood                        24m36s  
+   98 Kate Albertelli                  9     St. Thomas Aquinas               24m36.6s
+   99 Lily Stinchfield                 10    Kingswood                        24m40.8s
+  100 Clair Verrier                    9     Windham                          24m42s  
+  101 Katelyn Brennan                  12    John Stark                       24m47.7s
+  102 Olivia Vogel                     10    Milford                          24m50s  
+  103 Charlotte Corbitt                9     Pembroke                         24m54.7s
+  104 Katherine Butt                   12    Merrimack Valley                 24m56.3s
+  105 Grace Caplan                     9     John Stark                       24m56.3s
+  106 Carolyn Hultz                    9     Hollis/Brookline                 24m56.4s
+  107 Victoria Rezzarday               11    Hollis/Brookline                 24m57.2s
+  108 Amanda Montminy                  11    Pembroke                         25m6.4s 
+  109 Lindsay D'Orazio                 12    St. Thomas Aquinas               25m7.9s 
+  110 Tristan Beyer                    12    Merrimack Valley                 25m16.9s
+  111 Olivia Berkeley                  9     Pembroke                         25m26.6s
+  112 Kate Watt                        11    Bow                              25m31.6s
+  113 Hailey Simes                     12    Sanborn Regional                 25m37.9s
+  114 Skye Hansen                      12    Goffstown                        25m38.3s
+  115 Brooke Breton                    12    St. Thomas Aquinas               25m39.7s
+  116 Louisa Carey                     10    Bow                              25m41.9s
+  117 Nicole Bausha                    9     Goffstown                        25m43.1s
+  118 Brianna Therrien                 11    Plymouth Regional                25m44.2s
+  119 Kierra Dean                      12    Hollis/Brookline                 25m45.4s
+  120 MacNeill Matthews                10    Merrimack Valley                 25m48.8s
+  121 Emma Botelho                     10    Sanborn Regional                 25m50.7s
+  122 Reka Ivanyi                      10    Pelham                           26m1s   
+  123 Addison Tate                     12    Sanborn Regional                 26m17s  
+  124 Emily Pelleschi                  10    Pembroke                         26m28.3s
+  125 Natasha Jordan                   12    Pembroke                         26m29.6s
+  126 Ava Hansen                       12    Goffstown                        26m33.1s
+  127 Isabel Melim                     10    Goffstown                        26m33.3s
+  128 Catherine Donovan                11    Hollis/Brookline                 26m35.8s
+  129 Alanthara Chea                   10    Pelham                           26m40.4s
+  130 Madeline Finke                   9     Goffstown                        27m9s   
+  131 Katryn Maley                     9     Goffstown                        27m33.2s
+  132 Sarah Bellefleur                 11    Kingswood                        27m45.2s
+  133 Avery Gamache                    12    Pembroke                         28m15.6s

@@ -4,6 +4,7 @@ import (
 	"blreynolds4/event-race-timer/overall"
 	"blreynolds4/event-race-timer/redis_stream"
 	"blreynolds4/event-race-timer/results"
+	"blreynolds4/event-race-timer/xc"
 	"context"
 	"flag"
 	"fmt"
@@ -21,10 +22,14 @@ func main() {
 	var claDbAddress string
 	var claDbNumber int
 	var claRacename string
+	var claOverall bool
+	var claXCTeam bool
 
 	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
 	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
 	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
+	flag.BoolVar(&claOverall, "overall", false, "Use this flag to turn on overall scoring")
+	flag.BoolVar(&claXCTeam, "xc", false, "Use this flag to tun on XC team scoring")
 
 	// parse command line
 	flag.Parse()
@@ -40,26 +45,34 @@ func main() {
 
 	resultStreamName := claRacename + "_results"
 
-	fmt.Println("building result reader reader for", resultStreamName)
-	rawResultStream := redis_stream.NewRedisEventStream(rdb, claRacename+"_results")
-	resultStream := results.NewResultStream(rawResultStream)
-
-	resultScorer := overall.NewOverallResults()
-
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
-	fmt.Println("building overall results")
 	for {
-		err := resultScorer.ScoreResults(context.TODO(), resultStream)
-		if err != nil {
-			fmt.Println("ERROR scoring results:", err)
+		fmt.Println("building result reader reader for", resultStreamName)
+		rawResultStream := redis_stream.NewRedisEventStream(rdb, claRacename+"_results")
+		resultStream := results.NewResultStream(rawResultStream)
+
+		if claXCTeam {
+			xcScorer := xc.NewXCScorer()
+			err := xcScorer.ScoreResults(context.TODO(), resultStream)
+			if err != nil {
+				fmt.Println("ERROR scoring xc results:", err)
+			}
 		}
 
-		t := time.NewTicker(time.Second * 1)
+		if claOverall {
+			resultScorer := overall.NewOverallResults()
+			err := resultScorer.ScoreResults(context.TODO(), resultStream)
+			if err != nil {
+				fmt.Println("ERROR scoring overall results:", err)
+			}
+		}
+
+		t := time.NewTicker(time.Second * 2)
 		select {
 		case <-c:
-			fmt.Println("Overall Scorer Exiting")
+			fmt.Println("Scorer Exiting")
 			os.Exit(0)
 		case <-t.C:
 		}

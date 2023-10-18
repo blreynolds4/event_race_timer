@@ -1,0 +1,23 @@
+2018 boys scripts
+go run cmd/event_generator/main.go -raceName 2018D2Boys -sourceFile test_events/2018_d2_boys_events.txt
+go run cmd/default_placer/main.go -raceName 2018D2Boys -config race_config.json 
+go run cmd/result_builder/main.go -raceName 2018D2Boys -config race_config.json -competitors test_events/2018_d2_boys_events.txt_athletes.json 
+go run cmd/scorer/main.go -raceName 2018D2Boys
+
+2018 girls scripts
+go run cmd/event_generator/main.go -raceName 2018D2Girls -sourceFile test_events/2018_d2_girls_events.txt
+go run cmd/default_placer/main.go -raceName 2018D2Girls -config race_config.json 
+go run cmd/result_builder/main.go -raceName 2018D2Girls -config race_config.json -competitors test_events/2018_d2_girls_events.txt_athletes.json 
+go run cmd/scorer/main.go -raceName 2018D2Girls
+
+2019 boys scripts
+go run cmd/event_generator/main.go -raceName 2019D2Boys -sourceFile test_events/2019_d2_boys_events.txt
+go run cmd/default_placer/main.go -raceName 2019D2Boys -config race_config.json 
+go run cmd/result_builder/main.go -raceName 2019D2Boys -config race_config.json -competitors test_events/2019_d2_boys_events.txt_athletes.json 
+go run cmd/scorer/main.go -raceName 2019D2Boys
+
+2022 boys scripts
+go run cmd/event_generator/main.go -raceName 2022D2Boys -sourceFile test_events/2022_d2_boys_events.txt
+go run cmd/default_placer/main.go -raceName 2022D2Boys -config race_config.json 
+go run cmd/result_builder/main.go -raceName 2022D2Boys -config race_config.json -competitors test_events/2022_d2_boys_events.txt_athletes.json 
+go run cmd/scorer/main.go -raceName 2022D2Boys

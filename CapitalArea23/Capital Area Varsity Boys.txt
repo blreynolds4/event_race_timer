@@ -1,0 +1,12 @@
+Capital Area Varsity Boys
+Config:  capital_area.json
+RaceName: capital_area_boys_varsity
+Athletes: CAC_small_csv-Combined_JV_Race-athletes.json
+SourceMap:  webhookSourceConfig.json
+
+Command lines:
+./raceweb --config webhookSourceConfig.json --raceName capital_area_boys_varsity --competitors CAC_small.csv-Combined_JV_Race-athletes.json
+./placer --config capital_area.json --raceName capital_area_boys_varsity --competitors CAC_small.csv-Combined_JV_Race-athletes.json
+./result-builder --config capital_area.json --raceName capital_area_boys_varsity --competitors CAC_small.csv-Combined_JV_Race-athletes.json
+./cli --raceName capital_area_boys_varsity
+./overall-scorer --raceName capital_area_boys_varsity

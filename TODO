@@ -1,3 +1,10 @@
+1. better model for assigning places
+2. better logging
+3. audit of everything sent to result builder for potential replay if stream is deleted
+
+
+
+
 Tutorials on Testing
 https://blog.jetbrains.com/go/2022/11/22/comprehensive-guide-to-testing-in-go/
 

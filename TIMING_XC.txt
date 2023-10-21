@@ -15,7 +15,7 @@ Source ranking
 
 
 start the webserver
-start default placer
+start default placer *** Consider NOT using default placer for XC ***
 start result builder
 
 start a manual cli

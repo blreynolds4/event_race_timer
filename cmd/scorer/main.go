@@ -24,12 +24,14 @@ func main() {
 	var claRacename string
 	var claOverall bool
 	var claXCTeam bool
+	var claDebug bool
 
 	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
 	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
 	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
 	flag.BoolVar(&claOverall, "overall", false, "Use this flag to turn on overall scoring")
-	flag.BoolVar(&claXCTeam, "xc", false, "Use this flag to tun on XC team scoring")
+	flag.BoolVar(&claXCTeam, "xc", false, "Use this flag to turn on XC team scoring")
+	flag.BoolVar(&claDebug, "debug", false, "Use this flag to debug")
 
 	// parse command line
 	flag.Parse()
@@ -44,13 +46,16 @@ func main() {
 	defer rdb.Close()
 
 	resultStreamName := claRacename + "_results"
+	if claDebug {
+		resultStreamName = resultStreamName + "_debug"
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
 	for {
 		fmt.Println("building result reader reader for", resultStreamName)
-		rawResultStream := redis_stream.NewRedisEventStream(rdb, claRacename+"_results")
+		rawResultStream := redis_stream.NewRedisEventStream(rdb, resultStreamName)
 		resultStream := results.NewResultStream(rawResultStream)
 
 		if claXCTeam {

@@ -94,25 +94,9 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source *results.ResultStr
 			score++
 			team.scored++
 		}
-
-		// if len(teamResult.Finishers) < 5 {
-		// 	// no scores till there are 5
-		// }
-		// if len(teamResult.Finishers) > 6 {
-		// 	//average the times using indexs
-		// 	fmt.Println("TODO Top 7 Avg")
-		// } else if len(teamResult.Finishers) > 4 {
-		// 	//average the times
-		// 	fmt.Println("TODO Top 5 Avg")
-		// 	//we can also score here since there are 5
-		// 	scoreAcumulator := 0
-		// 	for b := 0; b < 4; b++ {
-		// 		scoreAcumulator += int(teamResult.Finishers[b].Score)
-		// 	}
-		// 	teamResult.TeamScore = int16(scoreAcumulator)
-		// }
 	}
 
+	// fmt.Printf("%s", "\x1Bc") // clear stdout
 	fmt.Printf("\n\n\n")
 	xcs.Results = make([]*XCTeamResult, 0)
 	fmt.Println("Plc Team                             Score     1    2    3    4    5    6*   7*   8*   9*")

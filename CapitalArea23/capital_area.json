@@ -1,8 +1,0 @@
-{
-    "SourceRanks": {
-        "finish-mat":1,
-        "manual": 2,
-        "default-placer":3,
-        "chute":3
-    }
-}

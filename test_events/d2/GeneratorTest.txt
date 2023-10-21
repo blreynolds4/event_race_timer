@@ -5,13 +5,15 @@ Athletes: 2018_d2_boys_events.txt_athletes.json
 SourceMap:  webhookSourceConfig.json
 
 Command lines:
-# ./raceweb --config webhookSourceConfig.json --raceName generator_test --competitors test_events/2018_d2_boys_events.txt_athletes.json
-./placer --config race_config.json --raceName generator_test --competitors test_events/2018_d2_boys_events.txt_athletes.json
-./result-builder --config race_config.json --raceName generator_test --competitors test_events/2018_d2_boys_events.txt_athletes.json
+./raceweb --config webhookSourceConfig.json --raceName generator_test --competitors test_events/d2/2018_d2_boys_events.txt_athletes.json
+./placer --config test_events/race_config.json --raceName generator_test --competitors test_events/d2/2018_d2_boys_events.txt_athletes.json
+./result-builder --config test_events/race_config.json --raceName generator_test --competitors test_events/d2/2018_d2_boys_events.txt_athletes.json
 ./cli --raceName generator_test
 ./overall-scorer --raceName generator_test
 
-./generator --raceName generator_test --sourceFile test_events/2018_d2_boys_events.txt
+./generator --raceName generator_test --sourceFile test_events/d2/2018_d2_boys_events.txt
 
 Place Fixes:
 p 82 29 (Kirpal Demian to 29th)
+
+curl http://localhost:8080/api/timingEvents/finishes -d '{"elapsedTime": 10, "captureMode":"finish", "startTime":20, "antenna":4, "bib":5 }'

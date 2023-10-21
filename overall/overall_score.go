@@ -71,7 +71,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source *results.Resu
 	defer f.Close()
 
 	// write an html header just to the file
-	_, err = f.WriteString("<html><head><title>Overall Results</title><meta http-equiv=\"refresh\" content=\"2\"></head><body><pre>\n")
+	_, err = f.WriteString("<html><head><title>Overall Results</title></head><body><pre>\n")
 	if err != nil {
 		return err
 	}
@@ -83,8 +83,10 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source *results.Resu
 	fmt.Fprintln(w, "===== ===== ================================ ===== ================================ ========")
 	for i := 1; i <= len(placeMap); i++ {
 		ovr.overallResults = append(ovr.overallResults, placeMap[i])
-		r := placeMap[i]
-		fmt.Fprintf(w, "%-5d %-5d %-32s %-5d %-32s %-8s\n", r.Place, r.Bib, r.Athlete.Name, r.Athlete.Grade, r.Athlete.Team, formatFinishTime(r.Finishtime))
+		r, exists := placeMap[i]
+		if exists {
+			fmt.Fprintf(w, "%-5d %-5d %-32s %-5d %-32s %-8s\n", r.Place, r.Bib, r.Athlete.Name, r.Athlete.Grade, r.Athlete.Team, formatFinishTime(r.Finishtime))
+		}
 	}
 
 	_, err = f.WriteString("\n</pre></body></html>\n")

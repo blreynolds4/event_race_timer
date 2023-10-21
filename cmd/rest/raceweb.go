@@ -39,15 +39,16 @@ func verifyTimingEvent(c *gin.Context) {
 
 func NewTimingHandler(sourceLookup config.SourceConfig, athletes competitors.CompetitorLookup, eventStream *raceevents.EventStream) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		logger := log.Default()
 		var data OpenSignupsTimingEvent
 		if err := c.BindJSON(&data); err != nil {
-			fmt.Println("bind json error:", err.Error())
+			logger.Println("bind json error:", err.Error())
 			return
 		}
 		bib, err := strconv.Atoi(data.Bib)
 		if err != nil {
 			// just drop the bad bib
-			fmt.Println("dropping bad bib", data.Bib)
+			logger.Println("dropping bad bib", data.Bib, data.Antenna, data.Host)
 			return
 		}
 
@@ -62,9 +63,9 @@ func NewTimingHandler(sourceLookup config.SourceConfig, athletes competitors.Com
 				FinishTime: finishTime,
 			})
 			c.IndentedJSON(http.StatusCreated, data)
-			fmt.Printf("Finish Sent bib %d %s\n", bib, time.Duration(data.ElapsedTime*int(time.Millisecond)).String())
+			logger.Printf("Finish Sent bib %d %s %d %s, %s\n", bib, time.Duration(data.ElapsedTime*int(time.Millisecond)).String(), data.Antenna, sourceLookup.SourceMap[data.Host], data.Host)
 		} else {
-			fmt.Println("skipping unknown bib", bib)
+			logger.Println("skipping unknown bib", bib, data.Antenna, data.Host)
 		}
 	}
 

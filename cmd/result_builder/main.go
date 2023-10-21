@@ -22,12 +22,16 @@ func main() {
 	var claRacename string
 	var claCompetitorsPath string
 	var claConfigPath string
+	var claDebug bool
+	var claPlaceFile string
 
 	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
 	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
 	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
 	flag.StringVar(&claCompetitorsPath, "competitors", "", "The path to the competitor lookup file (json)")
 	flag.StringVar(&claConfigPath, "config", "", "The path to the config file (json)")
+	flag.BoolVar(&claDebug, "debug", false, "Flag to debug")
+	flag.StringVar(&claPlaceFile, "places", "", "The path to the place file")
 
 	// parse command line
 	flag.Parse()
@@ -58,10 +62,18 @@ func main() {
 	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
 	eventStream := raceevents.NewEventStream(rawStream)
 
-	rawResultStream := redis_stream.NewRedisEventStream(rdb, claRacename+"_results")
+	resultStreamName := claRacename + "_results"
+	if claDebug {
+		resultStreamName = resultStreamName + "_debug"
+	}
+	rawResultStream := redis_stream.NewRedisEventStream(rdb, resultStreamName)
 	resultStream := results.NewResultStream(rawResultStream)
 
 	resultBuilder := results.NewResultBuilder()
+	if claDebug {
+		fmt.Println("DEBUGGING RESULTS")
+		resultBuilder = results.NewStartFinishResultBuilder(claPlaceFile)
+	}
 
 	err = resultBuilder.BuildResults(eventStream, athletes, resultStream, raceConfig.SourceRanks)
 	if err != nil {

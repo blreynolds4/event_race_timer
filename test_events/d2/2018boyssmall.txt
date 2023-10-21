@@ -1,0 +1,5 @@
+1|515|Reynolds|David|12|Merrimack Valley|16:44.8|1
+2|627|O'Brien|Andrew|10|Oyster River|16:48.6|2
+3|122|Dubois|Dawson|11|Coe-Brown|16:49.2|3
+4|128|Tkaczyk|Luke|10|Coe-Brown|16:55.3|4
+5|756|Khalil|Dylan|10|Sanborn Regional|16:59.0|5

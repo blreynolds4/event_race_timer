@@ -104,7 +104,14 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 						sendResult(context.TODO(), bibResult, results)
 					case previousPlace < pe.Place:
 						// require promotions pe.Place < previousPlace
-						fmt.Println("Demotions not allowed, promote places only new place < old")
+						demotePlaceResult(bibResult, pe, placeIndex)
+						// Loop and send from previous place to pe place inclusive
+						for i := previousPlace; i <= pe.Place; i++ {
+							if place, exists := placeIndex[i]; exists {
+								// if place >= pe.Place {
+								sendResult(context.TODO(), place, results)
+							}
+						}
 					default:
 						// add and update
 						addPlaceResult(bibResult, pe, placeIndex)
@@ -143,6 +150,29 @@ func addPlaceResult(rr *RaceResult, pe raceevents.PlaceEvent, places map[int]*Ra
 			if _, exists := places[i]; exists {
 				places[i+1] = places[i]
 				places[i+1].Place = i + 1
+			}
+		}
+	}
+
+	// put the new place in
+	rr.Place = pe.Place
+	rr.PlaceSource = pe.Source
+	places[pe.Place] = rr
+}
+
+func demotePlaceResult(rr *RaceResult, pe raceevents.PlaceEvent, places map[int]*RaceResult) {
+	// if the there is a result in the new place already, make room and save the result
+	delete(places, rr.Place)
+	_, found := places[pe.Place]
+	if found {
+		// move every result up a place (without updating the place source)
+		// place currently in result is deleted so start one more
+		// assumes new place is worse (more than existing)
+		for i := rr.Place + 1; i <= pe.Place; i++ {
+			// there could be place gaps
+			if _, exists := places[i]; exists {
+				places[i-1] = places[i]
+				places[i-1].Place = i - 1
 			}
 		}
 	}

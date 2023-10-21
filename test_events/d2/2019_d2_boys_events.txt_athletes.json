@@ -1,0 +1,872 @@
+{
+ "115": {
+  "Name": "Aidan Cox",
+  "Team": "Coe-Brown",
+  "Age": 0,
+  "Grade": 9
+ },
+ "116": {
+  "Name": "Dawson Dubois",
+  "Team": "Coe-Brown",
+  "Age": 0,
+  "Grade": 12
+ },
+ "117": {
+  "Name": "Patrick Hill",
+  "Team": "Coe-Brown",
+  "Age": 0,
+  "Grade": 11
+ },
+ "118": {
+  "Name": "Wyatt Mackey",
+  "Team": "Coe-Brown",
+  "Age": 0,
+  "Grade": 11
+ },
+ "119": {
+  "Name": "Logan Mihelich",
+  "Team": "Coe-Brown",
+  "Age": 0,
+  "Grade": 11
+ },
+ "120": {
+  "Name": "Carter Sylvester",
+  "Team": "Coe-Brown",
+  "Age": 0,
+  "Grade": 11
+ },
+ "121": {
+  "Name": "Luke Tkaczyk",
+  "Team": "Coe-Brown",
+  "Age": 0,
+  "Grade": 11
+ },
+ "157": {
+  "Name": "Tyler Beard",
+  "Team": "Con-Val",
+  "Age": 0,
+  "Grade": 10
+ },
+ "158": {
+  "Name": "Haven Deschenes",
+  "Team": "Con-Val",
+  "Age": 0,
+  "Grade": 11
+ },
+ "159": {
+  "Name": "Abe Dreher",
+  "Team": "Con-Val",
+  "Age": 0,
+  "Grade": 10
+ },
+ "160": {
+  "Name": "Jamini Viles",
+  "Team": "Con-Val",
+  "Age": 0,
+  "Grade": 10
+ },
+ "161": {
+  "Name": "Harrison Kim",
+  "Team": "Con-Val",
+  "Age": 0,
+  "Grade": 12
+ },
+ "162": {
+  "Name": "August Kotula",
+  "Team": "Con-Val",
+  "Age": 0,
+  "Grade": 11
+ },
+ "163": {
+  "Name": "Danny Veverka",
+  "Team": "Con-Val",
+  "Age": 0,
+  "Grade": 11
+ },
+ "246": {
+  "Name": "Gabriel Brigham",
+  "Team": "Goffstown",
+  "Age": 0,
+  "Grade": 10
+ },
+ "247": {
+  "Name": "Nicholas Dalton",
+  "Team": "Goffstown",
+  "Age": 0,
+  "Grade": 11
+ },
+ "248": {
+  "Name": "Daniel Gendron",
+  "Team": "Goffstown",
+  "Age": 0,
+  "Grade": 10
+ },
+ "249": {
+  "Name": "Kris Gendron",
+  "Team": "Goffstown",
+  "Age": 0,
+  "Grade": 11
+ },
+ "250": {
+  "Name": "Caleb Hagner",
+  "Team": "Goffstown",
+  "Age": 0,
+  "Grade": 10
+ },
+ "251": {
+  "Name": "Chase Hall",
+  "Team": "Goffstown",
+  "Age": 0,
+  "Grade": 9
+ },
+ "252": {
+  "Name": "Ethan Hansen",
+  "Team": "Goffstown",
+  "Age": 0,
+  "Grade": 9
+ },
+ "264": {
+  "Name": "Diego Aspinwall",
+  "Team": "Hanover",
+  "Age": 0,
+  "Grade": 12
+ },
+ "265": {
+  "Name": "Daniel Bandler",
+  "Team": "Hanover",
+  "Age": 0,
+  "Grade": 12
+ },
+ "266": {
+  "Name": "Matthew Bonner",
+  "Team": "Hanover",
+  "Age": 0,
+  "Grade": 12
+ },
+ "267": {
+  "Name": "Daniel Frost",
+  "Team": "Hanover",
+  "Age": 0,
+  "Grade": 11
+ },
+ "268": {
+  "Name": "Mack Levy",
+  "Team": "Hanover",
+  "Age": 0,
+  "Grade": 9
+ },
+ "269": {
+  "Name": "Ian Nolon",
+  "Team": "Hanover",
+  "Age": 0,
+  "Grade": 12
+ },
+ "270": {
+  "Name": "Trevor Siegel",
+  "Team": "Hanover",
+  "Age": 0,
+  "Grade": 12
+ },
+ "297": {
+  "Name": "Ryan Burgher",
+  "Team": "Hollis/Brookline",
+  "Age": 0,
+  "Grade": 9
+ },
+ "299": {
+  "Name": "Ayden Finnegan",
+  "Team": "Hollis/Brookline",
+  "Age": 0,
+  "Grade": 9
+ },
+ "300": {
+  "Name": "John Kotelly",
+  "Team": "Hollis/Brookline",
+  "Age": 0,
+  "Grade": 10
+ },
+ "301": {
+  "Name": "Jake LaBorde",
+  "Team": "Hollis/Brookline",
+  "Age": 0,
+  "Grade": 10
+ },
+ "302": {
+  "Name": "Luke Laborde",
+  "Team": "Hollis/Brookline",
+  "Age": 0,
+  "Grade": 9
+ },
+ "303": {
+  "Name": "Troy Moscatelli",
+  "Team": "Hollis/Brookline",
+  "Age": 0,
+  "Grade": 10
+ },
+ "338": {
+  "Name": "Jack Barnes",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 9
+ },
+ "339": {
+  "Name": "Jack Hagan",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 12
+ },
+ "340": {
+  "Name": "Marcus McFall",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 12
+ },
+ "341": {
+  "Name": "Reece Montague",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 11
+ },
+ "342": {
+  "Name": "Devin Patterson",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 10
+ },
+ "343": {
+  "Name": "Noah Sigrist",
+  "Team": "John Stark",
+  "Age": 0,
+  "Grade": 12
+ },
+ "379": {
+  "Name": "Keith Badger",
+  "Team": "Kennett",
+  "Age": 0,
+  "Grade": 12
+ },
+ "380": {
+  "Name": "Ben Biche",
+  "Team": "Kennett",
+  "Age": 0,
+  "Grade": 9
+ },
+ "381": {
+  "Name": "Christoph Desmaris",
+  "Team": "Kennett",
+  "Age": 0,
+  "Grade": 12
+ },
+ "382": {
+  "Name": "Gavin Hunt",
+  "Team": "Kennett",
+  "Age": 0,
+  "Grade": 11
+ },
+ "383": {
+  "Name": "Ben Klementovich",
+  "Team": "Kennett",
+  "Age": 0,
+  "Grade": 12
+ },
+ "384": {
+  "Name": "Tristen Smith",
+  "Team": "Kennett",
+  "Age": 0,
+  "Grade": 10
+ },
+ "385": {
+  "Name": "Logan Violette",
+  "Team": "Kennett",
+  "Age": 0,
+  "Grade": 11
+ },
+ "393": {
+  "Name": "Louis Arinello",
+  "Team": "Kingswood",
+  "Age": 0,
+  "Grade": 10
+ },
+ "394": {
+  "Name": "Casey Arsenault",
+  "Team": "Kingswood",
+  "Age": 0,
+  "Grade": 9
+ },
+ "395": {
+  "Name": "Mark Stenard",
+  "Team": "Kingswood",
+  "Age": 0,
+  "Grade": 11
+ },
+ "396": {
+  "Name": "Tim Huckman",
+  "Team": "Kingswood",
+  "Age": 0,
+  "Grade": 10
+ },
+ "397": {
+  "Name": "Matthew Perkins",
+  "Team": "Kingswood",
+  "Age": 0,
+  "Grade": 10
+ },
+ "398": {
+  "Name": "Oleg Sheahan",
+  "Team": "Kingswood",
+  "Age": 0,
+  "Grade": 11
+ },
+ "399": {
+  "Name": "Joseph Wasson",
+  "Team": "Kingswood",
+  "Age": 0,
+  "Grade": 12
+ },
+ "416": {
+  "Name": "Nathaniel Brown",
+  "Team": "Lebanon",
+  "Age": 0,
+  "Grade": 12
+ },
+ "417": {
+  "Name": "Cody Davis",
+  "Team": "Lebanon",
+  "Age": 0,
+  "Grade": 12
+ },
+ "418": {
+  "Name": "Ethan Eshbaugh",
+  "Team": "Lebanon",
+  "Age": 0,
+  "Grade": 10
+ },
+ "419": {
+  "Name": "Will Forman",
+  "Team": "Lebanon",
+  "Age": 0,
+  "Grade": 12
+ },
+ "420": {
+  "Name": "Carlos Kennelly",
+  "Team": "Lebanon",
+  "Age": 0,
+  "Grade": 9
+ },
+ "421": {
+  "Name": "Nichola Lamontagne",
+  "Team": "Lebanon",
+  "Age": 0,
+  "Grade": 9
+ },
+ "422": {
+  "Name": "Sam Shipman",
+  "Team": "Lebanon",
+  "Age": 0,
+  "Grade": 10
+ },
+ "474": {
+  "Name": "Giovanni Martin",
+  "Team": "Manchester West",
+  "Age": 0,
+  "Grade": 10
+ },
+ "475": {
+  "Name": "Travis Martins",
+  "Team": "Manchester West",
+  "Age": 0,
+  "Grade": 10
+ },
+ "476": {
+  "Name": "Lucas Tan",
+  "Team": "Manchester West",
+  "Age": 0,
+  "Grade": 10
+ },
+ "524": {
+  "Name": "Mar Carey-Matthews",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 9
+ },
+ "525": {
+  "Name": "Oliver Forsha",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 9
+ },
+ "526": {
+  "Name": "Elisha Dodenhoff",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 11
+ },
+ "527": {
+  "Name": "Ethan Dodenhoff",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 11
+ },
+ "528": {
+  "Name": "Isaac Linscott",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 10
+ },
+ "529": {
+  "Name": "Mark Mercier",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 9
+ },
+ "530": {
+  "Name": "Christian Oglesby",
+  "Team": "Merrimack Valley",
+  "Age": 0,
+  "Grade": 12
+ },
+ "538": {
+  "Name": "James Arseneault",
+  "Team": "Milford",
+  "Age": 0,
+  "Grade": 10
+ },
+ "539": {
+  "Name": "Nathan Caron",
+  "Team": "Milford",
+  "Age": 0,
+  "Grade": 9
+ },
+ "541": {
+  "Name": "Nazarri Klymok",
+  "Team": "Milford",
+  "Age": 0,
+  "Grade": 11
+ },
+ "542": {
+  "Name": "Caleb Korthals",
+  "Team": "Milford",
+  "Age": 0,
+  "Grade": 11
+ },
+ "543": {
+  "Name": "Aidan Robie",
+  "Team": "Milford",
+  "Age": 0,
+  "Grade": 10
+ },
+ "637": {
+  "Name": "Myles Carrico",
+  "Team": "Oyster River",
+  "Age": 0,
+  "Grade": 12
+ },
+ "638": {
+  "Name": "Henry Duisberg",
+  "Team": "Oyster River",
+  "Age": 0,
+  "Grade": 12
+ },
+ "639": {
+  "Name": "Owen Fleischer",
+  "Team": "Oyster River",
+  "Age": 0,
+  "Grade": 11
+ },
+ "640": {
+  "Name": "Noah Hall",
+  "Team": "Oyster River",
+  "Age": 0,
+  "Grade": 12
+ },
+ "641": {
+  "Name": "Dillon Labonte",
+  "Team": "Oyster River",
+  "Age": 0,
+  "Grade": 10
+ },
+ "642": {
+  "Name": "Andrew O'Brien",
+  "Team": "Oyster River",
+  "Age": 0,
+  "Grade": 11
+ },
+ "643": {
+  "Name": "Trevor Sassaman",
+  "Team": "Oyster River",
+  "Age": 0,
+  "Grade": 12
+ },
+ "649": {
+  "Name": "Ryan Bellahrossi",
+  "Team": "Pelham",
+  "Age": 0,
+  "Grade": 11
+ },
+ "650": {
+  "Name": "Matt Benson",
+  "Team": "Pelham",
+  "Age": 0,
+  "Grade": 9
+ },
+ "651": {
+  "Name": "Cameron Dufault",
+  "Team": "Pelham",
+  "Age": 0,
+  "Grade": 12
+ },
+ "652": {
+  "Name": "Brandon Kenney",
+  "Team": "Pelham",
+  "Age": 0,
+  "Grade": 9
+ },
+ "653": {
+  "Name": "Josh Nottebart",
+  "Team": "Pelham",
+  "Age": 0,
+  "Grade": 12
+ },
+ "654": {
+  "Name": "Kenny Pawlowicz",
+  "Team": "Pelham",
+  "Age": 0,
+  "Grade": 11
+ },
+ "655": {
+  "Name": "Trip Williams",
+  "Team": "Pelham",
+  "Age": 0,
+  "Grade": 9
+ },
+ "662": {
+  "Name": "Isaiah Berkeley",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 9
+ },
+ "663": {
+  "Name": "Alex Chiavaras",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 11
+ },
+ "664": {
+  "Name": "Ben Dugas",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 9
+ },
+ "665": {
+  "Name": "Jesse Garcia",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 11
+ },
+ "666": {
+  "Name": "Hayden Goyette",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 11
+ },
+ "667": {
+  "Name": "Casey Shuman",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 10
+ },
+ "668": {
+  "Name": "David Testerman",
+  "Team": "Pembroke",
+  "Age": 0,
+  "Grade": 10
+ },
+ "692": {
+  "Name": "Samson DeRuvo",
+  "Team": "Plymouth Regional",
+  "Age": 0,
+  "Grade": 12
+ },
+ "693": {
+  "Name": "Kyle Dimick",
+  "Team": "Plymouth Regional",
+  "Age": 0,
+  "Grade": 12
+ },
+ "694": {
+  "Name": "Michael Kulig",
+  "Team": "Plymouth Regional",
+  "Age": 0,
+  "Grade": 12
+ },
+ "695": {
+  "Name": "Hunter McLeod",
+  "Team": "Plymouth Regional",
+  "Age": 0,
+  "Grade": 11
+ },
+ "696": {
+  "Name": "James Philbin",
+  "Team": "Plymouth Regional",
+  "Age": 0,
+  "Grade": 12
+ },
+ "697": {
+  "Name": "John Ulricson",
+  "Team": "Plymouth Regional",
+  "Age": 0,
+  "Grade": 10
+ },
+ "698": {
+  "Name": "Achius Wolfley",
+  "Team": "Plymouth Regional",
+  "Age": 0,
+  "Grade": 11
+ },
+ "706": {
+  "Name": "Addison Crowell",
+  "Team": "Portsmouth",
+  "Age": 0,
+  "Grade": 12
+ },
+ "707": {
+  "Name": "Jake Haley",
+  "Team": "Portsmouth",
+  "Age": 0,
+  "Grade": 9
+ },
+ "708": {
+  "Name": "Ari Montville",
+  "Team": "Portsmouth",
+  "Age": 0,
+  "Grade": 12
+ },
+ "709": {
+  "Name": "Nick Norris",
+  "Team": "Portsmouth",
+  "Age": 0,
+  "Grade": 11
+ },
+ "710": {
+  "Name": "Michael O'Neil",
+  "Team": "Portsmouth",
+  "Age": 0,
+  "Grade": 10
+ },
+ "711": {
+  "Name": "Leo Swainbank",
+  "Team": "Portsmouth",
+  "Age": 0,
+  "Grade": 11
+ },
+ "712": {
+  "Name": "Zach Yeaton",
+  "Team": "Portsmouth",
+  "Age": 0,
+  "Grade": 11
+ },
+ "75": {
+  "Name": "Adem Aricanli",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 10
+ },
+ "76": {
+  "Name": "Connor Bernard",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 10
+ },
+ "77": {
+  "Name": "Matthew Cardarelli",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 11
+ },
+ "78": {
+  "Name": "Colin Lessard",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 12
+ },
+ "780": {
+  "Name": "Gavin O'Connell",
+  "Team": "Sanborn Regional",
+  "Age": 0,
+  "Grade": 9
+ },
+ "781": {
+  "Name": "Noah Cavallo",
+  "Team": "Sanborn Regional",
+  "Age": 0,
+  "Grade": 10
+ },
+ "783": {
+  "Name": "Jared Khalil",
+  "Team": "Sanborn Regional",
+  "Age": 0,
+  "Grade": 9
+ },
+ "784": {
+  "Name": "Ian Marsh",
+  "Team": "Sanborn Regional",
+  "Age": 0,
+  "Grade": 12
+ },
+ "785": {
+  "Name": "Andrew Pugh",
+  "Team": "Sanborn Regional",
+  "Age": 0,
+  "Grade": 10
+ },
+ "786": {
+  "Name": "Owen Stocker",
+  "Team": "Sanborn Regional",
+  "Age": 0,
+  "Grade": 11
+ },
+ "79": {
+  "Name": "Benjamin Neff",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 11
+ },
+ "794": {
+  "Name": "Kariso Anderson",
+  "Team": "Souhegan",
+  "Age": 0,
+  "Grade": 9
+ },
+ "795": {
+  "Name": "Drew Apple",
+  "Team": "Souhegan",
+  "Age": 0,
+  "Grade": 10
+ },
+ "796": {
+  "Name": "Nolan Dickinson",
+  "Team": "Souhegan",
+  "Age": 0,
+  "Grade": 10
+ },
+ "797": {
+  "Name": "Peter Headington",
+  "Team": "Souhegan",
+  "Age": 0,
+  "Grade": 10
+ },
+ "798": {
+  "Name": "Thomas Headington",
+  "Team": "Souhegan",
+  "Age": 0,
+  "Grade": 12
+ },
+ "799": {
+  "Name": "Ethan McFee",
+  "Team": "Souhegan",
+  "Age": 0,
+  "Grade": 11
+ },
+ "80": {
+  "Name": "Gabriel Neff",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 12
+ },
+ "800": {
+  "Name": "Andrew Strauss",
+  "Team": "Souhegan",
+  "Age": 0,
+  "Grade": 10
+ },
+ "81": {
+  "Name": "Wyatt Weber",
+  "Team": "Bow",
+  "Age": 0,
+  "Grade": 11
+ },
+ "822": {
+  "Name": "Nick Genkinger",
+  "Team": "St. Thomas Aquinas",
+  "Age": 0,
+  "Grade": 12
+ },
+ "823": {
+  "Name": "Peter Hyatt",
+  "Team": "St. Thomas Aquinas",
+  "Age": 0,
+  "Grade": 10
+ },
+ "824": {
+  "Name": "JJ Marsh",
+  "Team": "St. Thomas Aquinas",
+  "Age": 0,
+  "Grade": 11
+ },
+ "825": {
+  "Name": "Dillon O'Connor",
+  "Team": "St. Thomas Aquinas",
+  "Age": 0,
+  "Grade": 11
+ },
+ "826": {
+  "Name": "Patrick Reidy",
+  "Team": "St. Thomas Aquinas",
+  "Age": 0,
+  "Grade": 11
+ },
+ "827": {
+  "Name": "Peter Schultz",
+  "Team": "St. Thomas Aquinas",
+  "Age": 0,
+  "Grade": 12
+ },
+ "828": {
+  "Name": "Ben Smith",
+  "Team": "St. Thomas Aquinas",
+  "Age": 0,
+  "Grade": 11
+ },
+ "866": {
+  "Name": "Logan Carter",
+  "Team": "Windham",
+  "Age": 0,
+  "Grade": 9
+ },
+ "867": {
+  "Name": "Cole Flenniken",
+  "Team": "Windham",
+  "Age": 0,
+  "Grade": 11
+ },
+ "868": {
+  "Name": "Trey Gonzalez",
+  "Team": "Windham",
+  "Age": 0,
+  "Grade": 11
+ },
+ "869": {
+  "Name": "Michael Killian",
+  "Team": "Windham",
+  "Age": 0,
+  "Grade": 10
+ },
+ "870": {
+  "Name": "Jacob Kuczynski",
+  "Team": "Windham",
+  "Age": 0,
+  "Grade": 12
+ },
+ "871": {
+  "Name": "Rohan Rai",
+  "Team": "Windham",
+  "Age": 0,
+  "Grade": 11
+ },
+ "872": {
+  "Name": "Hirsh Ramani",
+  "Team": "Windham",
+  "Age": 0,
+  "Grade": 12
+ }
+}

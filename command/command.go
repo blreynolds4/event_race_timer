@@ -94,9 +94,18 @@ func NewFinishCommand(sourceName string, eventTarget *raceevents.EventStream) Co
 				}
 			}
 
+			finish := time.Now().UTC()
+			if len(args) > 1 && len(args[1]) > 0 {
+				// parse a finish time in RFC3339Nano format
+				finish, err = time.Parse(time.RFC3339Nano, args[1])
+				if err != nil {
+					return false, err
+				}
+			}
+
 			return false, eventTarget.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
 				Source:     sourceName,
-				FinishTime: time.Now().UTC(),
+				FinishTime: finish,
 				Bib:        bib,
 			})
 		},

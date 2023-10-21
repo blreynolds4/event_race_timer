@@ -1,0 +1,34 @@
+Pre Race Data:
+config json for each race
+source map config for rest server
+    rest server needs race name and source map (writes to race event stream) (connects readers to event stream)
+    placer needs source ranks, race name, athletes (reads race event stream) (generates default places by time for know athlete bibs only)
+    manual cli needs race name (Should use "manual" source name) (writes/reads race event stream)
+    result builder needs race name, source ranks, and athletes (reads race events, writes to result stream)
+    scorer needs race name (reads result stream)
+
+Source ranking
+    finish-mat is number 1 for finish time
+    manual is number 2 for everything
+    default-placer is number 3, places that are manually sent/swapped should override placer
+    chute is 3 for finish time as a back up
+
+
+start the webserver
+start default placer *** Consider NOT using default placer for XC ***
+start result builder
+
+start a manual cli
+    send start event and start backup timer and manual timer
+
+Start the Reader Race manager
+RaceManager set the race clock in sync with start event
+Start Collecting when first runner is coming
+
+Start overall scorer
+Start xc team scorer
+
+
+Notes:  default placer will resend all the place events with each finish, so it could override
+a swap event in the result builder.  Write swap handler to handle that?
+

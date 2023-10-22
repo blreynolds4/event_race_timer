@@ -1,8 +1,8 @@
 package places
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/raceevents"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/raceevents"
 	"context"
 	"fmt"
 	"sort"

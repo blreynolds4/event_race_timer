@@ -1,8 +1,8 @@
 package results
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/stream"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"fmt"
 	"testing"
@@ -55,17 +55,6 @@ func TestIsCompleteFalse(t *testing.T) {
 			},
 			Time: time.Second,
 		},
-		// {
-		// 	// Time is zero
-		// 	Bib: 1,
-		// 	Athlete: &competitors.Competitor{
-		// 		Name:  t.Name(),
-		// 		Team:  t.Name(),
-		// 		Age:   1,
-		// 		Grade: 1,
-		// 	},
-		// 	Place: 1,
-		// },
 		{
 			// place source is ""
 			Bib: 1,
@@ -78,18 +67,6 @@ func TestIsCompleteFalse(t *testing.T) {
 			Place:        1,
 			FinishSource: "y",
 		},
-		// {
-		// 	// finish source is ""
-		// 	Bib: 1,
-		// 	Athlete: &competitors.Competitor{
-		// 		Name:  t.Name(),
-		// 		Team:  t.Name(),
-		// 		Age:   1,
-		// 		Grade: 1,
-		// 	},
-		// 	Place:       1,
-		// 	PlaceSource: "y",
-		// },
 	}
 
 	for _, rr := range results {

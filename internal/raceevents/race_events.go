@@ -100,6 +100,9 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown type in Event Data")
 	}
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -1,8 +1,9 @@
-package results
+package resultbuilder
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/raceevents"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/results"
 	"bufio"
 	"context"
 	"fmt"
@@ -15,7 +16,6 @@ func NewStartFinishResultBuilder(places string) ResultBuilder {
 	// read in place file
 	finishes := make(map[int]int)
 	loadPlaces(places, finishes)
-	fmt.Println("PLACES", finishes)
 	return &startFinishResultBuilder{places: finishes}
 }
 
@@ -51,11 +51,14 @@ type startFinishResultBuilder struct {
 	places map[int]int
 }
 
-func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventStream, athletes competitors.CompetitorLookup, results *ResultStream, ranking map[string]int) error {
+func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventStream,
+	athletes competitors.CompetitorLookup,
+	outputResults *results.ResultStream,
+	ranking map[string]int) error {
 
-	start := []raceevents.StartEvent{} //array to store all of the start events
-	rr := make(map[int]*RaceResult)    //map of race results, bib number is key
-	ft := make(map[int]time.Time)      // map of times with bib number being key
+	start := make([]raceevents.StartEvent, 0) //array to store all of the start events
+	rr := make(map[int]*results.RaceResult)   //map of race results, bib number is key
+	ft := make(map[int]time.Time)             // map of times with bib number being key
 
 	fmt.Println("START FINISH RESULT BUILDER IS FOR DEBUGGING")
 	startCount := 0
@@ -81,7 +84,7 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventSt
 				result.Time = ft[result.Bib].Sub(start[len(start)-1].StartTime)
 				rr[result.Bib] = result
 				resultSent++
-				sendResult(context.TODO(), rr[result.Bib], results)
+				sendResult(context.TODO(), rr[result.Bib], outputResults)
 			}
 		case raceevents.FinishEvent:
 			finishCount++
@@ -93,7 +96,7 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventSt
 				result := rr[fe.Bib]
 				if result == nil {
 					// the result doesn't exist in the cache
-					result = new(RaceResult)
+					result = new(results.RaceResult)
 					result.Bib = fe.Bib
 					result.Athlete = athlete
 					rr[fe.Bib] = result
@@ -120,7 +123,7 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventSt
 
 					if rr[fe.Bib].IsComplete() {
 						resultSent++
-						sendResult(context.TODO(), rr[result.Bib], results)
+						sendResult(context.TODO(), rr[result.Bib], outputResults)
 					} else {
 						fmt.Println("NOT COMPLETE", fe.Bib, result)
 					}
@@ -139,13 +142,13 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventSt
 			// send missed places
 			for bib, place := range rb.places {
 				fmt.Println("No finish for", bib, "chute place", place)
-				result := new(RaceResult)
+				result := new(results.RaceResult)
 				result.Bib = bib
 				result.Place = place
 				result.PlaceSource = "manual"
 				if athlete, bibFound := athletes[bib]; bibFound {
 					result.Athlete = athlete
-					sendResult(context.TODO(), result, results)
+					sendResult(context.TODO(), result, outputResults)
 					resultSent++
 				} else {
 					fmt.Println("chute bib", bib, "not in athletes")
@@ -162,9 +165,9 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventSt
 	return nil
 }
 
-func printMissingAthletes(results map[int]*RaceResult, athletes competitors.CompetitorLookup) {
+func printMissingAthletes(outputResults map[int]*results.RaceResult, athletes competitors.CompetitorLookup) {
 	for bib, athlete := range athletes {
-		if _, found := results[bib]; !found {
+		if _, found := outputResults[bib]; !found {
 			fmt.Println("No Result: ", bib, athlete.Name, athlete.Team)
 		}
 	}

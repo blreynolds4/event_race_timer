@@ -14,9 +14,9 @@ package main
 // place events may be needed to distinguish the order of finish if times are the same
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/raceevents"
-	"blreynolds4/event-race-timer/redis_stream"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/redis_stream"
 	"bufio"
 	"context"
 	"flag"

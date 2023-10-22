@@ -1,7 +1,7 @@
 package redis_stream
 
 import (
-	"blreynolds4/event-race-timer/stream"
+	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"fmt"
 	"testing"

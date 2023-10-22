@@ -1,15 +1,13 @@
 package results
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/stream"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"encoding/json"
 	"fmt"
 	"time"
 )
-
-const resultValueKey = "result"
 
 // A RaceResult that can be filled in as events arrive and sent when IsComplete() is true
 type RaceResult struct {

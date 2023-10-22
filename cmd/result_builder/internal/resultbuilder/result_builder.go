@@ -1,15 +1,16 @@
-package results
+package resultbuilder
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/raceevents"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/results"
 	"context"
 	"fmt"
 	"time"
 )
 
 type ResultBuilder interface {
-	BuildResults(inputEvents *raceevents.EventStream, athletes competitors.CompetitorLookup, results *ResultStream, ranking map[string]int) error
+	BuildResults(inputEvents *raceevents.EventStream, athletes competitors.CompetitorLookup, results *results.ResultStream, ranking map[string]int) error
 }
 
 func NewResultBuilder() ResultBuilder {
@@ -19,12 +20,15 @@ func NewResultBuilder() ResultBuilder {
 type resultBuilder struct {
 }
 
-func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athletes competitors.CompetitorLookup, results *ResultStream, ranking map[string]int) error {
+func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream,
+	athletes competitors.CompetitorLookup,
+	resultOutput *results.ResultStream,
+	ranking map[string]int) error {
 
-	start := []raceevents.StartEvent{} //array to store all of the start events
-	rr := make(map[int]*RaceResult)    //map of race results, bib number is key
-	ft := make(map[int]time.Time)      // map of times with bib number being key
-	placeIndex := make(map[int]*RaceResult)
+	start := []raceevents.StartEvent{}      //array to store all of the start events
+	rr := make(map[int]*results.RaceResult) //map of race results, bib number is key
+	ft := make(map[int]time.Time)           // map of times with bib number being key
+	placeIndex := make(map[int]*results.RaceResult)
 
 	var event raceevents.Event
 	gotEvent, err := inputEvents.GetRaceEvent(context.TODO(), 0, &event)
@@ -44,7 +48,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 				rr[result.Bib] = result
 
 				if rr[result.Bib].IsComplete() {
-					sendResult(context.TODO(), rr[result.Bib], results)
+					sendResult(context.TODO(), rr[result.Bib], resultOutput)
 				}
 			}
 		case raceevents.FinishEvent:
@@ -55,7 +59,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 				result := rr[fe.Bib]
 				if result == nil {
 					// the result doesn't exist in the cache
-					result = new(RaceResult)
+					result = new(results.RaceResult)
 					result.Bib = fe.Bib
 					result.Athlete = athletes[fe.Bib]
 					rr[fe.Bib] = result
@@ -75,7 +79,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 					rr[fe.Bib] = result
 
 					if rr[fe.Bib].IsComplete() {
-						sendResult(context.TODO(), rr[result.Bib], results)
+						sendResult(context.TODO(), rr[result.Bib], resultOutput)
 					}
 				}
 			}
@@ -87,7 +91,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 				bibResult := rr[pe.Bib]
 				if bibResult == nil {
 					// this is a new result
-					bibResult = new(RaceResult)
+					bibResult = new(results.RaceResult)
 					bibResult.Bib = pe.Bib
 					bibResult.Athlete = athletes[pe.Bib]
 					bibResult.PlaceSource = pe.Source
@@ -101,7 +105,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 					case previousPlace == 0:
 						// add and send result for new place
 						addPlaceResult(bibResult, pe, placeIndex)
-						sendResult(context.TODO(), bibResult, results)
+						sendResult(context.TODO(), bibResult, resultOutput)
 					case previousPlace < pe.Place:
 						// require promotions pe.Place < previousPlace
 						demotePlaceResult(bibResult, pe, placeIndex)
@@ -109,7 +113,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 						for i := previousPlace; i <= pe.Place; i++ {
 							if place, exists := placeIndex[i]; exists {
 								// if place >= pe.Place {
-								sendResult(context.TODO(), place, results)
+								sendResult(context.TODO(), place, resultOutput)
 							}
 						}
 					default:
@@ -119,7 +123,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 						for i := pe.Place; i <= previousPlace; i++ {
 							if place, exists := placeIndex[i]; exists {
 								// if place >= pe.Place {
-								sendResult(context.TODO(), place, results)
+								sendResult(context.TODO(), place, resultOutput)
 							}
 						}
 					}
@@ -137,7 +141,7 @@ func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream, athle
 	return nil
 }
 
-func addPlaceResult(rr *RaceResult, pe raceevents.PlaceEvent, places map[int]*RaceResult) {
+func addPlaceResult(rr *results.RaceResult, pe raceevents.PlaceEvent, places map[int]*results.RaceResult) {
 	// if the there is a result in the new place already, make room and save the result
 	delete(places, rr.Place)
 	_, found := places[pe.Place]
@@ -160,7 +164,7 @@ func addPlaceResult(rr *RaceResult, pe raceevents.PlaceEvent, places map[int]*Ra
 	places[pe.Place] = rr
 }
 
-func demotePlaceResult(rr *RaceResult, pe raceevents.PlaceEvent, places map[int]*RaceResult) {
+func demotePlaceResult(rr *results.RaceResult, pe raceevents.PlaceEvent, places map[int]*results.RaceResult) {
 	// if the there is a result in the new place already, make room and save the result
 	delete(places, rr.Place)
 	_, found := places[pe.Place]
@@ -183,7 +187,7 @@ func demotePlaceResult(rr *RaceResult, pe raceevents.PlaceEvent, places map[int]
 	places[pe.Place] = rr
 }
 
-func sendResult(ctx context.Context, rr *RaceResult, s *ResultStream) {
+func sendResult(ctx context.Context, rr *results.RaceResult, s *results.ResultStream) {
 	copy := *rr
 
 	s.SendResult(ctx, copy)

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/config"
-	"blreynolds4/event-race-timer/raceevents"
-	"blreynolds4/event-race-timer/redis_stream"
-	"blreynolds4/event-race-timer/results"
+	"blreynolds4/event-race-timer/cmd/result_builder/internal/resultbuilder"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/config"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/redis_stream"
+	"blreynolds4/event-race-timer/internal/results"
 	"flag"
 	"fmt"
 	"os"
@@ -69,10 +70,10 @@ func main() {
 	rawResultStream := redis_stream.NewRedisEventStream(rdb, resultStreamName)
 	resultStream := results.NewResultStream(rawResultStream)
 
-	resultBuilder := results.NewResultBuilder()
+	resultBuilder := resultbuilder.NewResultBuilder()
 	if claDebug {
 		fmt.Println("DEBUGGING RESULTS")
-		resultBuilder = results.NewStartFinishResultBuilder(claPlaceFile)
+		resultBuilder = resultbuilder.NewStartFinishResultBuilder(claPlaceFile)
 	}
 
 	err = resultBuilder.BuildResults(eventStream, athletes, resultStream, raceConfig.SourceRanks)

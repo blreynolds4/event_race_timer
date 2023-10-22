@@ -1,8 +1,8 @@
 package command
 
 import (
-	"blreynolds4/event-race-timer/raceevents"
-	"blreynolds4/event-race-timer/stream"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/stream"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

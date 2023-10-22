@@ -10,10 +10,10 @@ import (
 	"strconv"
 	"time"
 
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/config"
-	"blreynolds4/event-race-timer/raceevents"
-	"blreynolds4/event-race-timer/redis_stream"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/config"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/redis_stream"
 
 	"github.com/gin-gonic/gin"
 	redis "github.com/redis/go-redis/v9"

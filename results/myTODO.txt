@@ -1,2 +1,0 @@
--create partial result struct and modify test
--copy overall to result Builder

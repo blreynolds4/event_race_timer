@@ -1,10 +1,10 @@
 package main
 
 import (
-	"blreynolds4/event-race-timer/overall"
-	"blreynolds4/event-race-timer/redis_stream"
-	"blreynolds4/event-race-timer/results"
-	"blreynolds4/event-race-timer/xc"
+	"blreynolds4/event-race-timer/cmd/scorer/internal/overall"
+	"blreynolds4/event-race-timer/cmd/scorer/internal/xc"
+	"blreynolds4/event-race-timer/internal/redis_stream"
+	"blreynolds4/event-race-timer/internal/results"
 	"context"
 	"flag"
 	"fmt"

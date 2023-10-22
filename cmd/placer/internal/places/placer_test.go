@@ -1,9 +1,9 @@
 package places
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/raceevents"
-	"blreynolds4/event-race-timer/stream"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"encoding/json"
 	"testing"

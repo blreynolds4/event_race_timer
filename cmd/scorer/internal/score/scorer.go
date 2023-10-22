@@ -1,7 +1,7 @@
 package score
 
 import (
-	"blreynolds4/event-race-timer/results"
+	"blreynolds4/event-race-timer/internal/results"
 	"context"
 )
 

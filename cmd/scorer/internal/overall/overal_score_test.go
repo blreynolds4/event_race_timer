@@ -1,9 +1,9 @@
 package overall
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/results"
-	"blreynolds4/event-race-timer/stream"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/results"
+	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"encoding/json"
 	"fmt"

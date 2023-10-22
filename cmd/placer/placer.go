@@ -1,11 +1,11 @@
 package main
 
 import (
-	"blreynolds4/event-race-timer/competitors"
-	"blreynolds4/event-race-timer/config"
-	"blreynolds4/event-race-timer/places"
-	"blreynolds4/event-race-timer/raceevents"
-	"blreynolds4/event-race-timer/redis_stream"
+	"blreynolds4/event-race-timer/cmd/placer/internal/places"
+	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/config"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/redis_stream"
 	"flag"
 	"fmt"
 	"os"

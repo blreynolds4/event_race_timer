@@ -3,8 +3,8 @@ package main
 import (
 	"blreynolds4/event-race-timer/cmd/cli/internal/command"
 	"blreynolds4/event-race-timer/cmd/cli/internal/repl"
-	"blreynolds4/event-race-timer/raceevents"
-	"blreynolds4/event-race-timer/redis_stream"
+	"blreynolds4/event-race-timer/internal/raceevents"
+	"blreynolds4/event-race-timer/internal/redis_stream"
 	"flag"
 	"fmt"
 	"os"

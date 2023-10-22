@@ -1,7 +1,7 @@
 package command
 
 import (
-	"blreynolds4/event-race-timer/raceevents"
+	"blreynolds4/event-race-timer/internal/raceevents"
 	"context"
 	"time"
 )

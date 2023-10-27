@@ -16,10 +16,10 @@ type PlaceGenerator interface {
 }
 
 type defaultPlaceGenerator struct {
-	stream *raceevents.EventStream
+	stream raceevents.EventStream
 }
 
-func NewPlaceGenerator(es *raceevents.EventStream) PlaceGenerator {
+func NewPlaceGenerator(es raceevents.EventStream) PlaceGenerator {
 	return &defaultPlaceGenerator{
 		stream: es,
 	}

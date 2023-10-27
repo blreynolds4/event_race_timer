@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func NewListFinishCommand(eventSource *raceevents.EventStream) Command {
+func NewListFinishCommand(eventSource raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			var err error

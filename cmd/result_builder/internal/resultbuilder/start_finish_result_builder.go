@@ -51,7 +51,7 @@ type startFinishResultBuilder struct {
 	places map[int]int
 }
 
-func (rb *startFinishResultBuilder) BuildResults(inputEvents *raceevents.EventStream,
+func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStream,
 	athletes competitors.CompetitorLookup,
 	outputResults *results.ResultStream,
 	ranking map[string]int) error {

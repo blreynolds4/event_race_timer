@@ -10,7 +10,7 @@ import (
 )
 
 type ResultBuilder interface {
-	BuildResults(inputEvents *raceevents.EventStream, athletes competitors.CompetitorLookup, results *results.ResultStream, ranking map[string]int) error
+	BuildResults(inputEvents raceevents.EventStream, athletes competitors.CompetitorLookup, results *results.ResultStream, ranking map[string]int) error
 }
 
 func NewResultBuilder() ResultBuilder {
@@ -20,7 +20,7 @@ func NewResultBuilder() ResultBuilder {
 type resultBuilder struct {
 }
 
-func (rb *resultBuilder) BuildResults(inputEvents *raceevents.EventStream,
+func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
 	athletes competitors.CompetitorLookup,
 	resultOutput *results.ResultStream,
 	ranking map[string]int) error {

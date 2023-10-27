@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func NewAddBibCommand(eventStream *raceevents.EventStream) Command {
+func NewAddBibCommand(eventStream raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			//get the event with the event id and resend it with a bib attached

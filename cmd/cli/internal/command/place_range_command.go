@@ -11,10 +11,10 @@ import (
 
 type placeRangeCommand struct {
 	source      string
-	eventTarget *raceevents.EventStream
+	eventTarget raceevents.EventStream
 }
 
-func NewPlaceRangeCommand(sourceName string, eventTarget *raceevents.EventStream) Command {
+func NewPlaceRangeCommand(sourceName string, eventTarget raceevents.EventStream) Command {
 	return &placeRangeCommand{
 		source:      sourceName,
 		eventTarget: eventTarget,
@@ -60,7 +60,7 @@ func (pr *placeRangeCommand) Run(args []string) (bool, error) {
 	return false, nil
 }
 
-func NewPlaceRangePlaceCommand(nextPlace int, source string, eventTarget *raceevents.EventStream) Command {
+func NewPlaceRangePlaceCommand(nextPlace int, source string, eventTarget raceevents.EventStream) Command {
 	return &placeRangePlaceCommand{
 		nextPlace:   nextPlace - 1, // gets incremented before use
 		source:      source,
@@ -71,7 +71,7 @@ func NewPlaceRangePlaceCommand(nextPlace int, source string, eventTarget *raceev
 type placeRangePlaceCommand struct {
 	nextPlace   int
 	source      string
-	eventTarget *raceevents.EventStream
+	eventTarget raceevents.EventStream
 }
 
 func (prc *placeRangePlaceCommand) Run(args []string) (bool, error) {

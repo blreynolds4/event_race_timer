@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func NewPlaceCommand(sourceName string, eventTarget *raceevents.EventStream) Command {
+func NewPlaceCommand(sourceName string, eventTarget raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			var err error

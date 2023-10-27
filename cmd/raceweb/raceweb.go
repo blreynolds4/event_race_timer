@@ -37,7 +37,7 @@ func verifyTimingEvent(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, emptyResponse{})
 }
 
-func NewTimingHandler(sourceLookup config.SourceConfig, athletes competitors.CompetitorLookup, eventStream *raceevents.EventStream) gin.HandlerFunc {
+func NewTimingHandler(sourceLookup config.SourceConfig, athletes competitors.CompetitorLookup, eventStream raceevents.EventStream) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		logger := log.Default()
 		var data OpenSignupsTimingEvent

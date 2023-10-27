@@ -8,19 +8,38 @@ import (
 	"time"
 )
 
+type EventStreamReader interface {
+	GetRaceEvent(ctx context.Context, timeout time.Duration, e *Event) (bool, error)
+	GetRaceEventRange(ctx context.Context, startId, endId string, resultEvents []Event) (int, error)
+	RangeQueryMin() string
+	ExclusiveQueryStart(string) string
+	RangeQueryMax() string
+}
+
+type EventStreamWriter interface {
+	SendStartEvent(ctx context.Context, se StartEvent) error
+	SendFinishEvent(ctx context.Context, fe FinishEvent) error
+	SendPlaceEvent(ctx context.Context, pe PlaceEvent) error
+}
+
+type EventStream interface {
+	EventStreamReader
+	EventStreamWriter
+}
+
 // Define the Event Stream, it can support reading and writing
 // Event Stream is the api for sending/getting events
-type EventStream struct {
+type eventStream struct {
 	raw stream.ReaderWriter
 }
 
-func NewEventStream(s stream.ReaderWriter) *EventStream {
-	return &EventStream{
+func NewEventStream(s stream.ReaderWriter) EventStream {
+	return &eventStream{
 		raw: s,
 	}
 }
 
-func (es *EventStream) SendStartEvent(ctx context.Context, se StartEvent) error {
+func (es *eventStream) SendStartEvent(ctx context.Context, se StartEvent) error {
 	// wrap start event with event and send
 	return es.sendMessage(ctx, Event{
 		EventTime: time.Now().UTC(),
@@ -28,7 +47,7 @@ func (es *EventStream) SendStartEvent(ctx context.Context, se StartEvent) error 
 	})
 }
 
-func (es *EventStream) SendFinishEvent(ctx context.Context, fe FinishEvent) error {
+func (es *eventStream) SendFinishEvent(ctx context.Context, fe FinishEvent) error {
 	// wrap finish event with event and send
 	return es.sendMessage(ctx, Event{
 		EventTime: time.Now().UTC(),
@@ -36,7 +55,7 @@ func (es *EventStream) SendFinishEvent(ctx context.Context, fe FinishEvent) erro
 	})
 }
 
-func (es *EventStream) SendPlaceEvent(ctx context.Context, pe PlaceEvent) error {
+func (es *eventStream) SendPlaceEvent(ctx context.Context, pe PlaceEvent) error {
 	// wrap place event with event and send
 	return es.sendMessage(ctx, Event{
 		EventTime: time.Now().UTC(),
@@ -44,7 +63,7 @@ func (es *EventStream) SendPlaceEvent(ctx context.Context, pe PlaceEvent) error 
 	})
 }
 
-func (es *EventStream) sendMessage(ctx context.Context, e Event) error {
+func (es *eventStream) sendMessage(ctx context.Context, e Event) error {
 	eventData, err := json.Marshal(e)
 	if err != nil {
 		return err
@@ -55,7 +74,7 @@ func (es *EventStream) sendMessage(ctx context.Context, e Event) error {
 	})
 }
 
-func (es *EventStream) GetRaceEvent(ctx context.Context, timeout time.Duration, e *Event) (bool, error) {
+func (es *eventStream) GetRaceEvent(ctx context.Context, timeout time.Duration, e *Event) (bool, error) {
 	var msg stream.Message
 	read, err := es.raw.GetMessage(ctx, timeout, &msg)
 	if err != nil {
@@ -70,10 +89,24 @@ func (es *EventStream) GetRaceEvent(ctx context.Context, timeout time.Duration, 
 		return false, err
 	}
 
+	e.ID = msg.ID
+
 	return true, nil
 }
 
-func (es EventStream) GetRaceEventRange(ctx context.Context, startId, endId string, resultEvents []Event) (int, error) {
+func (rs *eventStream) RangeQueryMin() string {
+	return rs.raw.RangeQueryMin()
+}
+
+func (rs *eventStream) ExclusiveQueryStart(id string) string {
+	return rs.raw.ExclusiveQueryStart(id)
+}
+
+func (rs *eventStream) RangeQueryMax() string {
+	return rs.raw.RangeQueryMax()
+}
+
+func (es *eventStream) GetRaceEventRange(ctx context.Context, startId, endId string, resultEvents []Event) (int, error) {
 	// may not be ideal to allocate a slice of Messages in same size
 	// as Events, but simplest way to do this
 	if len(resultEvents) == 0 {
@@ -96,6 +129,7 @@ func (es EventStream) GetRaceEventRange(ctx context.Context, startId, endId stri
 		if err != nil {
 			return 0, err
 		}
+		e.ID = msgs[i].ID
 		resultEvents[i] = e
 		read++
 	}

@@ -47,7 +47,7 @@ func (e Event) MarshalJSON() ([]byte, error) {
 		Data:      e.Data,
 	}
 
-	switch e.Data.(type) {
+	switch t := e.Data.(type) {
 	case StartEvent:
 		actual.DataType = "start"
 	case FinishEvent:
@@ -55,7 +55,7 @@ func (e Event) MarshalJSON() ([]byte, error) {
 	case PlaceEvent:
 		actual.DataType = "place"
 	default:
-		return nil, fmt.Errorf("unknown type in Event Data")
+		return nil, fmt.Errorf("unknown type in Event Data %v", t)
 	}
 
 	return json.Marshal(actual)

@@ -83,7 +83,6 @@ func (rs *RedisEventStream) decodeMessageData(data any) ([]byte, error) {
 	default:
 		return nil, fmt.Errorf("unknown msg data type")
 	}
-
 }
 
 func (rs *RedisEventStream) RangeQueryMin() string {

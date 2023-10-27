@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func NewStartCommand(sourceName string, eventTarget *raceevents.EventStream) Command {
+func NewStartCommand(sourceName string, eventTarget raceevents.EventStream) Command {
 	return &noStateCommand{
 		CmdFunc: func(args []string) (bool, error) {
 			startTime := time.Now().UTC()

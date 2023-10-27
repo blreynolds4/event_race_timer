@@ -1,7 +1,7 @@
 package main
 
 import (
-	"blreynolds4/event-race-timer/competitors"
+	"blreynolds4/event-race-timer/internal/competitors"
 	"encoding/csv"
 	"errors"
 	"flag"

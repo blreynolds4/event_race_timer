@@ -152,5 +152,4 @@ func main() {
 	if err != nil {
 		fmt.Println("Error saving roster data", err)
 	}
-
 }

@@ -12,21 +12,21 @@ import (
 // dataKey is used to store message payloads in AddXArg Values map
 const dataKey = "data"
 
-type RedisEventStream struct {
+type RedisStream struct {
 	client    *redis.Client
 	stream    string
 	lastMsgId string
 }
 
-func NewRedisEventStream(c *redis.Client, name string) *RedisEventStream {
-	return &RedisEventStream{
+func NewRedisStream(c *redis.Client, name string) *RedisStream {
+	return &RedisStream{
 		client:    c,
 		stream:    name,
 		lastMsgId: "0",
 	}
 }
 
-func (rs *RedisEventStream) SendMessage(ctx context.Context, sm stream.Message) error {
+func (rs *RedisStream) SendMessage(ctx context.Context, sm stream.Message) error {
 	addArgs := redis.XAddArgs{
 		Stream: rs.stream,
 		ID:     sm.ID,
@@ -43,7 +43,7 @@ func (rs *RedisEventStream) SendMessage(ctx context.Context, sm stream.Message) 
 	return nil
 }
 
-func (rs *RedisEventStream) GetMessage(ctx context.Context, timeout time.Duration, resultMsg *stream.Message) (bool, error) {
+func (rs *RedisStream) GetMessage(ctx context.Context, timeout time.Duration, resultMsg *stream.Message) (bool, error) {
 	data, err := rs.client.XRead(ctx, &redis.XReadArgs{
 		Streams: []string{rs.stream, rs.lastMsgId},
 		//count is number of entries we want to read from redis
@@ -73,31 +73,30 @@ func (rs *RedisEventStream) GetMessage(ctx context.Context, timeout time.Duratio
 	return false, nil
 }
 
-func (rs *RedisEventStream) decodeMessageData(data any) ([]byte, error) {
-	switch data.(type) {
+func (rs *RedisStream) decodeMessageData(data any) ([]byte, error) {
+	switch d := data.(type) {
 	case []byte:
-		return data.([]byte), nil
+		return d, nil
 	case string:
-		stringData := data.(string)
-		return []byte(stringData), nil
+		return []byte(d), nil
 	default:
 		return nil, fmt.Errorf("unknown msg data type")
 	}
 }
 
-func (rs *RedisEventStream) RangeQueryMin() string {
+func (rs *RedisStream) RangeQueryMin() string {
 	return "-"
 }
 
-func (rs *RedisEventStream) ExclusiveQueryStart(id string) string {
+func (rs *RedisStream) ExclusiveQueryStart(id string) string {
 	return "(" + id
 }
 
-func (rs *RedisEventStream) RangeQueryMax() string {
+func (rs *RedisStream) RangeQueryMax() string {
 	return "+"
 }
 
-func (rs *RedisEventStream) GetMessageRange(ctx context.Context, startId, endId string, resultMessages []stream.Message) (int, error) {
+func (rs *RedisStream) GetMessageRange(ctx context.Context, startId, endId string, resultMessages []stream.Message) (int, error) {
 	if len(resultMessages) == 0 {
 		return 0, fmt.Errorf("can't get message range with empty buffer")
 	}

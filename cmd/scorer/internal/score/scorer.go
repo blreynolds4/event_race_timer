@@ -9,5 +9,5 @@ import (
 // It is expected to be called whenever scores need to be updated and process
 // as much of the stream as possible on each run.
 type Scorer interface {
-	ScoreResults(context.Context, *results.ResultStream) error
+	ScoreResults(context.Context, results.ResultStream) error
 }

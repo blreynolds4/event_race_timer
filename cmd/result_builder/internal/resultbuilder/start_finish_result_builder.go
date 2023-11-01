@@ -53,7 +53,7 @@ type startFinishResultBuilder struct {
 
 func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStream,
 	athletes competitors.CompetitorLookup,
-	outputResults *results.ResultStream,
+	outputResults results.ResultStream,
 	ranking map[string]int) error {
 
 	start := make([]raceevents.StartEvent, 0) //array to store all of the start events

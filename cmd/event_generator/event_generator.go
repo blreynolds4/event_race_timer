@@ -64,7 +64,7 @@ func main() {
 	}
 
 	// create event target
-	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+	rawStream := redis_stream.NewRedisStream(rdb, claRacename)
 	eventStream := raceevents.NewEventStream(rawStream)
 
 	// create and save competitor data

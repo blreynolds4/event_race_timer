@@ -116,7 +116,7 @@ func main() {
 
 	defer rdb.Close()
 
-	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+	rawStream := redis_stream.NewRedisStream(rdb, claRacename)
 	eventStream := raceevents.NewEventStream(rawStream)
 
 	router := gin.Default()

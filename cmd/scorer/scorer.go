@@ -55,7 +55,7 @@ func main() {
 
 	for {
 		fmt.Println("building result reader reader for", resultStreamName)
-		rawResultStream := redis_stream.NewRedisEventStream(rdb, resultStreamName)
+		rawResultStream := redis_stream.NewRedisStream(rdb, resultStreamName)
 		resultStream := results.NewResultStream(rawResultStream)
 
 		if claXCTeam {

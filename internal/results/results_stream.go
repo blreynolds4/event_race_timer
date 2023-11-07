@@ -1,47 +1,38 @@
 package results
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
 	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 )
 
-// A RaceResult that can be filled in as events arrive and sent when IsComplete() is true
-type RaceResult struct {
-	Bib          int
-	Athlete      *competitors.Competitor
-	Place        int
-	Time         time.Duration
-	FinishSource string
-	PlaceSource  string
+type ResultReader interface {
+	GetResults(ctx context.Context, results []RaceResult) (int, error)
 }
 
-func (rr RaceResult) IsComplete() bool {
-	// the un-set, zero value for Athlete is nil
-	// if the bib is not 0, athlete is not nil, the place is not 0 and has a source
-	// then the result can be published
-	return (rr.Bib > 0) &&
-		(rr.Athlete != nil) &&
-		(rr.Place > 0) &&
-		(rr.PlaceSource != "")
+type ResultWriter interface {
+	SendResult(ctx context.Context, rr RaceResult) error
 }
 
-type ResultStream struct {
+type ResultStream interface {
+	ResultReader
+	ResultWriter
+}
+
+type resultStream struct {
 	rawStream       stream.ReaderWriter
 	rangeQueryStart string
 }
 
-func NewResultStream(raw stream.ReaderWriter) *ResultStream {
-	return &ResultStream{
+func NewResultStream(raw stream.ReaderWriter) ResultStream {
+	return &resultStream{
 		rawStream:       raw,
 		rangeQueryStart: raw.RangeQueryMin(), // default to earliest stream msg
 	}
 }
 
-func (rs *ResultStream) GetResults(ctx context.Context, results []RaceResult) (int, error) {
+func (rs *resultStream) GetResults(ctx context.Context, results []RaceResult) (int, error) {
 	if len(results) == 0 {
 		return 0, fmt.Errorf("can't get results with zero length buffer")
 	}
@@ -72,7 +63,7 @@ func (rs *ResultStream) GetResults(ctx context.Context, results []RaceResult) (i
 	return count, nil
 }
 
-func (rts *ResultStream) SendResult(ctx context.Context, rr RaceResult) error {
+func (rts *resultStream) SendResult(ctx context.Context, rr RaceResult) error {
 	resData, err := json.Marshal(rr)
 	if err != nil {
 		return err

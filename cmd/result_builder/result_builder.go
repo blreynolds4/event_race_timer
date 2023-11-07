@@ -60,14 +60,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+	rawStream := redis_stream.NewRedisStream(rdb, claRacename)
 	eventStream := raceevents.NewEventStream(rawStream)
 
 	resultStreamName := claRacename + "_results"
 	if claDebug {
 		resultStreamName = resultStreamName + "_debug"
 	}
-	rawResultStream := redis_stream.NewRedisEventStream(rdb, resultStreamName)
+	rawResultStream := redis_stream.NewRedisStream(rdb, resultStreamName)
 	resultStream := results.NewResultStream(rawResultStream)
 
 	resultBuilder := resultbuilder.NewResultBuilder()

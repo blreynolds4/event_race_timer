@@ -2,7 +2,6 @@ package command
 
 import (
 	"blreynolds4/event-race-timer/internal/raceevents"
-	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"fmt"
 	"testing"
@@ -12,26 +11,23 @@ import (
 )
 
 func TestListFinishes(t *testing.T) {
-	mockInStream := &stream.MockStream{
-		Events: make([]stream.Message, 0),
+	inputEvents := &raceevents.MockEventStream{
+		Events: make([]raceevents.Event, 0),
 	}
-	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	// seed a start and finish event
-
-	mockInStream.Events = append(mockInStream.Events, toMsg(raceevents.Event{
+	inputEvents.Events = append(inputEvents.Events, raceevents.Event{
 		EventTime: time.Now().UTC(),
 		Data: raceevents.StartEvent{
 			StartTime: time.Now().UTC(),
 		},
-	}))
-	mockInStream.Events = append(mockInStream.Events, toMsg(raceevents.Event{
+	})
+	inputEvents.Events = append(inputEvents.Events, raceevents.Event{
 		EventTime: time.Now().UTC(),
 		Data: raceevents.FinishEvent{
 			FinishTime: time.Now().UTC(),
 			Bib:        raceevents.NoBib,
 		},
-	}))
+	})
 	list := NewListFinishCommand(inputEvents)
 
 	// no seed duration arugment
@@ -42,14 +38,12 @@ func TestListFinishes(t *testing.T) {
 
 func TestListFinishesFailFirstGet(t *testing.T) {
 	expErr := fmt.Errorf("fail")
-	mockInStream := &stream.MockStream{
-		Get: func(ctx context.Context, timeout time.Duration, msg *stream.Message) (bool, error) {
-			fmt.Println("returnning error")
+	inputEvents := &raceevents.MockEventStream{
+		Get: func(ctx context.Context, timeout time.Duration, msg *raceevents.Event) (bool, error) {
 			return false, expErr
 		},
-		Events: make([]stream.Message, 0),
+		Events: make([]raceevents.Event, 0),
 	}
-	inputEvents := raceevents.NewEventStream(mockInStream)
 
 	list := NewListFinishCommand(inputEvents)
 	// no seed duration arugment
@@ -59,19 +53,18 @@ func TestListFinishesFailFirstGet(t *testing.T) {
 }
 
 func TestListFinishesFailSecondGet(t *testing.T) {
-	raceMessages := buildEventMessages(
-		[]raceevents.Event{
-			{
-				EventTime: time.Now().UTC(),
-				Data: raceevents.StartEvent{
-					Source:    t.Name(),
-					StartTime: time.Now().UTC(),
-				},
+	raceMessages := []raceevents.Event{
+		{
+			EventTime: time.Now().UTC(),
+			Data: raceevents.StartEvent{
+				Source:    t.Name(),
+				StartTime: time.Now().UTC(),
 			},
-		})
+		},
+	}
 	expErr := fmt.Errorf("fail")
-	mockInStream := &stream.MockStream{
-		Get: func(ctx context.Context, timeout time.Duration, msg *stream.Message) (bool, error) {
+	inputEvents := &raceevents.MockEventStream{
+		Get: func(ctx context.Context, timeout time.Duration, msg *raceevents.Event) (bool, error) {
 			if len(raceMessages) > 0 {
 				*msg = raceMessages[0]
 				raceMessages = raceMessages[1:]
@@ -79,8 +72,8 @@ func TestListFinishesFailSecondGet(t *testing.T) {
 			}
 			return false, expErr
 		},
+		Events: make([]raceevents.Event, 0),
 	}
-	inputEvents := raceevents.NewEventStream(mockInStream)
 
 	list := NewListFinishCommand(inputEvents)
 	// no seed duration arugment

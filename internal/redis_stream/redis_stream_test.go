@@ -28,7 +28,7 @@ func TestSendMessage(t *testing.T) {
 
 	mock.ExpectXAdd(expectedArgs).SetVal("newId")
 
-	rs := NewRedisEventStream(db, "stream")
+	rs := NewRedisStream(db, "stream")
 	err := rs.SendMessage(context.TODO(), msg)
 	assert.NoError(t, err)
 
@@ -54,7 +54,7 @@ func TestSendMessageFails(t *testing.T) {
 	expErr := fmt.Errorf("FAIL")
 	mock.ExpectXAdd(expectedArgs).SetErr(expErr)
 
-	rs := NewRedisEventStream(db, "stream")
+	rs := NewRedisStream(db, "stream")
 	err := rs.SendMessage(context.TODO(), msg)
 	assert.Equal(t, expErr, err)
 
@@ -94,7 +94,7 @@ func TestGetMessage(t *testing.T) {
 		}}
 	mock.ExpectXRead(expectedArgs).SetVal(expStream)
 
-	rs := NewRedisEventStream(db, "stream")
+	rs := NewRedisStream(db, "stream")
 
 	var actualMsg stream.Message
 	gotMsg, err := rs.GetMessage(context.TODO(), time.Second, &actualMsg)
@@ -138,7 +138,7 @@ func TestGetMessageBadData(t *testing.T) {
 		}}
 	mock.ExpectXRead(expectedArgs).SetVal(expStream)
 
-	rs := NewRedisEventStream(db, "stream")
+	rs := NewRedisStream(db, "stream")
 
 	var actualMsg stream.Message
 	gotMsg, err := rs.GetMessage(context.TODO(), time.Second, &actualMsg)
@@ -170,7 +170,7 @@ func TestGetMessageNoMessages(t *testing.T) {
 		}}
 	mock.ExpectXRead(expectedArgs).SetVal(expStream)
 
-	rs := NewRedisEventStream(db, "stream")
+	rs := NewRedisStream(db, "stream")
 	var msg stream.Message
 	gotMsg, err := rs.GetMessage(context.TODO(), time.Second, &msg)
 	assert.NoError(t, err)
@@ -196,7 +196,7 @@ func TestGetMessageReadFail(t *testing.T) {
 	expectedErr := fmt.Errorf("FAIL")
 	mock.ExpectXRead(expectedArgs).SetErr(expectedErr)
 
-	rs := NewRedisEventStream(db, "stream")
+	rs := NewRedisStream(db, "stream")
 	var msg stream.Message
 	gotMessage, err := rs.GetMessage(context.TODO(), time.Second, &msg)
 	assert.Equal(t, expectedErr, err)
@@ -226,7 +226,7 @@ func TestGetMessageRangeBufferSizeEqualMsgCount(t *testing.T) {
 	}
 	mock.ExpectXRangeN(streamName, "start", "end", int64(len(rawMsgs))).SetVal(rawMsgs)
 
-	rs := NewRedisEventStream(db, streamName)
+	rs := NewRedisStream(db, streamName)
 	actualMsgs := make([]stream.Message, 1)
 	countRead, err := rs.GetMessageRange(context.TODO(), "start", "end", actualMsgs)
 	assert.NoError(t, err)
@@ -256,7 +256,7 @@ func TestGetMessageRangeBadData(t *testing.T) {
 	}
 	mock.ExpectXRangeN(streamName, "start", "end", int64(len(rawMsgs))).SetVal(rawMsgs)
 
-	rs := NewRedisEventStream(db, streamName)
+	rs := NewRedisStream(db, streamName)
 	actualMsgs := make([]stream.Message, 1)
 	countRead, err := rs.GetMessageRange(context.TODO(), "start", "end", actualMsgs)
 	assert.Error(t, err)
@@ -272,7 +272,7 @@ func TestGetMessageRangeEmptyBuffer(t *testing.T) {
 	db, _ := redismock.NewClientMock()
 	streamName := "stream"
 
-	rs := NewRedisEventStream(db, streamName)
+	rs := NewRedisStream(db, streamName)
 	// should read nothing because acutal has no capacity
 	actualMsgs := make([]stream.Message, 0)
 	countRead, err := rs.GetMessageRange(context.TODO(), "start", "end", actualMsgs)
@@ -287,7 +287,7 @@ func TestGetMessageRangeError(t *testing.T) {
 	streamName := "stream"
 	mock.ExpectXRangeN(streamName, "start", "end", 1).SetErr(expErr)
 
-	rs := NewRedisEventStream(db, streamName)
+	rs := NewRedisStream(db, streamName)
 	actualMessages := make([]stream.Message, 1)
 	count, err := rs.GetMessageRange(context.TODO(), "start", "end", actualMessages)
 	assert.Equal(t, expErr, err)

@@ -34,7 +34,7 @@ type XCScorer struct {
 	Results []*XCTeamResult
 }
 
-func (xcs *XCScorer) ScoreResults(ctx context.Context, source *results.ResultStream) error {
+func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStream) error {
 	teams := make(map[string]*XCTeamResult)
 
 	resultBuffer := make([]results.RaceResult, resultChunkSize)
@@ -96,7 +96,7 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source *results.ResultStr
 		}
 	}
 
-	// fmt.Printf("%s", "\x1Bc") // clear stdout
+	fmt.Printf("%s", "\x1Bc") // clear stdout
 	fmt.Printf("\n\n\n")
 	xcs.Results = make([]*XCTeamResult, 0)
 	fmt.Println("Plc Team                             Score     1    2    3    4    5    6*   7*   8*   9*")

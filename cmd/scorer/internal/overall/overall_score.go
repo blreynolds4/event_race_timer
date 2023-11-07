@@ -31,7 +31,7 @@ func NewOverallResults() OverallScorer {
 	}
 }
 
-func (ovr *OverallScorer) ScoreResults(ctx context.Context, source *results.ResultStream) error {
+func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.ResultStream) error {
 	placeMap := make(map[int]OverallResult)
 
 	// want to keep trying until told to stop via context

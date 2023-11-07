@@ -49,7 +49,7 @@ func main() {
 
 	case claAction == saveAction:
 		// create the race event stream to archive
-		rawStream := redis_stream.NewRedisEventStream(rdb, claRacename)
+		rawStream := redis_stream.NewRedisStream(rdb, claRacename)
 		eventStream := raceevents.NewEventStream(rawStream)
 
 		// create the file for the events
@@ -66,7 +66,7 @@ func main() {
 			log.Fatalf("error archiving %s: %s\n", claRacename, err)
 		}
 	case claAction == restoreAction:
-		rawStream := redis_stream.NewRedisEventStream(rdb, claRacename+restoredExtension)
+		rawStream := redis_stream.NewRedisStream(rdb, claRacename+restoredExtension)
 		eventStream := raceevents.NewEventStream(rawStream)
 
 		f, err := os.Open(claRacename + archiveExtension)

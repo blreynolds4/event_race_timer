@@ -2,7 +2,7 @@ package competitors
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 )
 
 type CompetitorLookup map[int]*Competitor
@@ -26,7 +26,7 @@ func NewCompetitor(name, team string, age, grade int) *Competitor {
 // Implement JSON competitor lookup save and load
 func LoadCompetitorLookup(path string, athletes CompetitorLookup) error {
 	// read json from the path provided and return the lookup
-	file, err := ioutil.ReadFile(path)
+	file, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
@@ -41,5 +41,5 @@ func (cl CompetitorLookup) Store(path string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(path, data, 0644)
+	return os.WriteFile(path, data, 0644)
 }

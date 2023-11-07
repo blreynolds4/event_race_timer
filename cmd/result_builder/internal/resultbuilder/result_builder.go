@@ -10,7 +10,7 @@ import (
 )
 
 type ResultBuilder interface {
-	BuildResults(inputEvents raceevents.EventStream, athletes competitors.CompetitorLookup, results *results.ResultStream, ranking map[string]int) error
+	BuildResults(inputEvents raceevents.EventStream, athletes competitors.CompetitorLookup, results results.ResultStream, ranking map[string]int) error
 }
 
 func NewResultBuilder() ResultBuilder {
@@ -22,7 +22,7 @@ type resultBuilder struct {
 
 func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
 	athletes competitors.CompetitorLookup,
-	resultOutput *results.ResultStream,
+	resultOutput results.ResultStream,
 	ranking map[string]int) error {
 
 	start := []raceevents.StartEvent{}      //array to store all of the start events
@@ -187,7 +187,7 @@ func demotePlaceResult(rr *results.RaceResult, pe raceevents.PlaceEvent, places 
 	places[pe.Place] = rr
 }
 
-func sendResult(ctx context.Context, rr *results.RaceResult, s *results.ResultStream) {
+func sendResult(ctx context.Context, rr *results.RaceResult, s results.ResultStream) {
 	copy := *rr
 
 	s.SendResult(ctx, copy)

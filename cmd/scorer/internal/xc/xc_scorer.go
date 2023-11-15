@@ -51,6 +51,7 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 	for resultCount > 0 {
 		for i := 0; i < resultCount; i++ {
 			dedupedResults[resultBuffer[i].Bib] = resultBuffer[i]
+			xcs.logger.Debug("xc scorer adding result", "team", resultBuffer[i].Athlete.Team, "bib", resultBuffer[i].Bib, "time", resultBuffer[i].Time, "place", resultBuffer[i].Place)
 		}
 
 		resultCount, err = source.GetResults(ctx, resultBuffer)

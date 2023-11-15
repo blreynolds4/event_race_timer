@@ -51,6 +51,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.Resul
 		for i := 0; i < resultCount; i++ {
 			newResult := results[i]
 			ovr.rawResults[newResult.Bib] = newResult
+			ovr.logger.Debug("overall scorer adding result", "bib", newResult.Bib, "time", newResult.Time, "place", newResult.Place)
 		}
 
 		resultCount, err = source.GetResults(ctx, results)

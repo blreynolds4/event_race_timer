@@ -4,7 +4,6 @@
     "RedisDbNumber": 0,
     "SourceRanks": {
         "manual": 1,
-        "brian-lemur": 1,
         "reader-1":2,
         "default-placer":2,
         "generator-slow":3,

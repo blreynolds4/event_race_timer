@@ -14,6 +14,30 @@ https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ve
 
 
 100% test coverage is goal
+Updated event generator so I can feed many races in to test full system.
+Will need config for source ranks
+Try context as the start/stop method for a race shell in the cli
+
+Create a config that has everything needed to run a race
+Race name (for rest endpoints and streams)
+redis url and db number
+source rankings (name to rank)
+scoring to use?
+
+RUN tests with old results to verify matches
+wrap elements into a runtime that can be run by a test
+create integration tests for all event sets
+extract event generator from cmd and make usable in integration tests along with runtime
+Once everything works:
+semantic refactoring
+placer should be a function (not an object+interface?)
+placer needs source ranking
+create runtime object
+
+Rest API to accept finish and start events
+Rest API to serve results by scorer name
+
+Make config available via Context to commands and scorers?
 
 1. Implement scorers that read from result stream:
     Overall XC -- Place Name Grade Team Time (for each line, fastest at top of list)
@@ -25,4 +49,16 @@ https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ve
 2. Results web pages for all scoring types, one or more web services to show results web pages
 3. Raspberry pi deployment so monitor can be set up to show overall and team scores on constant refresh
 
+
+Next Steps
+
+Read race and result events with Ranges:  could eliminate ugly scorer channel
+
+Use context to correctly control each one: read by range makes this better, can check the select on context
+
+manual cli just sends events/talks to the stream
+
+Figure out how to fix places so one person can be put in a particular place
+
+Write step by step by step instructions
 

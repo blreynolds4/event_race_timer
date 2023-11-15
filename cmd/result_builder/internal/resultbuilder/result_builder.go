@@ -5,7 +5,7 @@ import (
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/results"
 	"context"
-	"fmt"
+	"log/slog"
 	"time"
 )
 
@@ -13,11 +13,14 @@ type ResultBuilder interface {
 	BuildResults(inputEvents raceevents.EventStream, athletes competitors.CompetitorLookup, results results.ResultStream, ranking map[string]int) error
 }
 
-func NewResultBuilder() ResultBuilder {
-	return &resultBuilder{}
+func NewResultBuilder(l *slog.Logger) ResultBuilder {
+	return &resultBuilder{
+		logger: l.With("app", "result-builder"),
+	}
 }
 
 type resultBuilder struct {
+	logger *slog.Logger
 }
 
 func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
@@ -48,7 +51,7 @@ func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
 				rr[result.Bib] = result
 
 				if rr[result.Bib].IsComplete() {
-					sendResult(context.TODO(), rr[result.Bib], resultOutput)
+					rb.sendResult(context.TODO(), rr[result.Bib], resultOutput)
 				}
 			}
 		case raceevents.FinishEvent:
@@ -79,7 +82,7 @@ func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
 					rr[fe.Bib] = result
 
 					if rr[fe.Bib].IsComplete() {
-						sendResult(context.TODO(), rr[result.Bib], resultOutput)
+						rb.sendResult(context.TODO(), rr[result.Bib], resultOutput)
 					}
 				}
 			}
@@ -105,7 +108,7 @@ func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
 					case previousPlace == 0:
 						// add and send result for new place
 						addPlaceResult(bibResult, pe, placeIndex)
-						sendResult(context.TODO(), bibResult, resultOutput)
+						rb.sendResult(context.TODO(), bibResult, resultOutput)
 					case previousPlace < pe.Place:
 						// require promotions pe.Place < previousPlace
 						demotePlaceResult(bibResult, pe, placeIndex)
@@ -113,7 +116,7 @@ func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
 						for i := previousPlace; i <= pe.Place; i++ {
 							if place, exists := placeIndex[i]; exists {
 								// if place >= pe.Place {
-								sendResult(context.TODO(), place, resultOutput)
+								rb.sendResult(context.TODO(), place, resultOutput)
 							}
 						}
 					default:
@@ -122,14 +125,13 @@ func (rb *resultBuilder) BuildResults(inputEvents raceevents.EventStream,
 						// send updated results from new place to old place inclusive
 						for i := pe.Place; i <= previousPlace; i++ {
 							if place, exists := placeIndex[i]; exists {
-								// if place >= pe.Place {
-								sendResult(context.TODO(), place, resultOutput)
+								rb.sendResult(context.TODO(), place, resultOutput)
 							}
 						}
 					}
 				}
 			} else {
-				fmt.Println("skipping unknown bib", pe.Bib)
+				rb.logger.Info("skipping unknown bib", "bib", pe.Bib)
 			}
 		}
 
@@ -187,9 +189,9 @@ func demotePlaceResult(rr *results.RaceResult, pe raceevents.PlaceEvent, places 
 	places[pe.Place] = rr
 }
 
-func sendResult(ctx context.Context, rr *results.RaceResult, s results.ResultStream) {
+func (rb *resultBuilder) sendResult(ctx context.Context, rr *results.RaceResult, s results.ResultStream) {
 	copy := *rr
 
 	s.SendResult(ctx, copy)
-	fmt.Printf("result sent bib %d place %d in %s\n", rr.Bib, rr.Place, rr.Time.String())
+	rb.logger.Info("result sent", "bib", rr.Bib, "place", rr.Place, "elapsedTime", rr.Time.String())
 }

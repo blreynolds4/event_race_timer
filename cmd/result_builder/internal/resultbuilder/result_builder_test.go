@@ -4,6 +4,7 @@ import (
 	"blreynolds4/event-race-timer/internal/competitors"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/results"
+	"log/slog"
 
 	"blreynolds4/event-race-timer/internal/stream"
 	"encoding/json"
@@ -75,7 +76,7 @@ func TestResultBuilderSimplest(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -122,7 +123,7 @@ func TestResultBuilderPlaceCausesResult(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -208,7 +209,7 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -293,7 +294,7 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -412,7 +413,7 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -506,7 +507,7 @@ func TestResultBuilderPlaceSwap(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -542,7 +543,7 @@ func TestResultBuilderUnknownPlaceBib(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -589,7 +590,7 @@ func TestResultBuilderNoPlaceNoResult(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -757,7 +758,7 @@ func TestResultBuilder(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -851,7 +852,7 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking["better"] = 1
 	ranking["worse"] = 2
@@ -937,7 +938,7 @@ func TestResultBuilderRankIgnores(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking["better"] = 1
 	ranking["worse"] = 2
@@ -1021,7 +1022,7 @@ func TestResultBuilderRankPlaceUpdate(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking["better"] = 1
 	ranking["worse"] = 2
@@ -1101,7 +1102,7 @@ func TestResultBuilderRankPlaceIgnore(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking["better"] = 1
 	ranking["worse"] = 2
@@ -1225,7 +1226,7 @@ func TestResultBuilderPlaceLastToFirst(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -1302,7 +1303,7 @@ func TestResultBuilderPlaceSwapDemote(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -1394,7 +1395,7 @@ func TestResultBuilderDemote(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)
@@ -1515,7 +1516,7 @@ func TestResultBuilderPlaceFirstToLast(t *testing.T) {
 	}
 	actualResults := results.NewResultStream(mockOutStream)
 
-	builder := NewResultBuilder()
+	builder := NewResultBuilder(slog.Default())
 	ranking := map[string]int{}
 	ranking[t.Name()] = 1
 	err := builder.BuildResults(inputEvents, athletes, actualResults, ranking)

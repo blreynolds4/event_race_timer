@@ -4,7 +4,7 @@ import (
 	"blreynolds4/event-race-timer/internal/competitors"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"context"
-	"fmt"
+	"log/slog"
 	"sort"
 )
 
@@ -16,11 +16,13 @@ type PlaceGenerator interface {
 }
 
 type defaultPlaceGenerator struct {
+	logger *slog.Logger
 	stream raceevents.EventStream
 }
 
-func NewPlaceGenerator(es raceevents.EventStream) PlaceGenerator {
+func NewPlaceGenerator(es raceevents.EventStream, l *slog.Logger) PlaceGenerator {
 	return &defaultPlaceGenerator{
+		logger: l.With("placer", placerSourceName),
 		stream: es,
 	}
 }
@@ -81,7 +83,7 @@ func (dpg *defaultPlaceGenerator) GeneratePlaces(athletes competitors.Competitor
 								Place:  i + 1,
 								Bib:    current.Bib,
 							})
-							fmt.Printf("Place sent for bib %d %d\n", current.Bib, i+1)
+							dpg.logger.Info("Place sent for bib", "bib", current.Bib, "place", i+1)
 						}
 					}
 				}

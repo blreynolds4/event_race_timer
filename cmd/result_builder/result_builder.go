@@ -8,13 +8,20 @@ import (
 	"blreynolds4/event-race-timer/internal/redis_stream"
 	"blreynolds4/event-race-timer/internal/results"
 	"flag"
-	"fmt"
+	"log/slog"
 	"os"
 
 	redis "github.com/redis/go-redis/v9"
 )
 
+func newLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, nil))
+}
+
 func main() {
+	// create a logger
+	logger := newLogger()
+
 	// connect to redis
 	// cli for db address, username, password, db, stream name?
 	// stream is specific to a race
@@ -49,14 +56,14 @@ func main() {
 	athletes := make(competitors.CompetitorLookup)
 	err := competitors.LoadCompetitorLookup(claCompetitorsPath, athletes)
 	if err != nil {
-		fmt.Printf("ERROR loading competitors from '%s': %v\n", claCompetitorsPath, err)
+		logger.Error("ERROR loading competitors", "filename", claCompetitorsPath, "error", err)
 		os.Exit(1)
 	}
 
 	var raceConfig config.RaceConfig
 	err = config.LoadConfigData(claConfigPath, &raceConfig)
 	if err != nil {
-		fmt.Printf("ERROR loading config from '%s': %v\n", claConfigPath, err)
+		logger.Error("ERROR loading config", "filename", claConfigPath, "error", err)
 		os.Exit(1)
 	}
 
@@ -70,14 +77,14 @@ func main() {
 	rawResultStream := redis_stream.NewRedisStream(rdb, resultStreamName)
 	resultStream := results.NewResultStream(rawResultStream)
 
-	resultBuilder := resultbuilder.NewResultBuilder()
+	resultBuilder := resultbuilder.NewResultBuilder(logger)
 	if claDebug {
-		fmt.Println("DEBUGGING RESULTS")
-		resultBuilder = resultbuilder.NewStartFinishResultBuilder(claPlaceFile)
+		logger.Info("DEBUGGING RESULTS")
+		resultBuilder = resultbuilder.NewStartFinishResultBuilder(claPlaceFile, logger)
 	}
 
 	err = resultBuilder.BuildResults(eventStream, athletes, resultStream, raceConfig.SourceRanks)
 	if err != nil {
-		fmt.Println("ERROR generating results:", err)
+		logger.Error("ERROR generating results", "error", err)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"time"
 )
@@ -13,6 +14,7 @@ import (
 const resultChunkSize = 25
 
 type OverallScorer struct {
+	logger         *slog.Logger
 	overallResults []OverallResult
 	rawResults     map[int]results.RaceResult // bib to result, keep latest result
 }
@@ -24,8 +26,9 @@ type OverallResult struct {
 	Bib        int
 }
 
-func NewOverallResults() OverallScorer {
+func NewOverallResults(l *slog.Logger) OverallScorer {
 	return OverallScorer{
+		logger:         l.With("scorer", "overall"),
 		overallResults: make([]OverallResult, 0),
 		rawResults:     make(map[int]results.RaceResult),
 	}
@@ -38,6 +41,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.Resul
 	results := make([]results.RaceResult, resultChunkSize)
 	resultCount, err := source.GetResults(ctx, results)
 	if err != nil {
+		ovr.logger.Error("overall scorer error", "error", err)
 		return fmt.Errorf("overall scorer error %w", err)
 	}
 
@@ -47,6 +51,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.Resul
 		for i := 0; i < resultCount; i++ {
 			newResult := results[i]
 			ovr.rawResults[newResult.Bib] = newResult
+			ovr.logger.Debug("overall scorer adding result", "bib", newResult.Bib, "time", newResult.Time, "place", newResult.Place)
 		}
 
 		resultCount, err = source.GetResults(ctx, results)
@@ -55,7 +60,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.Resul
 		}
 	}
 
-	// the stream is empty
+	// no more results, so we can
 	// build the output
 	for _, result := range ovr.rawResults {
 		placeMap[result.Place] = OverallResult{Athlete: result.Athlete, Place: result.Place, Finishtime: result.Time, Bib: result.Bib}

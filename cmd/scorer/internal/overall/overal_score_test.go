@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"testing"
 	"time"
 
@@ -36,28 +37,32 @@ func TestOverallResultsSimple(t *testing.T) {
 	expected := []OverallResult{
 		{
 			Athlete:    athletes[1],
+			Bib:        1,
 			Place:      1,
 			Finishtime: durationHelper("25m2s"),
 		},
 		{
 			Athlete:    athletes[10],
+			Bib:        10,
 			Place:      2,
 			Finishtime: durationHelper("26m40s"),
 		},
 		{
 			Athlete:    athletes[11],
+			Bib:        11,
 			Place:      3,
 			Finishtime: durationHelper("27m45s"),
 		},
 		{
 			Athlete:    athletes[23],
+			Bib:        23,
 			Place:      4,
 			Finishtime: durationHelper("37m46s"),
 		},
 	}
 
 	// XCScorer has team results in an array
-	OVR := NewOverallResults()
+	OVR := NewOverallResults(slog.Default())
 	err := OVR.ScoreResults(context.TODO(), mock)
 	assert.NoError(t, err)
 
@@ -92,28 +97,32 @@ func TestOverallResultsDuplicate(t *testing.T) {
 	expected := []OverallResult{
 		{
 			Athlete:    athletes[1],
+			Bib:        1,
 			Place:      1,
 			Finishtime: durationHelper("22m2s"),
 		},
 		{
 			Athlete:    athletes[10],
+			Bib:        10,
 			Place:      2,
 			Finishtime: durationHelper("26m40s"),
 		},
 		{
 			Athlete:    athletes[11],
+			Bib:        11,
 			Place:      3,
 			Finishtime: durationHelper("27m45s"),
 		},
 		{
 			Athlete:    athletes[23],
+			Bib:        23,
 			Place:      4,
 			Finishtime: durationHelper("37m46s"),
 		},
 	}
 
 	// XCScorer has team results in an array
-	OVR := NewOverallResults()
+	OVR := NewOverallResults(slog.Default())
 	err := OVR.ScoreResults(context.TODO(), mock)
 	assert.NoError(t, err)
 
@@ -140,7 +149,7 @@ func TestOverallResultsError(t *testing.T) {
 	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")}))
 
 	// XCScorer has team results in an array
-	OVR := NewOverallResults()
+	OVR := NewOverallResults(slog.Default())
 	err := OVR.ScoreResults(context.TODO(), mock)
 
 	assert.Error(t, fmt.Errorf("fail"), err)
@@ -160,14 +169,4 @@ func toMsg(r results.RaceResult) stream.Message {
 	msg.Data = msgData
 
 	return msg
-}
-
-func toResult(msg stream.Message) results.RaceResult {
-	var rr results.RaceResult
-	err := json.Unmarshal(msg.Data, &rr)
-	if err != nil {
-		panic(err)
-	}
-
-	return rr
 }

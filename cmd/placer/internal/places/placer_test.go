@@ -6,6 +6,7 @@ import (
 	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"encoding/json"
+	"log/slog"
 	"testing"
 	"time"
 
@@ -99,7 +100,7 @@ func TestNormalPlacingInOrderSkipNoBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockEventStream)
 
-	builder := NewPlaceGenerator(inputEvents)
+	builder := NewPlaceGenerator(inputEvents, slog.Default())
 	err := builder.GeneratePlaces(athletes, sourceRanks)
 	assert.NoError(t, err)
 	assert.Equal(t, 3, len(placesSent))
@@ -208,7 +209,7 @@ func TestNormalPlacingInOrderSkipUnknownBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockEventStream)
 
-	builder := NewPlaceGenerator(inputEvents)
+	builder := NewPlaceGenerator(inputEvents, slog.Default())
 	err := builder.GeneratePlaces(athletes, sourceRanks)
 	assert.NoError(t, err)
 	// slice off the beginning of the event stream to get to what places were sent
@@ -343,7 +344,7 @@ func TestNoisyMultiSourceEvents(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockEventStream)
 
-	builder := NewPlaceGenerator(inputEvents)
+	builder := NewPlaceGenerator(inputEvents, slog.Default())
 	err := builder.GeneratePlaces(athletes, sourceRanks)
 	assert.NoError(t, err)
 	assert.Equal(t, 4, len(placesSent))
@@ -431,7 +432,7 @@ func TestEventsArriveOutOfOrder(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockEventStream)
 
-	builder := NewPlaceGenerator(inputEvents)
+	builder := NewPlaceGenerator(inputEvents, slog.Default())
 	err := builder.GeneratePlaces(athletes, sourceRanks)
 	assert.NoError(t, err)
 	assert.Equal(t, 6, len(placesSent))

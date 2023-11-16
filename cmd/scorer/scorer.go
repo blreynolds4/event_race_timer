@@ -7,7 +7,7 @@ import (
 	"blreynolds4/event-race-timer/internal/results"
 	"context"
 	"flag"
-	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"time"
@@ -15,7 +15,14 @@ import (
 	redis "github.com/redis/go-redis/v9"
 )
 
+func newLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, nil))
+}
+
 func main() {
+	// create a logger
+	logger := newLogger()
+
 	// connect to redis
 	// cli for db address, username, password, db, stream name?
 	// stream is specific to a race
@@ -54,30 +61,30 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	for {
-		fmt.Println("building result reader reader for", resultStreamName)
+		logger.Info("building result reader reader for", "streamName", resultStreamName)
 		rawResultStream := redis_stream.NewRedisStream(rdb, resultStreamName)
 		resultStream := results.NewResultStream(rawResultStream)
 
 		if claXCTeam {
-			xcScorer := xc.NewXCScorer()
+			xcScorer := xc.NewXCScorer(logger)
 			err := xcScorer.ScoreResults(context.TODO(), resultStream)
 			if err != nil {
-				fmt.Println("ERROR scoring xc results:", err)
+				logger.Error("ERROR scoring xc results", "error", err)
 			}
 		}
 
 		if claOverall {
-			resultScorer := overall.NewOverallResults()
+			resultScorer := overall.NewOverallResults(logger)
 			err := resultScorer.ScoreResults(context.TODO(), resultStream)
 			if err != nil {
-				fmt.Println("ERROR scoring overall results:", err)
+				logger.Error("ERROR scoring overall results", "error", err)
 			}
 		}
 
 		t := time.NewTicker(time.Second * 2)
 		select {
 		case <-c:
-			fmt.Println("Scorer Exiting")
+			logger.Info("Scorer Exiting")
 			os.Exit(0)
 		case <-t.C:
 		}

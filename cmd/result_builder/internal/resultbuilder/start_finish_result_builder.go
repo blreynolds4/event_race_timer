@@ -6,17 +6,20 @@ import (
 	"blreynolds4/event-race-timer/internal/results"
 	"bufio"
 	"context"
-	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 	"time"
 )
 
-func NewStartFinishResultBuilder(places string) ResultBuilder {
+func NewStartFinishResultBuilder(places string, l *slog.Logger) ResultBuilder {
 	// read in place file
 	finishes := make(map[int]int)
 	loadPlaces(places, finishes)
-	return &startFinishResultBuilder{places: finishes}
+	return &startFinishResultBuilder{
+		places: finishes,
+		logger: l.With("app", "start-finish-result-builder"),
+	}
 }
 
 func loadPlaces(fname string, places map[int]int) error {
@@ -49,6 +52,7 @@ func loadPlaces(fname string, places map[int]int) error {
 type startFinishResultBuilder struct {
 	// map of bib to place
 	places map[int]int
+	logger *slog.Logger
 }
 
 func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStream,
@@ -60,7 +64,7 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 	rr := make(map[int]*results.RaceResult)   //map of race results, bib number is key
 	ft := make(map[int]time.Time)             // map of times with bib number being key
 
-	fmt.Println("START FINISH RESULT BUILDER IS FOR DEBUGGING")
+	rb.logger.Info("START FINISH RESULT BUILDER IS FOR DEBUGGING")
 	startCount := 0
 	finishCount := 0
 	resultSent := 0
@@ -77,14 +81,14 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 			startCount++
 			se := event.Data.(raceevents.StartEvent)
 			start = append(start, se)
-			fmt.Println("Got Start Event for", se.StartTime, "from", se.Source)
+			rb.logger.Info("Got Start Event", "startTime", se.StartTime, "source", se.Source)
 
 			// iterate over result to get times for all finish events that came before the start event
 			for _, result := range rr {
 				result.Time = ft[result.Bib].Sub(start[len(start)-1].StartTime)
 				rr[result.Bib] = result
 				resultSent++
-				sendResult(context.TODO(), rr[result.Bib], outputResults)
+				rb.sendResult(context.TODO(), rr[result.Bib], outputResults)
 			}
 		case raceevents.FinishEvent:
 			finishCount++
@@ -92,7 +96,7 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 
 			// only handle bibs for athletes that exist
 			if athlete, bibFound := athletes[fe.Bib]; bibFound {
-				fmt.Println("Got finish", fe.Bib, athlete.Name, athlete.Team)
+				rb.logger.Info("Got finish", "bib", fe.Bib, "athlete", athlete.Name, "team", athlete.Team)
 				result := rr[fe.Bib]
 				if result == nil {
 					// the result doesn't exist in the cache
@@ -123,41 +127,41 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 
 					if rr[fe.Bib].IsComplete() {
 						resultSent++
-						sendResult(context.TODO(), rr[result.Bib], outputResults)
+						rb.sendResult(context.TODO(), rr[result.Bib], outputResults)
 					} else {
-						fmt.Println("NOT COMPLETE", fe.Bib, result)
+						rb.logger.Info("NOT COMPLETE", "bib", fe.Bib, "result", result)
 					}
 				}
 			} else {
-				fmt.Println("BIB NOT FOUND", fe.Bib)
+				rb.logger.Info("BIB NOT FOUND", "bib", fe.Bib)
 			}
 		case raceevents.PlaceEvent:
 		}
 
 		gotEvent, err = inputEvents.GetRaceEvent(context.TODO(), 5, &event)
 		if err != nil {
-			fmt.Println("Bibs with results", len(rr), "athlete count", len(athletes))
-			printMissingAthletes(rr, athletes)
+			rb.logger.Info("Bibs with results", "bibCount", len(rr), "athleteCount", len(athletes))
+			rb.printMissingAthletes(rr, athletes)
 
 			// send missed places
 			for bib, place := range rb.places {
-				fmt.Println("No finish for", bib, "chute place", place)
+				rb.logger.Info("No finish", "bib", bib, "chutePlace", place)
 				result := new(results.RaceResult)
 				result.Bib = bib
 				result.Place = place
 				result.PlaceSource = "manual"
 				if athlete, bibFound := athletes[bib]; bibFound {
 					result.Athlete = athlete
-					sendResult(context.TODO(), result, outputResults)
+					rb.sendResult(context.TODO(), result, outputResults)
 					resultSent++
 				} else {
-					fmt.Println("chute bib", bib, "not in athletes")
+					rb.logger.Info("chute bib not found in athletes", "bib", bib)
 				}
 			}
 
-			fmt.Println("Start count", startCount)
-			fmt.Println("Finish count", finishCount)
-			fmt.Println("Result Sent", resultSent)
+			rb.logger.Info("Start count", "startCount", startCount)
+			rb.logger.Info("Finish count", "finishCount", finishCount)
+			rb.logger.Info("Result Sent", "resultsSent", resultSent)
 			return err
 		}
 	}
@@ -165,10 +169,17 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 	return nil
 }
 
-func printMissingAthletes(outputResults map[int]*results.RaceResult, athletes competitors.CompetitorLookup) {
+func (rb *startFinishResultBuilder) printMissingAthletes(outputResults map[int]*results.RaceResult, athletes competitors.CompetitorLookup) {
 	for bib, athlete := range athletes {
 		if _, found := outputResults[bib]; !found {
-			fmt.Println("No Result: ", bib, athlete.Name, athlete.Team)
+			rb.logger.Info("No Result: ", "bib", bib, "athlete", athlete.Name, "team", athlete.Team)
 		}
 	}
+}
+
+func (rb *startFinishResultBuilder) sendResult(ctx context.Context, rr *results.RaceResult, s results.ResultStream) {
+	copy := *rr
+
+	s.SendResult(ctx, copy)
+	rb.logger.Info("result sent", "bib", rr.Bib, "place", rr.Place, "elapsedTime", rr.Time.String())
 }

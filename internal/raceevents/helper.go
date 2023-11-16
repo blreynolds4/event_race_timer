@@ -2,7 +2,6 @@ package raceevents
 
 import (
 	"context"
-	"fmt"
 	"time"
 )
 
@@ -25,7 +24,6 @@ func (mes *MockEventStream) SendStartEvent(ctx context.Context, se StartEvent) e
 		Data:      se,
 	})
 
-	fmt.Println("Added start", mes.Events)
 	return nil
 }
 
@@ -33,13 +31,11 @@ func (mes *MockEventStream) SendFinishEvent(ctx context.Context, fe FinishEvent)
 	if mes.SendStart != nil {
 		return mes.SendFinish(ctx, fe)
 	}
-	fmt.Println("before add finish", mes.Events)
 
 	mes.Events = append(mes.Events, Event{
 		EventTime: fe.FinishTime,
 		Data:      fe,
 	})
-	fmt.Println("Added finish", mes.Events)
 	return nil
 }
 

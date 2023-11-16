@@ -4,6 +4,7 @@ import (
 	"blreynolds4/event-race-timer/internal/results"
 	"context"
 	"fmt"
+	"log/slog"
 	"sort"
 	"time"
 )
@@ -24,13 +25,15 @@ type XCTeamResult struct {
 	scored    int
 }
 
-func NewXCScorer() *XCScorer {
+func NewXCScorer(l *slog.Logger) *XCScorer {
 	return &XCScorer{
+		logger:  l.With("scorer", "xc"),
 		Results: make([]*XCTeamResult, 0),
 	}
 }
 
 type XCScorer struct {
+	logger  *slog.Logger
 	Results []*XCTeamResult
 }
 
@@ -48,6 +51,7 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 	for resultCount > 0 {
 		for i := 0; i < resultCount; i++ {
 			dedupedResults[resultBuffer[i].Bib] = resultBuffer[i]
+			xcs.logger.Debug("xc scorer adding result", "team", resultBuffer[i].Athlete.Team, "bib", resultBuffer[i].Bib, "time", resultBuffer[i].Time, "place", resultBuffer[i].Place)
 		}
 
 		resultCount, err = source.GetResults(ctx, resultBuffer)
@@ -96,11 +100,8 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 		}
 	}
 
-	fmt.Printf("%s", "\x1Bc") // clear stdout
-	fmt.Printf("\n\n\n")
+	// pass two is to sort the teams by score
 	xcs.Results = make([]*XCTeamResult, 0)
-	fmt.Println("Plc Team                             Score     1    2    3    4    5    6*   7*   8*   9*")
-	fmt.Println("=== ================================ =====   ==============================================")
 	sorted := make([]*XCTeamResult, 0, len(teams))
 	dnf := make([]*XCTeamResult, 0)
 	for _, xcteam := range teams {
@@ -132,6 +133,17 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 		return sorted[i].TeamScore < sorted[j].TeamScore
 	})
 
+	// sort the dnf teams by finisher count
+	sort.SliceStable(dnf, func(i, j int) bool {
+		// return i < j, ie i beat j in xc scoring
+		// if they have more finishers
+		return len(sorted[i].Finishers) > len(sorted[j].Finishers)
+	})
+
+	fmt.Printf("%s", "\x1Bc") // clear stdout
+	fmt.Printf("\n\n\n")
+	fmt.Println("Plc Team                             Score     1    2    3    4    5    6*   7*   8*   9*")
+	fmt.Println("=== ================================ =====   ==============================================")
 	for i, teamResult := range sorted {
 		teamResult.TotalTime = getTeamTime(teamResult)
 		teamResult.Top5Avg = getTeamAverage(teamResult)
@@ -146,7 +158,7 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 	}
 
 	for _, dnfTeam := range dnf {
-		fmt.Printf("%-3s %-32s\n", "DNS", dnfTeam.Name)
+		fmt.Printf("%-3s %-32s\n", "DNP", dnfTeam.Name)
 	}
 
 	return nil

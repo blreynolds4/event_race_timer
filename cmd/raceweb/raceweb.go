@@ -1,85 +1,27 @@
 package main
 
 import (
-	"context"
 	"flag"
-	"fmt"
-	"log"
-	"net/http"
+	"log/slog"
 	"os"
-	"strconv"
-	"time"
 
+	"blreynolds4/event-race-timer/cmd/raceweb/internal/raceweb"
 	"blreynolds4/event-race-timer/internal/competitors"
 	"blreynolds4/event-race-timer/internal/config"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/redis_stream"
 
-	"github.com/gin-gonic/gin"
 	redis "github.com/redis/go-redis/v9"
 )
 
-type emptyResponse struct {
+func newLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, nil))
 }
-
-type OpenSignupsTimingEvent struct {
-	ElapsedTime int    `json:"elapsedTime"`
-	CaptureMode string `json:"captureMode"`
-	StartTime   int    `json:"startTime"`
-	Antenna     int    `json:"antenna"`
-	Bib         string `json:"bib"`
-	Host        string `json:"host"`
-}
-
-// methods to handle rest requests
-func verifyTimingEvent(c *gin.Context) {
-	fmt.Println("Handling get timing events")
-	c.IndentedJSON(http.StatusOK, emptyResponse{})
-}
-
-func NewTimingHandler(sourceLookup config.SourceConfig, athletes competitors.CompetitorLookup, eventStream raceevents.EventStream) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		logger := log.Default()
-		var data OpenSignupsTimingEvent
-		if err := c.BindJSON(&data); err != nil {
-			logger.Println("bind json error:", err.Error())
-			return
-		}
-		bib, err := strconv.Atoi(data.Bib)
-		if err != nil {
-			// just drop the bad bib
-			logger.Println("dropping bad bib", data.Bib, data.Antenna, data.Host)
-			return
-		}
-
-		if _, bibFound := athletes[bib]; bibFound {
-			startTime := time.UnixMilli(int64(data.StartTime))
-			finishTime := startTime.Add(time.Duration(data.ElapsedTime * int(time.Millisecond)))
-
-			// send the finish event
-			eventStream.SendFinishEvent(context.TODO(), raceevents.FinishEvent{
-				Source:     sourceLookup.SourceMap[data.Host],
-				Bib:        bib,
-				FinishTime: finishTime,
-			})
-			c.IndentedJSON(http.StatusCreated, data)
-			logger.Printf("Finish Sent bib %d %s %d %s, %s\n", bib, time.Duration(data.ElapsedTime*int(time.Millisecond)).String(), data.Antenna, sourceLookup.SourceMap[data.Host], data.Host)
-		} else {
-			logger.Println("skipping unknown bib", bib, data.Antenna, data.Host)
-		}
-	}
-
-	return gin.HandlerFunc(fn)
-}
-
-// event timer needs to use configration to pick a source
-// Config needs to use host to map to source
-// the source goes into the finish event
-
-// long term source could also be used to identify event type like start or place
-// but not right now
 
 func main() {
+	// create a logger
+	logger := newLogger()
+
 	var claSourceConfig string
 	var claDbAddress string
 	var claDbNumber int
@@ -98,13 +40,14 @@ func main() {
 	var sources config.SourceConfig
 	err := config.LoadAnyConfigData[config.SourceConfig](claSourceConfig, &sources)
 	if err != nil {
-		log.Fatalf("error loading %s config %v", claSourceConfig, &sources)
+		logger.Error("error loading config", "fileName", claSourceConfig, "error", err)
+		os.Exit(1)
 	}
 
 	athletes := make(competitors.CompetitorLookup)
 	err = competitors.LoadCompetitorLookup(claCompetitorsPath, athletes)
 	if err != nil {
-		fmt.Printf("ERROR loading competitors from '%s': %v\n", claCompetitorsPath, err)
+		logger.Error("ERROR loading competitors", "fileName", claCompetitorsPath, "error", err)
 		os.Exit(1)
 	}
 
@@ -119,15 +62,7 @@ func main() {
 	rawStream := redis_stream.NewRedisStream(rdb, claRacename)
 	eventStream := raceevents.NewEventStream(rawStream)
 
-	router := gin.Default()
+	app := raceweb.NewApplication(sources, athletes, eventStream, logger)
 
-	// Setup route group for the API
-	api := router.Group("/api")
-	api.GET("/timingEvents", verifyTimingEvent)
-	api.POST("/timingEvents/finishes", NewTimingHandler(sources, athletes, eventStream))
-
-	// results paths
-	router.StaticFile("/overall", "overall_results.html")
-
-	router.Run(":8080")
+	app.Run(":8080")
 }

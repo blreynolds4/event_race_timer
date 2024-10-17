@@ -14,6 +14,7 @@ import (
 
 const (
 	DaID int = iota
+	TeamCode
 	LastName
 	Gender
 	Event
@@ -35,8 +36,10 @@ func LoadDARunScoreFile(r io.Reader, events map[string]competitors.CompetitorLoo
 	combineEvents := make(map[string]string)
 	combineEvents["Combined Junior Varsity"] = "Combined JV Race"
 	combineEvents["Mixed Junior Varsity"] = "Combined JV Race"
+	combineEvents["Combined JV"] = "Combined JV Race"
 
 	// read the rest of the records
+	bib := 300
 	for {
 		record, err := csvReader.Read()
 		if errors.Is(err, io.EOF) {
@@ -62,11 +65,12 @@ func LoadDARunScoreFile(r io.Reader, events map[string]competitors.CompetitorLoo
 		c.Team = record[Team]
 		c.Name = record[FirstName] + " " + record[LastName]
 
-		bib, err := strconv.Atoi(record[Bib])
-		if err != nil {
-			fmt.Println("err setting bib", err)
-			continue
-		}
+		// bib, err := strconv.Atoi(record[Bib])
+		// if err != nil {
+		// 	fmt.Println("err setting bib", err)
+		// 	continue
+		// }
+		bib++
 
 		// get event from map
 		eventAthletes, found := events[event]
@@ -94,6 +98,7 @@ func SaveRostersAndBibs(r io.Reader) error {
 	combineEvents := make(map[string]string)
 	combineEvents["Combined Junior Varsity"] = "Combined JV Race"
 	combineEvents["Mixed Junior Varsity"] = "Combined JV Race"
+	combineEvents["Combined JV"] = "Combined JV Race"
 
 	// create output
 	f, err := os.Create("CAC_bib_roster.txt")
@@ -102,6 +107,7 @@ func SaveRostersAndBibs(r io.Reader) error {
 	}
 
 	// read the rest of the records
+	bib := 300
 	for {
 		record, err := csvReader.Read()
 		if errors.Is(err, io.EOF) {
@@ -117,7 +123,15 @@ func SaveRostersAndBibs(r io.Reader) error {
 			event = combinedName
 		}
 
-		fmt.Fprintf(f, "%-32s %-4s %-36s %-40s\n", record[Team], record[Bib], record[FirstName]+" "+record[LastName], event)
+		// bibs start fromf 300 in 2024
+		// bib, err := strconv.Atoi(record[Bib])
+		// if err != nil {
+		// 	fmt.Println("err setting bib", err)
+		// 	continue
+		// }
+		bib++
+
+		fmt.Fprintf(f, "%-20s %-4d %-32s %-30s\n", record[Team], bib, record[FirstName]+" "+record[LastName], event)
 	}
 
 	return nil
@@ -131,7 +145,7 @@ func main() {
 
 	f, err := os.Open(claDaFile)
 	if err != nil {
-		fmt.Println("error opening event data", err)
+		fmt.Println("error opening event data "+claDaFile, err)
 		return
 	}
 	defer f.Close()

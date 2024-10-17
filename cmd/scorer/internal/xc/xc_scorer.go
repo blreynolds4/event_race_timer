@@ -141,6 +141,7 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 	})
 
 	fmt.Printf("%s", "\x1Bc") // clear stdout
+	fmt.Printf("Last Updated: %s\n", time.Now().Format("2006-01-02 15:04:05"))
 	fmt.Printf("\n\n\n")
 	fmt.Println("Plc Team                             Score     1    2    3    4    5    6*   7*   8*   9*")
 	fmt.Println("=== ================================ =====   ==============================================")
@@ -158,7 +159,7 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 	}
 
 	for _, dnfTeam := range dnf {
-		fmt.Printf("%-3s %-32s\n", "DNP", dnfTeam.Name)
+		fmt.Printf("%d/5 %-32s\n", len(dnfTeam.Finishers), dnfTeam.Name)
 	}
 
 	return nil

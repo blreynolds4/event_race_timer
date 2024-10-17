@@ -83,6 +83,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.Resul
 
 	w := io.MultiWriter(f, os.Stdout)
 	fmt.Printf("%s", "\x1Bc") // clear stdout
+	fmt.Printf("Last Updated: %s\n", time.Now().Format("2006-01-02 15:04:05"))
 	fmt.Fprintf(w, "\n\n\n")
 	fmt.Fprintln(w, "Place Bib   Name                             Grade Team                             Time")
 	fmt.Fprintln(w, "===== ===== ================================ ===== ================================ ========")

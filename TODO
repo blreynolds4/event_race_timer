@@ -1,9 +1,44 @@
+We need to fix the problems we had sending new place events that caused
+flipping in results or missing results.
+
+We want to assign a bib finish a place. Whatever we assign last is correct.
+We need to spot duplicate places and make sure we get the places unique and correct
+
+We want to store finish data in a database and query results instead of building them in memory and trying
+to keep them up to date with manual events.
+
+So we need a new Result Builder for a db based approach
+We need to store all start events. And know which one is the start that we use to do results
+If we get a new start event, we may need to update finish events that came before the start event
+
+We should save a "finish"/"result" record to db for every finish event. It will have a 0 place.
+We should ignore any additional finishes for a bib. Time adjustments should be done through a UI and
+not additional events because it's hard/impossible to distinguish an additional event created on purpose
+versus a walk by the reader.
+
+We should take place events as absolute. We will enter them manually so we should update the finish/result
+row with each place we get for a bib. We will need to allow duplicate places and then need a UI to deduplicate
+until all places are unique. That be a UI for a query that groups by place until the count for each place is 1
+
+What else should be in the db?
+Race Config: name, source rankings
+
+Athletes can be shared across races. Import from csv/json
+
+Db Schema/Implmentations thoughts
+Athletes should be associated with their race. This could be an initial Result row that is in raw state: No time or place.
+Then each event just does an update?
+If an athlete finishes and isn't in the race the update will do 0 rows and we can log to an orphaned result table?
+Start with creating a race in the db via a UI
+Add a way to import DA file of athletes. Import includes which race they're doing so add them to the race too.
+Add a way/UI to move athletes to other races.
+Race date create and add an athlete to a race
+
+Old Notes
+
 1. better model for assigning places
 2. better logging
 3. audit of everything sent to result builder for potential replay if stream is deleted
-
-
-
 
 Tutorials on Testing
 https://blog.jetbrains.com/go/2022/11/22/comprehensive-guide-to-testing-in-go/
@@ -11,7 +46,6 @@ https://blog.jetbrains.com/go/2022/11/22/comprehensive-guide-to-testing-in-go/
 https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjwtoPE4dSAAxXFjIkEHftFCLsQwqsBegQIDRAG&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DFjkSJ1iXKpg&usg=AOvVaw3HPFQSBDP-wM4R9gdWU4Gr&opi=89978449
 
 https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjwtoPE4dSAAxXFjIkEHftFCLsQwqsBegQIDhAG&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DXQzTUa9LPU8&usg=AOvVaw1TOzX0BIA5yTjiQOlO6cLX&opi=89978449
-
 
 100% test coverage is goal
 Updated event generator so I can feed many races in to test full system.
@@ -40,19 +74,18 @@ Rest API to serve results by scorer name
 Make config available via Context to commands and scorers?
 
 1. Implement scorers that read from result stream:
-    Overall XC -- Place Name Grade Team Time (for each line, fastest at top of list)
-    Team XC -- Place Team Points Top 5 Avg Top 7 Avg
+   Overall XC -- Place Name Grade Team Time (for each line, fastest at top of list)
+   Team XC -- Place Team Points Top 5 Avg Top 7 Avg
 
-    Results saved to db
-    Scoring is also probably a stand alone app.  It monitors results and compiles them into scoring output.  Stores the data to db
+   Results saved to db
+   Scoring is also probably a stand alone app. It monitors results and compiles them into scoring output. Stores the data to db
 
 2. Results web pages for all scoring types, one or more web services to show results web pages
 3. Raspberry pi deployment so monitor can be set up to show overall and team scores on constant refresh
 
-
 Next Steps
 
-Read race and result events with Ranges:  could eliminate ugly scorer channel
+Read race and result events with Ranges: could eliminate ugly scorer channel
 
 Use context to correctly control each one: read by range makes this better, can check the select on context
 
@@ -61,4 +94,3 @@ manual cli just sends events/talks to the stream
 Figure out how to fix places so one person can be put in a particular place
 
 Write step by step by step instructions
-

@@ -91,3 +91,33 @@ func TestMarshallEventPlaceEvent(t *testing.T) {
 	assert.Equal(t, bib, placeEvent.Bib)
 	assert.Equal(t, place, placeEvent.Place)
 }
+
+func TestMarshallEventWorkoutEvent(t *testing.T) {
+	testTime := time.Now().UTC()
+	splitTime := time.Now().UTC()
+	bib := 5
+	workoutEvent := WorkoutEvent{
+		Source:    t.Name(),
+		Bib:       bib,
+		SplitTime: splitTime,
+	}
+
+	testEvent := Event{
+		EventTime: testTime,
+		Data:      workoutEvent,
+	}
+
+	data, err := json.Marshal(testEvent)
+	assert.Nil(t, err)
+
+	var loaded Event
+	err = json.Unmarshal(data, &loaded)
+	assert.Nil(t, err)
+	assert.Equal(t, testEvent.EventTime, testTime)
+	actualWe, typeOk := loaded.Data.(WorkoutEvent)
+	assert.True(t, typeOk)
+	assert.Equal(t, testEvent.Data, actualWe)
+	assert.Equal(t, t.Name(), workoutEvent.Source)
+	assert.Equal(t, bib, workoutEvent.Bib)
+	assert.Equal(t, splitTime, workoutEvent.SplitTime)
+}

@@ -10,6 +10,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSendWorkoutEvent(t *testing.T) {
+	mock := &stream.MockStream{}
+	splitTime := time.Now().UTC().Add(-time.Minute)
+	bib := 5
+
+	es := NewEventStream(mock)
+
+	sentEvent := WorkoutEvent{
+		Source:    t.Name(),
+		Bib:       bib,
+		SplitTime: splitTime,
+	}
+
+	err := es.SendWorkoutEvent(context.TODO(), sentEvent)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(mock.Events))
+
+	var actualEvent Event
+	read, err := es.GetRaceEvent(context.TODO(), 0, &actualEvent)
+	assert.NoError(t, err)
+	assert.True(t, read)
+	actualWorkoutEvent, isWorkout := actualEvent.Data.(WorkoutEvent)
+	assert.True(t, isWorkout)
+	assert.Equal(t, sentEvent, actualWorkoutEvent)
+}
+
 func TestSendStartEvent(t *testing.T) {
 	mock := &stream.MockStream{}
 	startTime := time.Now().UTC().Add(-time.Minute)

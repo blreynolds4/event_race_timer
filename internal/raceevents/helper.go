@@ -6,12 +6,13 @@ import (
 )
 
 type MockEventStream struct {
-	SendStart  func(ctx context.Context, se StartEvent) error
-	SendFinish func(ctx context.Context, fe FinishEvent) error
-	SendPlace  func(ctx context.Context, pe PlaceEvent) error
-	Get        func(ctx context.Context, timeout time.Duration, msg *Event) (bool, error)
-	Range      func(ctx context.Context, startId, endId string, msgs []Event) (int, error)
-	Events     []Event
+	SendWorkout func(ctx context.Context, se WorkoutEvent) error
+	SendStart   func(ctx context.Context, se StartEvent) error
+	SendFinish  func(ctx context.Context, fe FinishEvent) error
+	SendPlace   func(ctx context.Context, pe PlaceEvent) error
+	Get         func(ctx context.Context, timeout time.Duration, msg *Event) (bool, error)
+	Range       func(ctx context.Context, startId, endId string, msgs []Event) (int, error)
+	Events      []Event
 }
 
 func (mes *MockEventStream) SendStartEvent(ctx context.Context, se StartEvent) error {
@@ -47,6 +48,18 @@ func (mes *MockEventStream) SendPlaceEvent(ctx context.Context, pe PlaceEvent) e
 	mes.Events = append(mes.Events, Event{
 		EventTime: time.Now().UTC(),
 		Data:      pe,
+	})
+	return nil
+}
+
+func (mes *MockEventStream) SendWorkoutEvent(ctx context.Context, we WorkoutEvent) error {
+	if mes.SendStart != nil {
+		return mes.SendWorkout(ctx, we)
+	}
+
+	mes.Events = append(mes.Events, Event{
+		EventTime: time.Now().UTC(),
+		Data:      we,
 	})
 	return nil
 }

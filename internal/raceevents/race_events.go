@@ -12,8 +12,14 @@ const (
 
 type Event struct {
 	ID        string
-	EventTime time.Time
+	EventTime time.Time // needs to come from source event as the time event created at source
 	Data      any
+}
+
+type WorkoutEvent struct {
+	SplitTime time.Time
+	Source    string
+	Bib       int
 }
 
 type StartEvent struct {
@@ -48,6 +54,8 @@ func (e Event) MarshalJSON() ([]byte, error) {
 	}
 
 	switch t := e.Data.(type) {
+	case WorkoutEvent:
+		actual.DataType = "workout"
 	case StartEvent:
 		actual.DataType = "start"
 	case FinishEvent:
@@ -85,6 +93,10 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 	}
 
 	switch dataType {
+	case "workout":
+		var we WorkoutEvent
+		err = json.Unmarshal(*objmap["Data"], &we)
+		e.Data = we
 	case "start":
 		var se StartEvent
 		err = json.Unmarshal(*objmap["Data"], &se)

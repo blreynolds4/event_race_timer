@@ -2,96 +2,65 @@ package xc
 
 import (
 	"blreynolds4/event-race-timer/internal/meets"
-	"blreynolds4/event-race-timer/internal/results"
-	"context"
 	"fmt"
 	"log/slog"
 	"sort"
 	"time"
 )
 
-const resultChunkSize = 25
-
-type XCResult struct {
-	Result meets.RaceResult
-	Score  int16
-}
-
-type XCTeamResult struct {
-	Name      string
-	TeamScore int16
-	TotalTime time.Duration
-	Top5Avg   time.Duration
-	Finishers []*XCResult
-	scored    int
-}
-
-func NewXCScorer(l *slog.Logger) *XCScorer {
-	return &XCScorer{
+func NewXCTeamScorer(race *meets.Race, l *slog.Logger) *XCTeamScorer {
+	return &XCTeamScorer{
+		Race:    race,
 		logger:  l.With("scorer", "xc"),
 		Results: make([]*XCTeamResult, 0),
 	}
 }
 
-type XCScorer struct {
+type XCTeamScorer struct {
+	Race    *meets.Race
 	logger  *slog.Logger
 	Results []*XCTeamResult
 }
 
-func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStream) error {
+func (xcs *XCTeamScorer) ScoreResults(resultsReader meets.RaceResultReader) error {
 	teams := make(map[string]*XCTeamResult)
 
-	resultBuffer := make([]meets.RaceResult, resultChunkSize)
-	resultCount, err := source.GetResults(ctx, resultBuffer)
+	// results are returned in place order
+	raceResults, err := resultsReader.GetRaceResults()
 	if err != nil {
+		xcs.logger.Error("ERROR getting race results", "error", err)
 		return err
 	}
 
-	// read and get the latest result for each bib
-	dedupedResults := make(map[int]meets.RaceResult)
-	for resultCount > 0 {
-		for i := 0; i < resultCount; i++ {
-			dedupedResults[resultBuffer[i].Bib] = resultBuffer[i]
-			xcs.logger.Debug("xc scorer adding result", "team", resultBuffer[i].Athlete.Team, "bib", resultBuffer[i].Bib, "time", resultBuffer[i].Time, "place", resultBuffer[i].Place)
-		}
-
-		resultCount, err = source.GetResults(ctx, resultBuffer)
-		if err != nil {
-			return err
-		}
-	}
-
-	// pass one through the results is to build team lists to get finisher counts by team
-	// sort the deduped results by place
-	sortedResults := make([]*XCResult, 0, len(dedupedResults))
-	for _, result := range dedupedResults {
+	// pass one through the results is to create an XC result for each result
+	xcResults := make([]*XCResult, 0, len(raceResults))
+	for _, result := range raceResults {
 		xcr := new(XCResult)
-		xcr.Result = result
-		sortedResults = append(sortedResults, xcr)
+		// this should copy the pointer contents into the Result
+		xcr.Result = *result
+		xcResults = append(xcResults, xcr)
 	}
-	sort.SliceStable(sortedResults, func(i, j int) bool { return sortedResults[i].Result.Place < sortedResults[j].Result.Place })
 
-	// this can just be the result list from db
-
-	for i := 0; i < len(sortedResults); i++ {
+	// group results by team
+	for i := 0; i < len(raceResults); i++ {
 		var teamResult *XCTeamResult
-		teamResult, exists := teams[sortedResults[i].Result.Athlete.Team]
+		teamResult, exists := teams[xcResults[i].Result.Athlete.Team]
 		if !exists {
 			teamResult = new(XCTeamResult)
-			teamResult.Name = sortedResults[i].Result.Athlete.Team
+			teamResult.Name = xcResults[i].Result.Athlete.Team
 			teamResult.Finishers = make([]*XCResult, 0)
 		}
 
-		teamResult.Finishers = append(teamResult.Finishers, sortedResults[i])
+		teamResult.Finishers = append(teamResult.Finishers, xcResults[i])
 		teams[teamResult.Name] = teamResult
 	}
 
 	score := int16(1)
-	for i := 0; i < len(sortedResults); i++ {
+	for i := 0; i < len(xcResults); i++ {
 		// each team has all their finishers set
 		// for each finisher assign a score if the team has more 5 or more runners
 		// TODO set their score to zero if they are 8th or higher runner
-		team := teams[sortedResults[i].Result.Athlete.Team]
+		team := teams[xcResults[i].Result.Athlete.Team]
 		// only give scores to teams of 5+ but less than 8
 		if len(team.Finishers) >= 5 && team.scored < 8 {
 			team.Finishers[team.scored].Score = score
@@ -140,7 +109,7 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 	sort.SliceStable(dnf, func(i, j int) bool {
 		// return i < j, ie i beat j in xc scoring
 		// if they have more finishers
-		return len(sorted[i].Finishers) > len(sorted[j].Finishers)
+		return len(dnf[i].Finishers) > len(dnf[j].Finishers)
 	})
 
 	fmt.Printf("%s", "\x1Bc") // clear stdout
@@ -166,22 +135,4 @@ func (xcs *XCScorer) ScoreResults(ctx context.Context, source results.ResultStre
 	}
 
 	return nil
-}
-
-func getTeamAverage(t *XCTeamResult) time.Duration {
-	total := time.Duration(0)
-	for i := 0; i < 5; i++ {
-		total += t.Finishers[i].Result.Time
-	}
-
-	return total / 5
-}
-
-func getTeamTime(t *XCTeamResult) time.Duration {
-	total := time.Duration(0)
-	for i := 0; i < 5; i++ {
-		total += t.Finishers[i].Result.Time
-	}
-
-	return total
 }

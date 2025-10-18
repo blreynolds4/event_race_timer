@@ -1,7 +1,7 @@
 package overall
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/results"
 	"blreynolds4/event-race-timer/internal/stream"
 	"context"
@@ -15,11 +15,11 @@ import (
 )
 
 func TestOverallResultsSimple(t *testing.T) {
-	athletes := make(competitors.CompetitorLookup)
-	athletes[1] = competitors.NewCompetitor("JS 1", "JS", 1, 1)
-	athletes[10] = competitors.NewCompetitor("Leb 1", "Leb", 1, 1)
-	athletes[11] = competitors.NewCompetitor("MV 4", "MV", 1, 1)
-	athletes[23] = competitors.NewCompetitor("MV 10", "MV", 1, 1)
+	athletes := make(meets.AthleteLookup)
+	athletes[1] = meets.NewAthlete("JS", "1", "JS", "DAID", 1, "m")
+	athletes[10] = meets.NewAthlete("Leb", "1", "Leb", "DAID", 1, "m")
+	athletes[11] = meets.NewAthlete("MV", "4", "MV", "DAID", 1, "m")
+	athletes[23] = meets.NewAthlete("MV", "10", "MV", "DAID", 1, "m")
 
 	// Need to create Results for each athlete
 	mockEventStream := &stream.MockStream{
@@ -27,10 +27,10 @@ func TestOverallResultsSimple(t *testing.T) {
 	}
 	mock := results.NewResultStream(mockEventStream)
 
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 10, Athlete: athletes[10], Place: 2, Time: durationHelper("26m40s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 11, Athlete: athletes[11], Place: 3, Time: durationHelper("27m45s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 10, Athlete: athletes[10], Place: 2, Time: durationHelper("26m40s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 11, Athlete: athletes[11], Place: 3, Time: durationHelper("27m45s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")}))
 
 	// expected scoring
 	// start with just the scores, fill the rest in
@@ -70,11 +70,11 @@ func TestOverallResultsSimple(t *testing.T) {
 }
 
 func TestOverallResultsDuplicate(t *testing.T) {
-	athletes := make(competitors.CompetitorLookup)
-	athletes[1] = competitors.NewCompetitor("JS 1", "JS", 1, 1)
-	athletes[10] = competitors.NewCompetitor("Leb 1", "Leb", 1, 1)
-	athletes[11] = competitors.NewCompetitor("MV 4", "MV", 1, 1)
-	athletes[23] = competitors.NewCompetitor("MV 10", "MV", 1, 1)
+	athletes := make(meets.AthleteLookup)
+	athletes[1] = meets.NewAthlete("JS", "1", "JS", "DAID", 1, "m")
+	athletes[10] = meets.NewAthlete("Leb", "1", "Leb", "DAID", 1, "m")
+	athletes[11] = meets.NewAthlete("MV", "4", "MV", "DAID", 1, "m")
+	athletes[23] = meets.NewAthlete("MV", "10", "MV", "DAID", 1, "m")
 
 	// Need to create Results for each athlete
 	mockEventStream := &stream.MockStream{
@@ -83,14 +83,14 @@ func TestOverallResultsDuplicate(t *testing.T) {
 	mock := results.NewResultStream(mockEventStream)
 
 	// this way
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
 
 	// convert these to ^^^
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("22m2s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 10, Athlete: athletes[10], Place: 2, Time: durationHelper("26m40s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 11, Athlete: athletes[11], Place: 3, Time: durationHelper("27m45s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("22m2s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 10, Athlete: athletes[10], Place: 2, Time: durationHelper("26m40s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 11, Athlete: athletes[11], Place: 3, Time: durationHelper("27m45s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")}))
 
 	// expected scoring
 	// start with just the scores, fill the rest in
@@ -130,11 +130,11 @@ func TestOverallResultsDuplicate(t *testing.T) {
 }
 
 func TestOverallResultsError(t *testing.T) {
-	athletes := make(competitors.CompetitorLookup)
-	athletes[1] = competitors.NewCompetitor("JS 1", "JS", 1, 1)
-	athletes[10] = competitors.NewCompetitor("Leb 1", "Leb", 1, 1)
-	athletes[11] = competitors.NewCompetitor("MV 4", "MV", 1, 1)
-	athletes[23] = competitors.NewCompetitor("MV 10", "MV", 1, 1)
+	athletes := make(meets.AthleteLookup)
+	athletes[1] = meets.NewAthlete("JS", "1", "JS", "DAID", 1, "m")
+	athletes[10] = meets.NewAthlete("Leb", "1", "Leb", "DAID", 1, "m")
+	athletes[11] = meets.NewAthlete("MV", "4", "MV", "DAID", 1, "m")
+	athletes[23] = meets.NewAthlete("MV", "10", "MV", "DAID", 1, "m")
 
 	// Need to create Results for each athlete
 	mockEventStream := &stream.MockStream{
@@ -142,11 +142,11 @@ func TestOverallResultsError(t *testing.T) {
 	}
 	mock := results.NewResultStream(mockEventStream)
 
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("22m2s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 10, Athlete: athletes[10], Place: 2, Time: durationHelper("26m40s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 11, Athlete: athletes[11], Place: 3, Time: durationHelper("27m45s")}))
-	mockEventStream.Events = append(mockEventStream.Events, toMsg(results.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("25m2s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 1, Athlete: athletes[1], Place: 1, Time: durationHelper("22m2s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 10, Athlete: athletes[10], Place: 2, Time: durationHelper("26m40s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 11, Athlete: athletes[11], Place: 3, Time: durationHelper("27m45s")}))
+	mockEventStream.Events = append(mockEventStream.Events, toMsg(meets.RaceResult{Bib: 23, Athlete: athletes[23], Place: 4, Time: durationHelper("37m46s")}))
 
 	// XCScorer has team results in an array
 	OVR := NewOverallResults(slog.Default())
@@ -160,7 +160,7 @@ func durationHelper(d string) time.Duration {
 	return result
 }
 
-func toMsg(r results.RaceResult) stream.Message {
+func toMsg(r meets.RaceResult) stream.Message {
 	var msg stream.Message
 	msgData, err := json.Marshal(r)
 	if err != nil {

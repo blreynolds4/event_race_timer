@@ -3,6 +3,7 @@ package cli
 import (
 	"blreynolds4/event-race-timer/cmd/cli/internal/command"
 	"blreynolds4/event-race-timer/cmd/cli/internal/repl"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/redis_stream"
 	"fmt"
@@ -23,7 +24,7 @@ func NewCliApp() CliApp {
 	}
 }
 
-func (ca CliApp) Run(claDbAddress string, claDbNumber int, claRacename string) {
+func (ca CliApp) Run(claDbAddress string, claDbNumber int, claRacename string, pgConnect string) {
 	// connect to redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     claDbAddress,
@@ -37,13 +38,31 @@ func (ca CliApp) Run(claDbAddress string, claDbNumber int, claRacename string) {
 	eventStream := raceevents.NewEventStream(rawStream)
 
 	// create the command map
-	ca.createCommandMap(rdb, eventStream)
+	ca.createCommandMap(rdb, claRacename, eventStream, pgConnect)
 
 	inputRepl := repl.NewReadEvalPrintLoop(fmt.Sprintf("race-cli:%s", claRacename), os.Stdin, ca.commandRunner)
 	inputRepl.Run()
 }
 
-func (ca CliApp) createCommandMap(rdb *redis.Client, eventStream raceevents.EventStream) {
+func (ca CliApp) createCommandMap(rdb *redis.Client, raceName string, eventStream raceevents.EventStream, pgConnect string) {
+	athleteReader, err := meets.NewAthleteReader(pgConnect)
+	if err != nil {
+		fmt.Println("error creating athlete reader:", err.Error())
+		os.Exit(1)
+	}
+
+	raceReader, err := meets.NewRaceReader(pgConnect)
+	if err != nil {
+		fmt.Println("error creating race reader:", err.Error())
+		os.Exit(1)
+	}
+
+	raceWriter, err := meets.NewRaceWriter(pgConnect)
+	if err != nil {
+		fmt.Println("error creating race writer:", err.Error())
+		os.Exit(1)
+	}
+
 	ca.replCommands["quit"] = command.NewQuitCommand()
 	ca.replCommands["q"] = ca.replCommands["quit"]
 	ca.replCommands["exit"] = ca.replCommands["quit"]
@@ -63,6 +82,12 @@ func (ca CliApp) createCommandMap(rdb *redis.Client, eventStream raceevents.Even
 	ca.replCommands["list"] = command.NewListFinishCommand(eventStream)
 
 	ca.replCommands["bib"] = command.NewAddBibCommand(eventStream)
+
+	ca.replCommands["removeAthleteFromRace"] = command.NewDeleteAthleteFromRaceCommand(athleteReader, raceReader, raceWriter)
+	ca.replCommands["rar"] = ca.replCommands["removeAthleteFromRace"]
+
+	ca.replCommands["addAthleteToRace"] = command.NewAddAthleteToRaceCommand(athleteReader, raceReader, raceWriter)
+	ca.replCommands["aar"] = ca.replCommands["addAthleteToRace"]
 
 	ca.replCommands["finish"] = command.NewFinishCommand(sourceName, eventStream)
 	ca.replCommands["f"] = ca.replCommands["finish"]

@@ -1,7 +1,7 @@
 package results
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/meets"
 	"testing"
 	"time"
 
@@ -9,13 +9,14 @@ import (
 )
 
 func TestIsComplete(t *testing.T) {
-	rr := RaceResult{
+	rr := meets.RaceResult{
 		Bib: 1,
-		Athlete: &competitors.Competitor{
-			Name:  t.Name(),
-			Team:  t.Name(),
-			Age:   1,
-			Grade: 1,
+		Athlete: &meets.Athlete{
+			FirstName: t.Name(),
+			LastName:  t.Name(),
+			Team:      t.Name(),
+			Grade:     1,
+			Gender:    "m",
 		},
 		Place:       1,
 		PlaceSource: "y",
@@ -24,13 +25,14 @@ func TestIsComplete(t *testing.T) {
 }
 
 func TestIsCompleteFalse(t *testing.T) {
-	results := []RaceResult{
+	results := []meets.RaceResult{
 		{ //Bib is 0
-			Athlete: &competitors.Competitor{
-				Name:  t.Name(),
-				Team:  t.Name(),
-				Age:   1,
-				Grade: 1,
+			Athlete: &meets.Athlete{
+				FirstName: t.Name(),
+				LastName:  t.Name(),
+				Team:      t.Name(),
+				Grade:     1,
+				Gender:    "m",
 			},
 			Place: 1,
 			Time:  time.Second,
@@ -44,22 +46,24 @@ func TestIsCompleteFalse(t *testing.T) {
 		{
 			// place is 0
 			Bib: 1,
-			Athlete: &competitors.Competitor{
-				Name:  t.Name(),
-				Team:  t.Name(),
-				Age:   1,
-				Grade: 1,
+			Athlete: &meets.Athlete{
+				FirstName: t.Name(),
+				LastName:  t.Name(),
+				Team:      t.Name(),
+				Grade:     1,
+				Gender:    "m",
 			},
 			Time: time.Second,
 		},
 		{
 			// place source is ""
 			Bib: 1,
-			Athlete: &competitors.Competitor{
-				Name:  t.Name(),
-				Team:  t.Name(),
-				Age:   1,
-				Grade: 1,
+			Athlete: &meets.Athlete{
+				FirstName: t.Name(),
+				LastName:  t.Name(),
+				Team:      t.Name(),
+				Grade:     1,
+				Gender:    "m",
 			},
 			Place:        1,
 			FinishSource: "y",

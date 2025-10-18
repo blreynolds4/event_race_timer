@@ -17,6 +17,7 @@ type EventStreamReader interface {
 }
 
 type EventStreamWriter interface {
+	SendWorkoutEvent(ctx context.Context, we WorkoutEvent) error
 	SendStartEvent(ctx context.Context, se StartEvent) error
 	SendFinishEvent(ctx context.Context, fe FinishEvent) error
 	SendPlaceEvent(ctx context.Context, pe PlaceEvent) error
@@ -37,6 +38,14 @@ func NewEventStream(s stream.ReaderWriter) EventStream {
 	return &eventStream{
 		raw: s,
 	}
+}
+
+func (es *eventStream) SendWorkoutEvent(ctx context.Context, we WorkoutEvent) error {
+	// wrap start event with event and send
+	return es.sendMessage(ctx, Event{
+		EventTime: time.Now().UTC(),
+		Data:      we,
+	})
 }
 
 func (es *eventStream) SendStartEvent(ctx context.Context, se StartEvent) error {

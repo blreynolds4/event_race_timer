@@ -1,6 +1,7 @@
 package results
 
 import (
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/stream"
 	"context"
 	"encoding/json"
@@ -8,11 +9,11 @@ import (
 )
 
 type ResultReader interface {
-	GetResults(ctx context.Context, results []RaceResult) (int, error)
+	GetResults(ctx context.Context, results []meets.RaceResult) (int, error)
 }
 
 type ResultWriter interface {
-	SendResult(ctx context.Context, rr RaceResult) error
+	SendResult(ctx context.Context, rr meets.RaceResult) error
 }
 
 type ResultStream interface {
@@ -32,7 +33,7 @@ func NewResultStream(raw stream.ReaderWriter) ResultStream {
 	}
 }
 
-func (rs *resultStream) GetResults(ctx context.Context, results []RaceResult) (int, error) {
+func (rs *resultStream) GetResults(ctx context.Context, results []meets.RaceResult) (int, error) {
 	if len(results) == 0 {
 		return 0, fmt.Errorf("can't get results with zero length buffer")
 	}
@@ -49,7 +50,7 @@ func (rs *resultStream) GetResults(ctx context.Context, results []RaceResult) (i
 		// doesn't get shared with each read
 		// (assigning to results[i] directly only kept last competitor for all)
 		// using rr creates new space that escapes into the result
-		var rr RaceResult
+		var rr meets.RaceResult
 		err = json.Unmarshal(msgBuffer[i].Data, &rr)
 		if err != nil {
 			return 0, err
@@ -63,7 +64,7 @@ func (rs *resultStream) GetResults(ctx context.Context, results []RaceResult) (i
 	return count, nil
 }
 
-func (rts *resultStream) SendResult(ctx context.Context, rr RaceResult) error {
+func (rts *resultStream) SendResult(ctx context.Context, rr meets.RaceResult) error {
 	resData, err := json.Marshal(rr)
 	if err != nil {
 		return err

@@ -1,7 +1,7 @@
 package resultbuilder
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/results"
 	"log/slog"
@@ -57,10 +57,10 @@ func TestResultBuilderSimplest(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -106,10 +106,10 @@ func TestResultBuilderPlaceCausesResult(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:         10,
 			Athlete:     athletes[10],
@@ -179,13 +179,13 @@ func TestResultBuilderFinishUpdated(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
 	// when the first place event comes in the builder should produce a result
 	// when the updated finish time comes, it should produce a new result for the
 	// same bib
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -264,13 +264,13 @@ func TestResultBuilderStartUpdated(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
 	// when the first place event comes in the builder should produce a result
 	// when the updated start time comes, it should produce a new result for the
 	// same bib
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -366,14 +366,14 @@ func TestResultBuilderPlaceUpdated(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
-	athletes[11] = competitors.NewCompetitor("MWR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
+	athletes[11] = meets.NewAthlete("M", "R", "WPI", "DAID2", 12, "m")
 
 	// when the first place event comes in the builder should produce a result
 	// when the updated start time comes, it should produce a new result for the
 	// same bib
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -464,12 +464,12 @@ func TestResultBuilderPlaceSwap(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
-	athletes[11] = competitors.NewCompetitor("MWR", "WPI", 22, 17)
-	athletes[12] = competitors.NewCompetitor("MGR", "MVHS", 16, 11)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
+	athletes[11] = meets.NewAthlete("M", "R", "WPI", "DAID2", 12, "m")
+	athletes[12] = meets.NewAthlete("MG", "R", "MVHS", "DAID3", 12, "m")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:         10,
 			Athlete:     athletes[10],
@@ -534,9 +534,9 @@ func TestResultBuilderUnknownPlaceBib(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
+	athletes := make(meets.AthleteLookup)
 
-	expectedResults := []results.RaceResult{}
+	expectedResults := []meets.RaceResult{}
 
 	mockOutStream := &stream.MockStream{
 		Events: make([]stream.Message, 0, 10),
@@ -580,10 +580,10 @@ func TestResultBuilderNoPlaceNoResult(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
-	expectedResults := []results.RaceResult{}
+	expectedResults := []meets.RaceResult{}
 
 	mockOutStream := &stream.MockStream{
 		Events: make([]stream.Message, 0, 10),
@@ -703,14 +703,14 @@ func TestResultBuilder(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
-	athletes[11] = competitors.NewCompetitor("MWR", "OGTC", 22, 16)
-	athletes[12] = competitors.NewCompetitor("MGR", "MVXC", 16, 11)
-	athletes[13] = competitors.NewCompetitor("SSR", "WPI", 19, 14)
-	athletes[14] = competitors.NewCompetitor("SSL", "CU", 53, 20)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
+	athletes[11] = meets.NewAthlete("M", "R", "WPI", "DAID2", 12, "m")
+	athletes[12] = meets.NewAthlete("MG", "R", "MVHS", "DAID3", 12, "m")
+	athletes[13] = meets.NewAthlete("S", "R", "WPI", "DAID4", 12, "f")
+	athletes[14] = meets.NewAthlete("S", "L", "CU", "DAID5", 12, "f")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          12,
 			Athlete:      athletes[12],
@@ -814,13 +814,13 @@ func TestResultBuilderRankUpdates(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
 	// when the first place event comes in the builder should produce a result
 	// when the updated start time comes, it should produce a new result for the
 	// same bib
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -908,13 +908,13 @@ func TestResultBuilderRankIgnores(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
 	// when the first place event comes in the builder should produce a result
 	// when the updated start time comes, it should produce a new result for the
 	// same bib
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -992,13 +992,13 @@ func TestResultBuilderRankPlaceUpdate(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
 	// when the first place event comes in the builder should produce a result
 	// when the updated start time comes, it should produce a new result for the
 	// same bib
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -1080,13 +1080,13 @@ func TestResultBuilderRankPlaceIgnore(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
 
 	// when the first place event comes in the builder should produce a result
 	// when the updated start time comes, it should produce a new result for the
 	// same bib
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:          10,
 			Athlete:      athletes[10],
@@ -1164,13 +1164,13 @@ func TestResultBuilderPlaceLastToFirst(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
-	athletes[11] = competitors.NewCompetitor("MWR", "WPI", 22, 17)
-	athletes[12] = competitors.NewCompetitor("MGR", "MVHS", 16, 11)
-	athletes[13] = competitors.NewCompetitor("SSR", "WPI", 16, 14)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
+	athletes[11] = meets.NewAthlete("M", "R", "WPI", "DAID2", 12, "m")
+	athletes[12] = meets.NewAthlete("MG", "R", "MVHS", "DAID3", 12, "m")
+	athletes[13] = meets.NewAthlete("S", "R", "WPI", "DAID4", 16, "f")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:         10,
 			Athlete:     athletes[10],
@@ -1267,11 +1267,11 @@ func TestResultBuilderPlaceSwapDemote(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
-	athletes[11] = competitors.NewCompetitor("MWR", "WPI", 22, 17)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
+	athletes[11] = meets.NewAthlete("M", "R", "WPI", "DAID2", 12, "m")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:         10,
 			Athlete:     athletes[10],
@@ -1352,12 +1352,12 @@ func TestResultBuilderDemote(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
-	athletes[11] = competitors.NewCompetitor("MWR", "WPI", 22, 17)
-	athletes[12] = competitors.NewCompetitor("MGR", "MVHS", 16, 11)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
+	athletes[11] = meets.NewAthlete("M", "R", "WPI", "DAID2", 12, "m")
+	athletes[12] = meets.NewAthlete("MG", "R", "MVHS", "DAID3", 12, "m")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:         10,
 			Athlete:     athletes[10],
@@ -1454,13 +1454,13 @@ func TestResultBuilderPlaceFirstToLast(t *testing.T) {
 	}
 	inputEvents := raceevents.NewEventStream(mockInStream)
 
-	athletes := make(competitors.CompetitorLookup)
-	athletes[10] = competitors.NewCompetitor("DJR", "WPI", 22, 17)
-	athletes[11] = competitors.NewCompetitor("MWR", "WPI", 22, 17)
-	athletes[12] = competitors.NewCompetitor("MGR", "MVHS", 16, 11)
-	athletes[13] = competitors.NewCompetitor("SSR", "WPI", 16, 14)
+	athletes := make(meets.AthleteLookup)
+	athletes[10] = meets.NewAthlete("D", "R", "WPI", "DAID", 12, "m")
+	athletes[11] = meets.NewAthlete("M", "R", "WPI", "DAID2", 12, "m")
+	athletes[12] = meets.NewAthlete("MG", "R", "MVHS", "DAID3", 12, "m")
+	athletes[13] = meets.NewAthlete("S", "R", "WPI", "DAID4", 16, "f")
 
-	expectedResults := []results.RaceResult{
+	expectedResults := []meets.RaceResult{
 		{
 			Bib:         10,
 			Athlete:     athletes[10],
@@ -1540,8 +1540,8 @@ func buildEventMessages(testEvents []raceevents.Event) []stream.Message {
 	return result
 }
 
-func buildActualResults(rawOutput *stream.MockStream) []results.RaceResult {
-	result := make([]results.RaceResult, len(rawOutput.Events))
+func buildActualResults(rawOutput *stream.MockStream) []meets.RaceResult {
+	result := make([]meets.RaceResult, len(rawOutput.Events))
 	for i, msg := range rawOutput.Events {
 		err := json.Unmarshal(msg.Data, &result[i])
 		if err != nil {

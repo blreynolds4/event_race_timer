@@ -1,5 +1,6 @@
 go build -o cli cmd/cli/cli.go
 go build -o da-import cmd/da_import/da_import.go
+go build -o da-meet-init cmd/da_meet_init/da_load_meet.go
 go build -o generator cmd/event_generator/event_generator.go
 go build -o placer cmd/placer/placer.go
 go build -o raceweb cmd/raceweb/raceweb.go

@@ -14,38 +14,88 @@ package main
 // place events may be needed to distinguish the order of finish if times are the same
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/redis_stream"
 	"bufio"
 	"context"
 	"flag"
 	"fmt"
+	"log/slog"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	_ "github.com/lib/pq" // PostgreSQL driver
+
 	redis "github.com/redis/go-redis/v9"
 )
 
+func newLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, nil))
+}
+
 func main() {
-	// connect to redis
-	// cli for db address, username, password, db, stream name?
-	// stream is specific to a race
+	// create a logger
+	logger := newLogger()
+
 	var claDbAddress string
 	var claDbNumber int
 	var claRacename string
+	var claPostgresConnect string
 	var claSourceFile string
 
-	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
-	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
-	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
+	flag.StringVar(&claDbAddress, "redisAddress", "localhost:6379", "The host and port ie localhost:6379")
+	flag.IntVar(&claDbNumber, "redisDbNumber", 0, "The database to use, defaults to 0")
+	flag.StringVar(&claPostgresConnect, "pgConnect", "postgres://eventtimer:eventtimer@localhost:5432/eventtimer?sslmode=disable", "PostgreSQL connection string")
+	flag.StringVar(&claRacename, "raceName", "", "The name of the race being timed")
 	flag.StringVar(&claSourceFile, "sourceFile", "", "The name of the source file for the race events.")
 
 	// parse command line
 	flag.Parse()
+
+	if strings.TrimSpace(claRacename) == "" {
+		logger.Error("raceName is required")
+		os.Exit(1)
+	}
+
+	// create a meet
+	meetWriter, err := meets.NewMeetWriter(claPostgresConnect)
+	if err != nil {
+		logger.Error("ERROR creating meet writer", "error", err)
+		os.Exit(1)
+	}
+	defer meetWriter.Close()
+
+	meet, err := meetWriter.SaveMeet(&meets.Meet{
+		Name: "Generated Meet " + time.Now().Format("2006-01-02-15-04-05"),
+	})
+	if err != nil {
+		logger.Error("ERROR saving meet", "error", err)
+		os.Exit(1)
+	}
+
+	raceWriter, err := meets.NewRaceWriter(claPostgresConnect)
+	if err != nil {
+		logger.Error("ERROR creating race writer", "error", err)
+		os.Exit(1)
+	}
+	defer raceWriter.Close()
+
+	race, err := raceWriter.SaveRace(&meets.Race{Name: claRacename}, meet)
+	if err != nil {
+		logger.Error("ERROR saving race", "error", err)
+		os.Exit(1)
+	}
+
+	athleteWriter, err := meets.NewAthleteWriter(claPostgresConnect)
+	if err != nil {
+		logger.Error("ERROR creating athlete writer", "error", err)
+		os.Exit(1)
+	}
+	defer athleteWriter.Close()
 
 	// connect to redis
 	rdb := redis.NewClient(&redis.Options{
@@ -68,7 +118,7 @@ func main() {
 	eventStream := raceevents.NewEventStream(rawStream)
 
 	// create and save competitor data
-	athletes := make(competitors.CompetitorLookup)
+	athletes := make(meets.AthleteLookup)
 
 	// send a start event
 	startTime := time.Now().UTC()
@@ -109,13 +159,27 @@ func main() {
 					os.Exit(-1)
 				}
 
-				c := competitors.Competitor{
-					Name:  split[3] + " " + split[2],
-					Team:  split[5],
-					Grade: int(grade),
+				c := new(meets.Athlete)
+				c.DaID = fmt.Sprintf("gen-%d", bib)
+				c.FirstName = split[3]
+				c.LastName = split[2]
+				c.Team = split[5]
+				c.Grade = grade
+				athletes[bib] = c
+
+				athlete, err := athleteWriter.SaveAthlete(c)
+				if err != nil {
+					fmt.Printf("error saving athlete %s: %s", c.DaID, err.Error())
+					os.Exit(-1)
 				}
 
-				athletes[bib] = &c
+				err = raceWriter.AddAthlete(race, athlete, bib)
+				if err != nil {
+					fmt.Printf("error adding athlete %d to race %s: %s", bib, race.Name, err.Error())
+					os.Exit(-1)
+				}
+
+				athletes[bib] = athlete
 
 				finishCount++
 
@@ -137,6 +201,12 @@ func main() {
 					Source:     "reader-1",
 					FinishTime: startTime.Add(runDuration),
 					Bib:        bib,
+				})
+
+				eventStream.SendPlaceEvent(context.TODO(), raceevents.PlaceEvent{
+					Source: "manual",
+					Bib:    bib,
+					Place:  finishCount,
 				})
 
 				// get a random number 1 - 3 to decide on additional finish events for the athlete
@@ -166,8 +236,5 @@ func main() {
 		} else {
 			done = true
 		}
-
-		// Save the competitor data for these events
-		athletes.Store(claSourceFile + "_athletes.json")
 	}
 }

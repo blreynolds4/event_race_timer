@@ -94,3 +94,42 @@ manual cli just sends events/talks to the stream
 Figure out how to fix places so one person can be put in a particular place
 
 Write step by step by step instructions
+
+(Done) Meet saves/reads from db
+(Done) Add/Remove races to/from meet
+(Done) Create Athletes
+(Done) Link Athlets to races
+
+2025 Next to Do:
+Lemur has most up to date command lines (Commit or backup race data)
+Save config data look at race web and result builders to see what config can be put in db and read out by meet
+Get Athlete List for a race and build bib lookup
+CLI updates to change races for an athlete
+Update Result builders
+Other use cases on paper
+
+raceweb command lines:
+config is using webhookSourceConfig.json
+raceName aka stream name
+competitors athlete lookup
+
+result-builder
+config CapitalArea24/capital_area_jv_config.json
+raceName aka stream name
+competitors athelet lookup
+
+cli
+raceName aka stream name
+
+overall-scorer
+raceName
+overall flag for socre mode
+
+overall-scorer
+raceName
+xc flag for score mode
+
+race config is the config.go
+
+athlete lookup can come from db
+race config should go to db

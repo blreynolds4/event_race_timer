@@ -2,14 +2,16 @@ package main
 
 import (
 	"blreynolds4/event-race-timer/cmd/result_builder/internal/resultbuilder"
-	"blreynolds4/event-race-timer/internal/competitors"
 	"blreynolds4/event-race-timer/internal/config"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/redis_stream"
-	"blreynolds4/event-race-timer/internal/results"
 	"flag"
 	"log/slog"
 	"os"
+	"strings"
+
+	_ "github.com/lib/pq" // PostgreSQL driver
 
 	redis "github.com/redis/go-redis/v9"
 )
@@ -27,22 +29,27 @@ func main() {
 	// stream is specific to a race
 	var claDbAddress string
 	var claDbNumber int
+	var claPostgresConnect string
 	var claRacename string
-	var claCompetitorsPath string
 	var claConfigPath string
 	var claDebug bool
 	var claPlaceFile string
 
-	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
-	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
-	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
-	flag.StringVar(&claCompetitorsPath, "competitors", "", "The path to the competitor lookup file (json)")
+	flag.StringVar(&claDbAddress, "redisAddress", "localhost:6379", "The host and port ie localhost:6379")
+	flag.IntVar(&claDbNumber, "redisDbNumber", 0, "The database to use, defaults to 0")
+	flag.StringVar(&claPostgresConnect, "pgConnect", "postgres://eventtimer:eventtimer@localhost:5432/eventtimer?sslmode=disable", "PostgreSQL connection string")
+	flag.StringVar(&claRacename, "raceName", "", "The name of the race being timed")
 	flag.StringVar(&claConfigPath, "config", "", "The path to the config file (json)")
 	flag.BoolVar(&claDebug, "debug", false, "Flag to debug")
 	flag.StringVar(&claPlaceFile, "places", "", "The path to the place file")
 
 	// parse command line
 	flag.Parse()
+
+	if strings.TrimSpace(claRacename) == "" {
+		logger.Error("raceName is required")
+		os.Exit(1)
+	}
 
 	// connect to redis
 	rdb := redis.NewClient(&redis.Options{
@@ -53,12 +60,33 @@ func main() {
 
 	defer rdb.Close()
 
-	athletes := make(competitors.CompetitorLookup)
-	err := competitors.LoadCompetitorLookup(claCompetitorsPath, athletes)
+	raceReader, err := meets.NewRaceReader(claPostgresConnect)
 	if err != nil {
-		logger.Error("ERROR loading competitors", "filename", claCompetitorsPath, "error", err)
+		logger.Error("ERROR creating race reader", "error", err)
 		os.Exit(1)
 	}
+	defer raceReader.Close()
+
+	race, err := raceReader.GetRaceByName(claRacename)
+	if err != nil {
+		logger.Error("ERROR loading race", "race", claRacename, "error", err)
+		os.Exit(1)
+	}
+
+	resultsWriter, err := meets.NewRaceResultWriter(race, claPostgresConnect)
+	if err != nil {
+		logger.Error("ERROR creating results writer", "error", err)
+		os.Exit(1)
+	}
+
+	athletes := make(meets.AthleteLookup)
+	err = meets.LoadAthleteLookup(claPostgresConnect, claRacename, athletes)
+	if err != nil {
+		logger.Error("error loading athletes", "error", err)
+		os.Exit(1)
+	}
+
+	logger.Info("Loaded athletes", "count", len(athletes), "athletes", athletes)
 
 	var raceConfig config.RaceConfig
 	err = config.LoadConfigData(claConfigPath, &raceConfig)
@@ -70,20 +98,9 @@ func main() {
 	rawStream := redis_stream.NewRedisStream(rdb, claRacename)
 	eventStream := raceevents.NewEventStream(rawStream)
 
-	resultStreamName := claRacename + "_results"
-	if claDebug {
-		resultStreamName = resultStreamName + "_debug"
-	}
-	rawResultStream := redis_stream.NewRedisStream(rdb, resultStreamName)
-	resultStream := results.NewResultStream(rawResultStream)
+	resultBuilder := resultbuilder.NewRaceResultBuilder(logger)
 
-	resultBuilder := resultbuilder.NewResultBuilder(logger)
-	if claDebug {
-		logger.Info("DEBUGGING RESULTS")
-		resultBuilder = resultbuilder.NewStartFinishResultBuilder(claPlaceFile, logger)
-	}
-
-	err = resultBuilder.BuildResults(eventStream, athletes, resultStream, raceConfig.SourceRanks)
+	err = resultBuilder.BuildRaceResults(eventStream, athletes, raceConfig.SourceRanks, resultsWriter)
 	if err != nil {
 		logger.Error("ERROR generating results", "error", err)
 	}

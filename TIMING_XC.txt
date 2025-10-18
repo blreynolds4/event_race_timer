@@ -1,3 +1,5 @@
+Download meet entries with Runscore Download
+
 Pre Race Data:
 config json for each race
 source map config for rest server
@@ -15,11 +17,12 @@ Source ranking
 
 
 start the webserver
-start default placer *** Consider NOT using default placer for XC ***
 start result builder
 
 start a manual cli
     send start event and start backup timer and manual timer
+    ./cli --raceName "XXXX"
+    at race-cli:XXXX> prompte type "start"
 
 Start the Reader Race manager
 RaceManager set the race clock in sync with start event

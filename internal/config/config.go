@@ -2,23 +2,34 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
+	"io"
+	"os"
 )
 
 type RaceConfig struct {
-	// RaceName     string
-	// RedisAddress string
-	// RedisDbumber int
-	SourceRanks map[string]int
+	RaceName      string
+	RedisAddress  string
+	RedisDbNumber int
+	PgConnect     string
+	SourceRanks   map[string]int
 }
 
 func LoadConfigData(configPath string, raceConfig *RaceConfig) error {
-	file, err := ioutil.ReadFile(configPath)
+	fmt.Println("Loading config from", configPath)
+	file, err := os.Open(configPath)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return err
+	}
+	defer file.Close()
+
+	fileContent, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}
 
-	return json.Unmarshal([]byte(file), raceConfig)
+	return json.Unmarshal(fileContent, raceConfig)
 }
 
 func GetConfigData(rc RaceConfig) ([]byte, error) {

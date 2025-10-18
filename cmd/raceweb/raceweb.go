@@ -4,13 +4,15 @@ import (
 	"flag"
 	"log/slog"
 	"os"
+	"strings"
 
 	"blreynolds4/event-race-timer/cmd/raceweb/internal/raceweb"
-	"blreynolds4/event-race-timer/internal/competitors"
 	"blreynolds4/event-race-timer/internal/config"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/redis_stream"
 
+	_ "github.com/lib/pq" // PostgreSQL driver
 	redis "github.com/redis/go-redis/v9"
 )
 
@@ -26,17 +28,17 @@ func main() {
 	var claDbAddress string
 	var claDbNumber int
 	var claRacename string
-	var claCompetitorsPath string
+	var claPostgresConnect string
 
 	flag.StringVar(&claSourceConfig, "config", "", "The config file for sources")
-	flag.StringVar(&claDbAddress, "dbAddress", "localhost:6379", "The host and port ie localhost:6379")
-	flag.IntVar(&claDbNumber, "dbNumber", 0, "The database to use, defaults to 0")
-	flag.StringVar(&claRacename, "raceName", "race", "The name of the race being timed (no spaces)")
-	flag.StringVar(&claCompetitorsPath, "competitors", "", "The path to the competitor lookup file (json)")
+	flag.StringVar(&claDbAddress, "redisAddress", "localhost:6379", "The host and port ie localhost:6379")
+	flag.IntVar(&claDbNumber, "redisDbNumber", 0, "The database to use, defaults to 0")
+	flag.StringVar(&claPostgresConnect, "pgConnect", "postgres://eventtimer:eventtimer@localhost:5432/eventtimer?sslmode=disable", "PostgreSQL connection string")
+	flag.StringVar(&claRacename, "raceName", "", "The name of the race being timed")
 
 	flag.Parse()
 
-	// load config data
+	// load config data for host/ip to source name like mat and chute reader
 	var sources config.SourceConfig
 	err := config.LoadAnyConfigData[config.SourceConfig](claSourceConfig, &sources)
 	if err != nil {
@@ -44,10 +46,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	athletes := make(competitors.CompetitorLookup)
-	err = competitors.LoadCompetitorLookup(claCompetitorsPath, athletes)
+	if strings.TrimSpace(claRacename) == "" {
+		logger.Error("raceName is required")
+		os.Exit(1)
+	}
+
+	athletes := make(meets.AthleteLookup)
+	err = meets.LoadAthleteLookup(claPostgresConnect, claRacename, athletes)
 	if err != nil {
-		logger.Error("ERROR loading competitors", "fileName", claCompetitorsPath, "error", err)
+		logger.Error("error loading athletes", "error", err)
 		os.Exit(1)
 	}
 

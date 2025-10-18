@@ -1,7 +1,7 @@
 package resultbuilder
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"blreynolds4/event-race-timer/internal/results"
 	"bufio"
@@ -56,12 +56,12 @@ type startFinishResultBuilder struct {
 }
 
 func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStream,
-	athletes competitors.CompetitorLookup,
+	athletes meets.AthleteLookup,
 	outputResults results.ResultStream,
 	ranking map[string]int) error {
 
 	start := make([]raceevents.StartEvent, 0) //array to store all of the start events
-	rr := make(map[int]*results.RaceResult)   //map of race results, bib number is key
+	rr := make(map[int]*meets.RaceResult)     //map of race results, bib number is key
 	ft := make(map[int]time.Time)             // map of times with bib number being key
 
 	rb.logger.Info("START FINISH RESULT BUILDER IS FOR DEBUGGING")
@@ -96,11 +96,11 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 
 			// only handle bibs for athletes that exist
 			if athlete, bibFound := athletes[fe.Bib]; bibFound {
-				rb.logger.Info("Got finish", "bib", fe.Bib, "athlete", athlete.Name, "team", athlete.Team)
+				rb.logger.Info("Got finish", "bib", fe.Bib, "athlete", athlete.FirstName+" "+athlete.LastName, "team", athlete.Team)
 				result := rr[fe.Bib]
 				if result == nil {
 					// the result doesn't exist in the cache
-					result = new(results.RaceResult)
+					result = new(meets.RaceResult)
 					result.Bib = fe.Bib
 					result.Athlete = athlete
 					rr[fe.Bib] = result
@@ -146,7 +146,7 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 			// send missed places
 			for bib, place := range rb.places {
 				rb.logger.Info("No finish", "bib", bib, "chutePlace", place)
-				result := new(results.RaceResult)
+				result := new(meets.RaceResult)
 				result.Bib = bib
 				result.Place = place
 				result.PlaceSource = "manual"
@@ -169,15 +169,15 @@ func (rb *startFinishResultBuilder) BuildResults(inputEvents raceevents.EventStr
 	return nil
 }
 
-func (rb *startFinishResultBuilder) printMissingAthletes(outputResults map[int]*results.RaceResult, athletes competitors.CompetitorLookup) {
+func (rb *startFinishResultBuilder) printMissingAthletes(outputResults map[int]*meets.RaceResult, athletes meets.AthleteLookup) {
 	for bib, athlete := range athletes {
 		if _, found := outputResults[bib]; !found {
-			rb.logger.Info("No Result: ", "bib", bib, "athlete", athlete.Name, "team", athlete.Team)
+			rb.logger.Info("No Result: ", "bib", bib, "athlete", athlete.FirstName+" "+athlete.LastName, "team", athlete.Team)
 		}
 	}
 }
 
-func (rb *startFinishResultBuilder) sendResult(ctx context.Context, rr *results.RaceResult, s results.ResultStream) {
+func (rb *startFinishResultBuilder) sendResult(ctx context.Context, rr *meets.RaceResult, s results.ResultStream) {
 	copy := *rr
 
 	s.SendResult(ctx, copy)

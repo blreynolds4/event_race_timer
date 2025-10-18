@@ -2,8 +2,8 @@ package raceweb
 
 import (
 	"blreynolds4/event-race-timer/cmd/raceweb/internal/handler"
-	"blreynolds4/event-race-timer/internal/competitors"
 	"blreynolds4/event-race-timer/internal/config"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/raceevents"
 	"log/slog"
 
@@ -18,7 +18,7 @@ type application struct {
 	router *gin.Engine
 }
 
-func NewApplication(sources config.SourceConfig, athletes competitors.CompetitorLookup, eventStream raceevents.EventStream, logger *slog.Logger) Application {
+func NewApplication(sources config.SourceConfig, athletes meets.AthleteLookup, eventStream raceevents.EventStream, logger *slog.Logger) Application {
 	router := gin.Default()
 
 	// Setup route group for the API

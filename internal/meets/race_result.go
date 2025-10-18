@@ -1,15 +1,15 @@
-package results
+package meets
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
 	"time"
 )
 
 // A RaceResult that can be filled in as events arrive and sent when IsComplete() is true
 type RaceResult struct {
 	Bib          int
-	Athlete      *competitors.Competitor
+	Athlete      *Athlete
 	Place        int
+	XcPlace      int
 	Time         time.Duration
 	FinishSource string
 	PlaceSource  string

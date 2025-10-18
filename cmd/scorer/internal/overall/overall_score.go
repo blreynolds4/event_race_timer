@@ -1,7 +1,7 @@
 package overall
 
 import (
-	"blreynolds4/event-race-timer/internal/competitors"
+	"blreynolds4/event-race-timer/internal/meets"
 	"blreynolds4/event-race-timer/internal/results"
 	"context"
 	"fmt"
@@ -16,11 +16,11 @@ const resultChunkSize = 25
 type OverallScorer struct {
 	logger         *slog.Logger
 	overallResults []OverallResult
-	rawResults     map[int]results.RaceResult // bib to result, keep latest result
+	rawResults     map[int]meets.RaceResult // bib to result, keep latest result
 }
 
 type OverallResult struct {
-	Athlete    *competitors.Competitor
+	Athlete    *meets.Athlete
 	Finishtime time.Duration
 	Place      int
 	Bib        int
@@ -30,7 +30,7 @@ func NewOverallResults(l *slog.Logger) OverallScorer {
 	return OverallScorer{
 		logger:         l.With("scorer", "overall"),
 		overallResults: make([]OverallResult, 0),
-		rawResults:     make(map[int]results.RaceResult),
+		rawResults:     make(map[int]meets.RaceResult),
 	}
 }
 
@@ -38,7 +38,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.Resul
 	placeMap := make(map[int]OverallResult)
 
 	// want to keep trying until told to stop via context
-	results := make([]results.RaceResult, resultChunkSize)
+	results := make([]meets.RaceResult, resultChunkSize)
 	resultCount, err := source.GetResults(ctx, results)
 	if err != nil {
 		ovr.logger.Error("overall scorer error", "error", err)
@@ -91,7 +91,7 @@ func (ovr *OverallScorer) ScoreResults(ctx context.Context, source results.Resul
 		ovr.overallResults = append(ovr.overallResults, placeMap[i])
 		r, exists := placeMap[i]
 		if exists {
-			fmt.Fprintf(w, "%-5d %-5d %-32s %-5d %-32s %-8s\n", r.Place, r.Bib, r.Athlete.Name, r.Athlete.Grade, r.Athlete.Team, formatFinishTime(r.Finishtime))
+			fmt.Fprintf(w, "%-5d %-5d %-32s %-5d %-32s %-8s\n", r.Place, r.Bib, r.Athlete.Name(), r.Athlete.Grade, r.Athlete.Team, formatFinishTime(r.Finishtime))
 		}
 	}
 

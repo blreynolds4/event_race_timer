@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var connectStr = "postgres://eventtimer:eventtimer@localhost:5432/eventtimer?sslmode=disable"
+var connectStr = "postgres://testdb:testdb@localhost:5433/testdb?sslmode=disable"
 
 func TestCloseAClosedReader(t *testing.T) {
 	// Create a meetData instance
@@ -69,6 +69,54 @@ func TestGetMeetFromDbNotFound(t *testing.T) {
 	meet, err := md.GetMeet("Test Meet")
 	assert.Nil(t, err)
 	assert.Nil(t, meet)
+}
+
+func TestGetMeetListFromDb(t *testing.T) {
+	// Create a meetData instance (nothing cached)
+	md, err := NewMeetReader(connectStr)
+	if err != nil {
+		t.Fatalf("Failed to create meetData: %v", err)
+	}
+	defer md.Close()
+
+	// Insert a test meet into the database
+	db, err := sql.Open("postgres", connectStr)
+	if err != nil {
+		t.Fatalf("Failed to open test database: %v", err)
+	}
+
+	_, err = db.Exec("INSERT INTO meet (id, name) VALUES ($1, $2)", 1, "Test Meet 1")
+	if err != nil {
+		t.Fatalf("Failed to insert test meet: %v", err)
+	}
+	_, err = db.Exec("INSERT INTO meet (id, name) VALUES ($1, $2)", 2, "Test Meet 2")
+	if err != nil {
+		t.Fatalf("Failed to insert test meet 2: %v", err)
+	}
+
+	// defer cleanup
+	defer func() {
+		_, err := db.Exec("DELETE FROM meet WHERE id = $1", 1)
+		if err != nil {
+			t.Fatalf("Failed to delete test meet: %v", err)
+		}
+		_, err = db.Exec("DELETE FROM meet WHERE id = $1", 2)
+		if err != nil {
+			t.Fatalf("Failed to delete test meet: %v", err)
+		}
+	}()
+
+	// Test: Retrieve the meet by name
+	meets, err := md.GetMeets()
+	assert.Nil(t, err)
+	assert.NotNil(t, meets)
+	assert.Equal(t, 2, len(meets))
+	assert.Equal(t, int64(1), meets[0].id)
+	assert.Equal(t, "Test Meet 1", meets[0].Name)
+	assert.Equal(t, 0, len(meets[0].races))
+	assert.Equal(t, int64(2), meets[1].id)
+	assert.Equal(t, "Test Meet 2", meets[1].Name)
+	assert.Equal(t, 0, len(meets[1].races))
 }
 
 func TestCreateNewDeleteMeet(t *testing.T) {

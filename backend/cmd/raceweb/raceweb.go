@@ -69,7 +69,13 @@ func main() {
 	rawStream := redis_stream.NewRedisStream(rdb, claRacename)
 	eventStream := raceevents.NewEventStream(rawStream)
 
-	app := raceweb.NewApplication(sources, athletes, eventStream, logger)
+	meetReader, err := meets.NewMeetReader(claPostgresConnect)
+	if err != nil {
+		logger.Error("error creating meet reader", "error", err)
+		panic(err)
+	}
+
+	app := raceweb.NewApplication(sources, athletes, meetReader, eventStream, logger)
 
 	app.Run(":8080")
 }

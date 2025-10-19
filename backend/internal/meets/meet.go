@@ -16,6 +16,7 @@ type Race struct {
 
 type MeetReader interface {
 	GetMeet(name string) (*Meet, error)
+	GetMeets() ([]*Meet, error)
 	GetMeetRaces(m *Meet) ([]Race, error)
 	io.Closer
 }

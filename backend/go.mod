@@ -1,6 +1,6 @@
 module blreynolds4/event-race-timer
 
-go 1.21.4
+go 1.24.1
 
 require (
 	github.com/gin-gonic/gin v1.9.1

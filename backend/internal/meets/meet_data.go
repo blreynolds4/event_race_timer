@@ -71,6 +71,32 @@ func (md *meetData) GetMeet(name string) (*Meet, error) {
 	return meet, nil
 }
 
+func (md *meetData) GetMeets() ([]*Meet, error) {
+	// Query the database
+	rows, err := md.db.Query(`
+		SELECT m.id,
+			m.name
+		FROM meet m`)
+	if err != nil {
+		slog.Error("Error querying meets", slog.String("error", err.Error()))
+		return nil, err
+	}
+	defer rows.Close()
+
+	meets := make([]*Meet, 0, 10)
+	for rows.Next() {
+		meet := new(Meet)
+		err := rows.Scan(&meet.id, &meet.Name)
+		if err != nil {
+			slog.Error("Error scanning meet row", slog.String("error", err.Error()))
+			return nil, err
+		}
+		meets = append(meets, meet)
+	}
+
+	return meets, nil
+}
+
 func (md *meetData) GetMeetRaces(m *Meet) ([]Race, error) {
 	rows, err := md.db.Query(`
 		SELECT r.id, r.name

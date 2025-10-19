@@ -18,13 +18,16 @@ type application struct {
 	router *gin.Engine
 }
 
-func NewApplication(sources config.SourceConfig, athletes meets.AthleteLookup, eventStream raceevents.EventStream, logger *slog.Logger) Application {
+func NewApplication(sources config.SourceConfig, athletes meets.AthleteLookup, meetReader meets.MeetReader, eventStream raceevents.EventStream, logger *slog.Logger) Application {
 	router := gin.Default()
 
 	// Setup route group for the API
 	api := router.Group("/api")
 	api.GET("/timingEvents", handler.NewVerifyTimingHandler(logger))
 	api.POST("/timingEvents/finishes", handler.NewTimingHandler(sources, athletes, eventStream, logger))
+
+	// meet api
+	api.GET("/meets", handler.NewMeetListHandler(meetReader, logger))
 
 	// results paths
 	router.StaticFile("/overall", "overall_results.html")
